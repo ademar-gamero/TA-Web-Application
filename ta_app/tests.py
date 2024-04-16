@@ -1,3 +1,63 @@
 from django.test import TestCase
+from classes.TA import TA
+from classes.User import User
+class Teacher_Assitant(TestCase):
+    def setUp(self):
+        self.ta = TA(1,"ta","taUser","taUser","email@email.com","Teacher-Assistant","1","street",False)
+    
+        self.id = 1
+        self.name = "ta"
+        self.username = "taUser"
+        self.password = "taUser"
+        self.email = "email@email.com"
+        self.role="Teacher_Assistant"
+        self.phone_number="1"
+        self.address = "street"
+        self.assigned = False
+        self.assigned_section = []
+    def test_TAcreation(self):
+        checker = True
+        if(self.id != self.ta.id):
+            checker = False
+        if(self.name != self.ta.name):
+            checker = False
+        if(self.id != self.ta.username):
+            checker = False
+        if(self.id != self.ta.password):
+            checker = False
+        if(self.id != self.ta.email):
+            checker = False
+        if(self.id != self.ta.role):
+            checker = False
+        if(self.id != self.ta.phone_number):
+            checker = False
+        if(self.id != self.ta.address):
+            checker = False
+        if(self.id != self.ta.assigned):
+            checker = False
+        if(self.id != self.ta.address):
+            checker = False
+        if(self.assigned_section != self.ta.assigned_section)
+            checker = False
+        self.assertEqual(checker, "invalid TA creation")
 
-# Create your tests here.
+    def test_viewContactInformation(self):
+        contact_info = ta.view_contact_info()
+        self.assertEqual(contact_info,self.email)
+
+    def test_editContactInformation(self):
+        new_contact_info = "american@email.com" 
+        ta.edit_contact_info("american@email.com")
+        self.assertEqual(new_contact_info,ta.email,"contact info was not changed")
+
+    def test_editContactInfoInteger(self):
+        with self.assertRaises(TypeError, msg = "you passed in a non numberic value"):
+            ta.edit_contact_info(1)
+
+    def test_editContactInfoInvalid(self):
+        self.assertFalse(ta.edit_contact_info("americanemail.com"),"email validation failed")
+
+    def test_editContactInfoInvalidCheck(self):
+        ta.edit_contact_info("americanemail.com")
+        self.assertEqual(self.ta.email,"email@email.com","email validation failed")
+
