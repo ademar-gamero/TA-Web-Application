@@ -1,6 +1,6 @@
 from django.test import TestCase
-from classes.TA import TA
-from classes.User import User
+from classes.ta import TA
+from classes.ClassUser import ClassUser
 class Teacher_Assitant(TestCase):
     def setUp(self):
         self.ta = TA(1,"ta","taUser","taUser","email@email.com","Teacher-Assistant","1","street",False)
