@@ -75,5 +75,8 @@ class UserClass(ABC):
     def get_assigned_sections(self):
         return self.assigned_sections
 
+    def set_contact_info(self, email, phone_number, address):
+        pass
+
     def get_contact_info(self, user_id):
         pass
