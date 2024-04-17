@@ -32,7 +32,6 @@ class Section(models.Model):
 
 
 class User(models.Model):
-    user_id = models.IntegerField(null=True)
     name = models.CharField(max_length=50)
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
