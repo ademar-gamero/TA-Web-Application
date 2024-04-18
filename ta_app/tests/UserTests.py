@@ -2,7 +2,7 @@ from django.test import TestCase
 from classes.UserClass import UserClass
 
 
-class UserTests(TestCase):
+class TestUserClass(TestCase):
 
     def test_createNullAll(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid entry"):
@@ -149,3 +149,4 @@ class UserTests(TestCase):
         self.assertEqual(temp.assigned_sections, None, "Shouldn't be assigned to any sections")
         self.assertEqual(temp.__str__(), "New : AD", "toString returns incorrectly")
     # check if creating a user with additional details (phone/address) returns successfully
+

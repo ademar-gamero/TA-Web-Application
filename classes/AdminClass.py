@@ -18,7 +18,13 @@ class Admin(UserClass):
     def assign_instructor(self, user_id, section_id):
         pass
 
+    def unassign_instructor(self, user_id, section_id):
+        pass
+
     def assign_ta(self, user_id, section_id):
+        pass
+
+    def unassign_ta(self, user_id, section_id):
         pass
 
     def edit_user(self, username, password, name, role, email, phone, address):

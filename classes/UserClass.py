@@ -4,7 +4,7 @@ from ta_app.models import User, Roles, Section
 
 class UserClass(ABC):
 
-    def __init__(self, username, password, name, role, email, phone_number, address):
+    def __init__(self, username, password, name, role, email, phone_number="", address=""):
         self.username = username
         self.password = password
         self.name = name
