@@ -1,20 +1,20 @@
 from django.test import TestCase
-from classes.TA import TA
-from classes.ClassUser import ClassUser
+from ta_app.classes.TA import TA
+from ta_app.classes.UserClass import UserClass
 
 class Teacher_Assitant(TestCase):
     def setUp(self):
-        self.ta = TA("ta","taUser","taUser","email@email.com","Teacher-Assistant","1","street",False)
+        self.ta = TA("taUser","taUser","ta","Teacher-Assistant","email@email.com","1","street",True)
     
         self.name = "ta"
         self.username = "taUser"
         self.password = "taUser"
         self.email = "email@email.com"
-        self.role="Teacher_Assistant"
+        self.role="Teacher-Assistant"
         self.phone_number="1"
         self.address = "street"
         self.assigned = False
-        self.assigned_section = None
+        self.assigned_section = []
 
     def test_TAcreation(self):
         self.assertEqual(self.name,self.ta.name,"error: ta name field is incorrect")
@@ -25,7 +25,7 @@ class Teacher_Assitant(TestCase):
         self.assertEqual(self.phone_number,self.ta.phone_number,"error: ta name field is incorrect")
         self.assertEqual(self.address,self.ta.address,"error: ta name field is incorrect")
         self.assertEqual(self.assigned,self.ta.assigned,"error: ta name field is incorrect")
-        self.assertEqual(self.assigned_section,self.ta.assigned_section,"error: ta name field is incorrect")
+        self.assertEqual(self.assigned_section,self.ta.assigned_sections,"error: ta name field is incorrect")
 
     def test_viewContactInformation(self):
         contact_info = self.ta.view_contact_info()
