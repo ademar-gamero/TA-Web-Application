@@ -1,26 +1,38 @@
 class Course(object):
     def __init__(self, course_id=0, course_name="unavailable", description="TBD"):
-        self.course_id = course_id
-        self.course_name = course_name
-        self.description = description
+        # use setters so that we don't have to reimplement the data validation
+        self.set_id(course_id)
+        self.set_name(course_name)
+        self.set_description(description)
 
     def __str__(self):
-        pass
+        return f"{self.course_name} - {self.course_id}"
 
     def set_name(self, course_name):
-        pass
+        # may need to check input length later on
+        if not isinstance(course_name, str):
+            raise TypeError("ID must be an integer")
+        self.course_name = course_name
 
     def set_id(self, course_id):
-        pass
+        # may need to check input length later on
+        if not isinstance(course_id, int):
+            raise TypeError("ID must be an integer")
+        elif course_id < 0:
+            raise ValueError("ID cannot be negative")
+        self.course_id = course_id
 
     def set_description(self, description):
-        pass
+        # may need to check input length later on
+        if not isinstance(description, str):
+            raise TypeError("ID must be an integer")
+        self.description = description
 
     def get_course_id(self):
-        pass
+        return self.course_id
 
     def get_course_name(self):
-        pass
+        return self.course_name
 
     def get_course_description(self):
-        pass
+        return self.description
