@@ -1,52 +1,84 @@
 from django.test import TestCase
-from classes.TA import TA
-from classes.ClassUser import ClassUser
+from Classes.Course import Course
 
-class Teacher_Assitant(TestCase):
+
+# Create your tests here.
+class CommonCourses(TestCase):
     def setUp(self):
-        self.ta = TA("ta","taUser","taUser","email@email.com","Teacher-Assistant","1","street",False)
-    
-        self.name = "ta"
-        self.username = "taUser"
-        self.password = "taUser"
-        self.email = "email@email.com"
-        self.role="Teacher_Assistant"
-        self.phone_number="1"
-        self.address = "street"
-        self.assigned = False
-        self.assigned_section = None
+        self.default = Course(0, "test name", "test description")
 
-    def test_TAcreation(self):
-        self.assertEqual(self.name,self.ta.name,"error: ta name field is incorrect")
-        self.assertEqual(self.username,self.ta.username,"error: ta name field is incorrect")
-        self.assertEqual(self.password,self.ta.password,"error: ta name field is incorrect")
-        self.assertEqual(self.email,self.ta.email,"error: ta name field is incorrect")
-        self.assertEqual(self.role,self.ta.role,"error: ta name field is incorrect")
-        self.assertEqual(self.phone_number,self.ta.phone_number,"error: ta name field is incorrect")
-        self.assertEqual(self.address,self.ta.address,"error: ta name field is incorrect")
-        self.assertEqual(self.assigned,self.ta.assigned,"error: ta name field is incorrect")
-        self.assertEqual(self.assigned_section,self.ta.assigned_section,"error: ta name field is incorrect")
 
-    def test_viewContactInformation(self):
-        contact_info = self.ta.view_contact_info()
-        self.assertEqual(contact_info,self.email)
+class CourseInit(TestCase):
+    def test_courseThreeArgId(self):
+        self.assertEqual(0, Course(0, "test name", "test description").course_id,
+                         "course_id is incorrect value")
 
-    def test_editContactInformation(self):
-        new_contact_info = "american@email.com" 
-        self.ta.edit_contact_info("american@email.com")
-        self.assertEqual(new_contact_info,self.ta.email,"contact info was not changed")
+    def test_courseThreeArgName(self):
+        self.assertEqual("test name", Course(0, "test name", "test description").course_name,
+                         "course_name is incorrect value")
 
-    def test_editContactInfoInteger(self):
-        with self.assertRaises(TypeError, msg = "you passed in a non numberic value"):
-            self.ta.edit_contact_info(1)
+    def test_courseThreeArgDescription(self):
+        self.assertEqual("test description", Course(0, "test name", "test description").description,
+                         "course description is incorrect value")
 
-    def test_invalidEmail(self):
-        self.assertFalse(self.ta.valid_email("americanemail.com"),"email validation failed")
+    def test_defaultId(self):  # check if we want to allow default values
+        # will the 0 argument version of the constructor produce the correct id?
+        self.assertEqual(0, Course().course_id, "Default ID is incorrect value")
 
-    def test_validEmail(self):
-        self.assertTrue(self.ta.valid_email("american@email.com"),"email validation failed")
+    def test_defaultName(self):
+        # will the 0 argument version of the constructor produce the correct name?
+        self.assertEqual("unavailable", Course().course_name, "Default name is incorrect value")
 
-    def test_editContactInfoInvalidCheck(self):
-        self.ta.edit_contact_info("americanemail.com")
-        self.assertEqual(self.ta.email,"email@email.com","email validation failed")
+    def test_defaultDescription(self):
+        # will the 0 argument version of the constructor produce the correct description?
+        self.assertEqual("TBD", Course().description, "Default description is incorrect value")
 
+    def test_idInputString(self):
+        # will constructor throw an exception if string data is passed to the course_id?
+        with self.assertRaises(TypeError, msg="Non-numeric ID data fails to raise TypeError") as ctx:
+            a = Course("X", "test name", "test description")
+        self.assertEqual(str(ctx.exception), "Non-numeric ID data fails to raise TypeError")
+
+    def test_idInputFloat(self):
+        # will constructor throw an exception if floating-point data is passed to the course_id?
+        with self.assertRaises(TypeError, msg="Float ID data fails to raise TypeError") as ctx:
+            a = Course(1.1, "test name", "test description")
+        self.assertEqual(str(ctx.exception), "Float ID data fails to raise TypeError")
+
+    def test_idInputNegative(self):
+        # will constructor throw an exception if negative data is passed to the course_id?
+        # Rule: negative IDs will not be allowed
+        with self.assertRaises(ValueError, msg="Negative ID data fails to raise ValueError") as ctx:
+            a = Course(-1, "test name", "test description")
+        self.assertEqual(str(ctx.exception), "Negative ID data fails to raise ValueError")
+
+    def test_nameInputInt(self):
+        # will constructor throw an exception if int data is passed to the course_name?
+        with self.assertRaises(TypeError, msg="Integer name data fails to raise TypeError") as ctx:
+            a = Course(0, 1, "test description")
+        self.assertEqual(str(ctx.exception), "Integer name data fails to raise TypeError")
+
+    def test_nameInputFloat(self):
+        # will constructor throw an exception if floating-point data is passed to the course_name?
+        with self.assertRaises(TypeError, msg="Float name data fails to raise TypeError") as ctx:
+            a = Course(0, 1.1, "test description")
+        self.assertEqual(str(ctx.exception), "Float name data fails to raise TypeError")
+
+    def test_descriptionInputInt(self):
+        # will constructor throw an exception if int data is passed to the description?
+        with self.assertRaises(TypeError, msg="Integer description data fails to raise TypeError") as ctx:
+            a = Course(0, "test name", 1)
+        self.assertEqual(str(ctx.exception), "Integer description data fails to raise TypeError")
+
+    def test_descriptionInputFloat(self):
+        # will constructor throw an exception if floating-point data is passed to the description?
+        with self.assertRaises(TypeError, msg="Float description data fails to raise TypeError") as ctx:
+            a = Course(0, "test name", 1.1)
+        self.assertEqual(str(ctx.exception), "Float description data fails to raise TypeError")
+
+
+class CourseString(CommonCourses):
+    def test_displayCourse(self):
+        # will string method produce the correct output
+        # Rule: string representation will be "<course_name>"
+        self.assertEqual("test name", str(self.default), "incorrect string representation returned")
