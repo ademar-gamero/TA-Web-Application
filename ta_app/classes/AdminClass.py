@@ -1,4 +1,4 @@
-from classes.UserClass import UserClass
+from ta_app.classes.UserClass import UserClass
 
 
 class Admin(UserClass):

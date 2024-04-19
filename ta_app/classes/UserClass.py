@@ -4,7 +4,7 @@ from ta_app.models import User, Roles, Section
 
 class UserClass(ABC):
 
-    def __init__(self, username, password, name, role, email, phone_number="", address=""):
+    def __init__(self, username, password, name, role, email, phone_number="", address="",assigned = False,assigned_sections=[]):
         self.username = username
         self.password = password
         self.name = name
@@ -12,8 +12,8 @@ class UserClass(ABC):
         self.email = email
         self.phone_number = phone_number
         self.address = address
-        self.assigned = False
-        self.assigned_sections = None
+        self.assigned = assigned
+        self.assigned_sections = assigned_sections
 
     def __str__(self):
         return f'{self.name} : {self.role}'
