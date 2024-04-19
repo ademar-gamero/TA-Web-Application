@@ -4,7 +4,7 @@ from ta_app.classes.UserClass import UserClass
 
 class Teacher_Assitant(TestCase):
     def setUp(self):
-        self.ta = TA("taUser","taUser","ta","Teacher-Assistant","email@email.com","1","street",True)
+        self.ta = TA("taUser","taUser","ta","Teacher-Assistant","email@email.com","1","street",False)
     
         self.name = "ta"
         self.username = "taUser"
