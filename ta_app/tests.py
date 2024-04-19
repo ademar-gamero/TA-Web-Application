@@ -1,5 +1,5 @@
 from django.test import TestCase
-from Classes.Course import Course
+from ta_app.Classes.Course import Course
 
 
 # Create your tests here.
@@ -99,7 +99,7 @@ class CourseSetID(CommonCourses):
     def test_setIdInt(self):
         # will set_id properly change the course's id field?
         self.default.set_id(361)
-        self.assertEqual(361, self.default.course_id, "Course ID is not updated by setter")
+        self.assertEqual(361, self.default.course_id, "Course ID is not updated by set_id")
 
 
 class CourseSetName(CommonCourses):
@@ -108,12 +108,50 @@ class CourseSetName(CommonCourses):
         with self.assertRaises(TypeError, msg="No input fails to raise TyperError"):
             self.default.set_name(None)
 
-    def test_setNameInt(self):
-        # will passing int data cause set_name to throw an exception?
-        with self.assertRaises(TypeError, msg="Integer name data fails to raise TypeError"):
+    def test_setNameNonString(self):
+        # will passing non-string data cause set_name to throw an exception?
+        with self.assertRaises(TypeError, msg="Non-string name data fails to raise TypeError"):
             self.default.set_name(1)
 
     def test_setNameString(self):
         # will set_name properly change the course's name field?
         self.default.set_name("CompSci")
-        self.assertEqual("CompSci", self.default.course_name, "Course name is not updated by setter")
+        self.assertEqual("CompSci", self.default.course_name, "Course name is not updated by set_name")
+
+
+class CourseSetDescription(CommonCourses):
+    def test_setDescriptionNoInput(self):
+        # will no input cause set_description to throw an exception
+        with self.assertRaises(TypeError, msg="No input fails to raise TyperError"):
+            self.default.description(None)
+
+    def test_setDescriptionNonString(self):
+        # will passing non-string data cause set_name to throw an exception?
+        with self.assertRaises(TypeError, msg="Non-string description data fails to raise TypeError"):
+            self.default.description(1)
+
+    def test_setDescriptionString(self):
+        # will set_description properly change the course's description field?
+        self.default.set_description("test test test")
+        self.assertEqual("test test test", self.default.description,
+                         "Course description is not updated by set_description")
+
+
+class CourseGetCourseID(CommonCourses):
+    def test_getID(self):
+        # will get_course_id return the course's current id?
+        self.assertEqual(0, self.default.get_course_id(), "Value returned by get_course_id is incorrect")
+
+
+class CourseGetCourseName(CommonCourses):
+    def test_getName(self):
+        # will get_course_name return the course's current name?
+        self.assertEqual("test name", self.default.get_course_name(),
+                         "Value returned by get_course_name is incorrect")
+
+
+class CourseGetCourseDescription(CommonCourses):
+    def test_getDescription(self):
+        # will get_course_description return the course's current description?
+        self.assertEqual("test description", self.default.get_course_description(),
+                         "Value returned by get_course_description is incorrect")
