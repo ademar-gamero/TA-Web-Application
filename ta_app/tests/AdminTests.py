@@ -10,20 +10,57 @@ class TestAdminClass(TestCase):
 
     def test_createUserTA(self):
         user = self.ad.create_user("newuser", "password", "NewTA", "TA", "email@uwm.edu")
+        self.assertEqual("newuser", user.username, "Username is wrong")
+        self.assertEqual("password", user.password, "Password is wrong")
+        self.assertEqual("NewTA", user.name, "Name is wrong")
+        self.assertEqual("TA", user.role, "Role is wrong")
+        self.assertEqual("email@uwm.edu", user.email, "Email is wrong")
+        self.assertEqual("", user.phone_number, "Phone is wrong")
+        self.assertEqual("", user.address, "Address is wrong")
+        self.assertFalse(user.assigned, "Should not be assigned upon creation")
+        self.assertEqual(None, user.assigned_sections, "Should not be in any sections upon creation")
 
     def test_createUserInstructor(self):
         user = self.ad.create_user("newuser", "password", "NewIN", "IN", "email@uwm.edu")
+        self.assertEqual("newuser", user.username, "Username is wrong")
+        self.assertEqual("password", user.password, "Password is wrong")
+        self.assertEqual("NewIN", user.name, "Name is wrong")
+        self.assertEqual("IN", user.role, "Role is wrong")
+        self.assertEqual("email@uwm.edu", user.email, "Email is wrong")
+        self.assertEqual("", user.phone_number, "Phone is wrong")
+        self.assertEqual("", user.address, "Address is wrong")
+        self.assertFalse(user.assigned, "Should not be assigned upon creation")
+        self.assertEqual(None, user.assigned_sections, "Should not be in any sections upon creation")
 
     def test_createUserAdmin(self):
         user = self.ad.create_user("newuser", "password", "NewAD", "AD", "email@uwm.edu")
+        self.assertEqual("newuser", user.username, "Username is wrong")
+        self.assertEqual("password", user.password, "Password is wrong")
+        self.assertEqual("NewAD", user.name, "Name is wrong")
+        self.assertEqual("AD", user.role, "Role is wrong")
+        self.assertEqual("email@uwm.edu", user.email, "Email is wrong")
+        self.assertEqual("", user.phone_number, "Phone is wrong")
+        self.assertEqual("", user.address, "Address is wrong")
+        self.assertFalse(user.assigned, "Should not be assigned upon creation")
+        self.assertEqual(None, user.assigned_sections, "Should not be in any sections upon creation")
 
     def test_createUserFullDetails(self):
         user = self.ad.create_user("newuser", "password", "New", "IN", "email@uwm.edu",
                                    "555-5555", "123 Fake Street")
+        self.assertEqual("newuser", user.username, "Username is wrong")
+        self.assertEqual("password", user.password, "Password is wrong")
+        self.assertEqual("New", user.name, "Name is wrong")
+        self.assertEqual("IN", user.role, "Role is wrong")
+        self.assertEqual("email@uwm.edu", user.email, "Email is wrong")
+        self.assertEqual("555-5555", user.phone_number, "Phone is wrong")
+        self.assertEqual("123 Fake Street", user.address, "Address is wrong")
+        self.assertFalse(user.assigned, "Should not be assigned upon creation")
+        self.assertEqual(None, user.assigned_sections, "Should not be in any sections upon creation")
 
     def test_delete_user(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         self.ad.delete_user(user)
+        self.assertEqual(None, user, "User was not deleted")
 
     def test_delete_userNull(self):
         with self.assertRaises(ValueError, msg="Fails to catch wrong input type"):
@@ -37,10 +74,24 @@ class TestAdminClass(TestCase):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         self.ad.edit_user(user, "newUsername", "newPass", "New Name", "IN", "newemail@uwm.edu",
                           "555-5555", "123 Fake Street")
+        self.assertEqual("newUsername", user.username, "Username is wrong")
+        self.assertEqual("newPass", user.password, "Password is wrong")
+        self.assertEqual("New Name", user.name, "Name is wrong")
+        self.assertEqual("IN", user.role, "Role is wrong")
+        self.assertEqual("newemail@uwm.edu", user.email, "Email is wrong")
+        self.assertEqual("555-5555", user.phone_number, "Phone is wrong")
+        self.assertEqual("123 Fake Street", user.address, "Address is wrong")
 
     def test_edit_userUsername(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         self.ad.edit_user(user, "newUsername")
+        self.assertEqual("newUsername", user.username, "Username is wrong")
+        self.assertEqual("password", user.password, "Password is wrong")
+        self.assertEqual("New", user.name, "Name is wrong")
+        self.assertEqual("TA", user.role, "Role is wrong")
+        self.assertEqual("email@uwm.edu", user.email, "Email is wrong")
+        self.assertEqual("", user.phone_number, "Phone is wrong")
+        self.assertEqual("", user.address, "Address is wrong")
 
     def test_edit_userUsernameEmpty(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
@@ -50,6 +101,13 @@ class TestAdminClass(TestCase):
     def test_edit_userPassword(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         self.ad.edit_user(user, password="newPass")
+        self.assertEqual("newuser", user.username, "Username is wrong")
+        self.assertEqual("newPass", user.password, "Password is wrong")
+        self.assertEqual("New", user.name, "Name is wrong")
+        self.assertEqual("TA", user.role, "Role is wrong")
+        self.assertEqual("email@uwm.edu", user.email, "Email is wrong")
+        self.assertEqual("", user.phone_number, "Phone is wrong")
+        self.assertEqual("", user.address, "Address is wrong")
 
     def test_edit_userPasswordEmpty(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
@@ -59,6 +117,13 @@ class TestAdminClass(TestCase):
     def test_edit_userName(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         self.ad.edit_user(user, name="New Name")
+        self.assertEqual("newuser", user.username, "Username is wrong")
+        self.assertEqual("password", user.password, "Password is wrong")
+        self.assertEqual("New Name", user.name, "Name is wrong")
+        self.assertEqual("TA", user.role, "Role is wrong")
+        self.assertEqual("email@uwm.edu", user.email, "Email is wrong")
+        self.assertEqual("", user.phone_number, "Phone is wrong")
+        self.assertEqual("", user.address, "Address is wrong")
 
     def test_edit_userNameEmpty(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
@@ -97,10 +162,12 @@ class TestAdminClass(TestCase):
             course = self.ad.create_course(101, "", None)
 
     def test_edit_course(self):
-        pass
+        course = self.ad.create_course(101, "English")
+        self.ad.edit_course(101, "Math", "A basic math class")
 
     def test_delete_course(self):
-        pass
+        course = self.ad.create_course(101, "English")
+        self.ad.delete_course(101)
 
     def test_create_section(self):
         pass
