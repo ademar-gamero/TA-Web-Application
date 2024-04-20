@@ -15,10 +15,10 @@ class UserClass(ABC):
         self.address = address
         self.assigned = assigned
         self.assigned_sections = assigned_sections
-        user = User(self.username, self.password, self.name, self.role, self.email, self.phone_number, self.address,
+        self.user = User(self.username, self.password, self.name, self.role, self.email, self.phone_number, self.address,
                     self.assigned, self.assigned_sections)
-        user.save()
-        self.user_id = user.id
+        self.user.save()
+        self.user_id = self.user.id
 
     def __str__(self):
         return f'{self.name} : {self.role}'
@@ -79,6 +79,9 @@ class UserClass(ABC):
 
     def get_assigned_sections(self):
         return self.assigned_sections
+
+    def get_user_id(self):
+        return self.user_id
 
     def set_contact_info(self, email, phone_number, address):
         pass

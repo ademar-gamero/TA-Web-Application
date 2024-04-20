@@ -59,7 +59,7 @@ class TestAdminClass(TestCase):
 
     def test_delete_user(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
-        self.ad.delete_user(user)
+        self.ad.delete_user(user.get_user_id())
         self.assertEqual(None, user, "User was not deleted")
 
     def test_delete_userNull(self):
@@ -72,7 +72,7 @@ class TestAdminClass(TestCase):
 
     def test_edit_userFull(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
-        self.ad.edit_user(user, "newUsername", "newPass", "New Name", "IN", "newemail@uwm.edu",
+        self.ad.edit_user(user.get_user_id(), "newUsername", "newPass", "New Name", "IN", "newemail@uwm.edu",
                           "555-5555", "123 Fake Street")
         self.assertEqual("newUsername", user.username, "Username is wrong")
         self.assertEqual("newPass", user.password, "Password is wrong")
@@ -84,7 +84,7 @@ class TestAdminClass(TestCase):
 
     def test_edit_userUsername(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
-        self.ad.edit_user(user, "newUsername")
+        self.ad.edit_user(user.get_user_id(), "newUsername")
         self.assertEqual("newUsername", user.username, "Username is wrong")
         self.assertEqual("password", user.password, "Password is wrong")
         self.assertEqual("New", user.name, "Name is wrong")
@@ -96,11 +96,11 @@ class TestAdminClass(TestCase):
     def test_edit_userUsernameEmpty(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         with self.assertRaises(ValueError, msg="Fails to catch empty username"):
-            self.ad.edit_user(user, "")
+            self.ad.edit_user(user.get_user_id(), "")
 
     def test_edit_userPassword(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
-        self.ad.edit_user(user, password="newPass")
+        self.ad.edit_user(user.get_user_id(), password="newPass")
         self.assertEqual("newuser", user.username, "Username is wrong")
         self.assertEqual("newPass", user.password, "Password is wrong")
         self.assertEqual("New", user.name, "Name is wrong")
@@ -112,11 +112,11 @@ class TestAdminClass(TestCase):
     def test_edit_userPasswordEmpty(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         with self.assertRaises(ValueError, msg="Fails to catch empty password"):
-            self.ad.edit_user(user, password="")
+            self.ad.edit_user(user.get_user_id(), password="")
 
     def test_edit_userName(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
-        self.ad.edit_user(user, name="New Name")
+        self.ad.edit_user(user.get_user_id(), name="New Name")
         self.assertEqual("newuser", user.username, "Username is wrong")
         self.assertEqual("password", user.password, "Password is wrong")
         self.assertEqual("New Name", user.name, "Name is wrong")
@@ -128,12 +128,12 @@ class TestAdminClass(TestCase):
     def test_edit_userNameEmpty(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         with self.assertRaises(ValueError, msg="Fails to catch empty name"):
-            self.ad.edit_user(user, name="")
+            self.ad.edit_user(user.get_user_id(), name="")
 
     def test_edit_userNameNonString(self):
         user = self.ad.create_user("newuser", "password", "New", "TA", "email@uwm.edu")
         with self.assertRaises(ValueError, msg="Fails to catch invalid value type"):
-            self.ad.edit_user(user, name=123)
+            self.ad.edit_user(user.get_user_id(), name=123)
 
     def test_create_course(self):
         course = self.ad.create_course(101, "English", "A generic class")
@@ -170,7 +170,8 @@ class TestAdminClass(TestCase):
         self.ad.delete_course(101)
 
     def test_create_section(self):
-        pass
+        course = self.ad.create_course(101, "English")
+        section = self.ad.create_section(101, 555, "M 5:30", "LAB")
 
     def test_edit_section(self):
         pass
