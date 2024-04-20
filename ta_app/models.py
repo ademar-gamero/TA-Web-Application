@@ -41,7 +41,7 @@ class User(models.Model):
     phone_number = models.CharField(max_length=100)
     address = models.CharField(max_length=256)
     assigned = models.BooleanField
-    assigned_section = models.ManyToManyField(Section)
+    assigned_sections = models.ManyToManyField(Section)
 
     def __str__(self):
         return f"{self.name} + {self.role}"

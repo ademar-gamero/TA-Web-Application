@@ -3,7 +3,8 @@ from classes.UserClass import UserClass
 
 class Admin(UserClass):
 
-    def create_user(self, username, password, name, role, email, phone_number=None, address=None):
+    def create_user(self, username, password, name, role, email, phone_number="", address=""):
+        # new_user = UserClass(username, password, name, role, email, phone_number, address)
         pass
 
     def delete_user(self, user_id):
@@ -15,19 +16,19 @@ class Admin(UserClass):
     def create_section(self, course_id, section_id, meeting_time, section_type):
         pass
 
-    def assign_instructor(self, user, section_id):
+    def assign_instructor(self, user_id, section_id):
         pass
 
-    def unassign_instructor(self, user, section_id):
+    def unassign_instructor(self, user_id, section_id):
         pass
 
-    def assign_ta(self, user, section_id):
+    def assign_ta(self, user_id, section_id):
         pass
 
-    def unassign_ta(self, user, section_id):
+    def unassign_ta(self, user_id, section_id):
         pass
 
-    def edit_user(self, user, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
+    def edit_user(self, user_id, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
         pass
 
     def edit_course(self, course_id, course_name=None, description=None):
