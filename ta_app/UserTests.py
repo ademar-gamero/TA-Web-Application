@@ -6,7 +6,7 @@ class TestUserClass(TestCase):
 
     def test_createNullAll(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid entry"):
-            temp = UserClass()
+            temp = UserClass(None, None, None, None, None)
     # shouldn't be able to create a user with no name, password, etc
 
     def test_createNullUsername(self):

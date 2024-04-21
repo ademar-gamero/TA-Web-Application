@@ -1,11 +1,41 @@
 from abc import ABC
 from ta_app.models import User, Roles, Section
+from django.core.validators import validate_email
 
 
 class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
                  assigned_sections=None):
+        if username is None or password is None or name is None or role is None or email is None:
+            raise ValueError("Missing necessary parameters. Must include username, password, name, role, and email.")
+        if not isinstance(username, str) or username.strip() == "":
+            raise ValueError("Username must be a non-empty string")
+        if not isinstance(password, str) or password.strip() == "":
+            raise ValueError("Password must be a non-empty string")
+        if not isinstance(name, str) or name.strip() == "":
+            raise ValueError("Name must be a non-empty string")
+        if username.strip() != username:
+            raise ValueError("Username cannot contain spaces")
+        if password.strip() != password:
+            raise ValueError("Password cannot contain spaces")
+        if not validate_email(email):
+            raise ValueError("Email is not valid")
+        if not (role is "TA" or role is "IN" or role is "AD"):
+            raise ValueError("Invalid role")
+        if not isinstance(phone_number, str):
+            raise ValueError("Invalid phone number")
+        if not isinstance(address, str):
+            raise ValueError("Invalid phone number")
+        if not isinstance(assigned, bool):
+            raise ValueError("Assigned must be a boolean")
+        if assigned_sections is not None:
+            if isinstance(assigned_sections, list):
+                for section in assigned_sections:
+                    if not isinstance(section, int):
+                        raise ValueError("Assigned Sections must be listed by their ID")
+            else:
+                raise ValueError("Assigned Sections must be listed by their ID")
         self.username = username
         self.password = password
         self.name = name
