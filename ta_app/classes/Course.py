@@ -1,6 +1,5 @@
 class Course(object):
     def __init__(self, course_id=0, course_name="unavailable", description="TBD"):
-        # use setters so that we don't have to reimplement the data validation
         self.set_id(course_id)
         self.set_name(course_name)
         self.set_description(description)
@@ -9,13 +8,11 @@ class Course(object):
         return f"{self.course_name} - {self.course_id}"
 
     def set_name(self, course_name):
-        # may need to check input length later on
         if not isinstance(course_name, str):
             raise TypeError("ID must be an integer")
         self.course_name = course_name
 
     def set_id(self, course_id):
-        # may need to check input length later on
         if not isinstance(course_id, int):
             raise TypeError("ID must be an integer")
         elif course_id < 0:
@@ -23,7 +20,6 @@ class Course(object):
         self.course_id = course_id
 
     def set_description(self, description):
-        # may need to check input length later on
         if not isinstance(description, str):
             raise TypeError("ID must be an integer")
         self.description = description
