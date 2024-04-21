@@ -7,6 +7,8 @@ class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
                  assigned_sections=None):
+        if assigned_sections is None:
+            assigned_sections = []
         if username is None or password is None or name is None or role is None or email is None:
             raise ValueError("Missing necessary parameters. Must include username, password, name, role, and email.")
         if not isinstance(username, str) or username.strip() == "":
@@ -21,7 +23,7 @@ class UserClass(ABC):
             raise ValueError("Password cannot contain spaces")
         if not validate_email(email):
             raise ValueError("Email is not valid")
-        if not (role is "TA" or role is "IN" or role is "AD"):
+        if not (role is "Teacher-Assistant" or role is "Instructor" or role is "Admin"):
             raise ValueError("Invalid role")
         if not isinstance(phone_number, str):
             raise ValueError("Invalid phone number")
@@ -49,7 +51,7 @@ class UserClass(ABC):
         self.phone_number = phone_number
         self.address = address
         self.assigned = assigned
-        self.assigned_sections = assigned_sections
+        self.assigned_sections = []
         self.user = User(self.username, self.password, self.name, self.role, self.email, self.phone_number,
                          self.address, self.assigned, self.assigned_sections)
         self.user.save()
@@ -108,16 +110,41 @@ class UserClass(ABC):
             raise ValueError("New Name must be a string")
 
     def set_role(self, new_role):
-        pass
+        if isinstance(new_role, str):
+            if not (new_role is "Teacher-Assistant" or new_role is "Instructor" or new_role is "Admin"):
+                raise ValueError("Invalid role")
+            self.role = new_role
+        else:
+            raise ValueError("Invalid role")
 
     def set_assigned(self, new_assigned):
-        pass
+        if isinstance(new_assigned, bool):
+            self.assigned = new_assigned
+        else:
+            raise ValueError("Assignment must be a boolean")
 
     def add_section(self, new_section):
-        pass
+        if isinstance(new_section, Section):
+            if self.assigned_sections is None:
+                self.assigned_sections = [new_section]
+            else:
+                if self.assigned_sections.count(new_section) > 0:
+                    raise ValueError("User is already assigned to this section")
+                self.assigned_sections.append(new_section)
+        else:
+            raise ValueError("Invalid section entry")
 
     def remove_section(self, section_to_remove):
-        pass
+        if isinstance(section_to_remove, Section):
+            if self.assigned_sections is None:
+                raise ValueError("Section not in user's assigned sections")
+            else:
+                try:
+                    self.assigned_sections.remove(section_to_remove)
+                except ValueError:
+                    raise ValueError("Section not in user's assigned sections")
+        else:
+            raise ValueError("Invalid section entry")
 
     def get_username(self):
         return self.username
@@ -149,8 +176,5 @@ class UserClass(ABC):
     def get_user_id(self):
         return self.user_id
 
-    def set_contact_info(self, email, phone_number, address):
-        pass
-
-    def get_contact_info(self, user_id):
+    def view_contact_info(self, user_id):
         pass
