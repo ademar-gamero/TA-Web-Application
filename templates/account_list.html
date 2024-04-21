@@ -1,0 +1,37 @@
+
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account List</title>
+</head>
+<body>
+<h1>Account List Page</h1>
+  
+    <form action="/Home/accountList/" method="post">
+      {% csrf_token %}
+      <input type="text" name="name" placeholder = "name">
+    </form>
+    <form action="/Home/accountList/" method="post">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder = "username">
+    </form>
+    <label for="roles">select role</label>
+    <form action="/Home/accountList/" method="post">
+      {% csrf_token %}
+      <select name="roles" id="roles">
+        <option value="Instructor">Instructor</option>
+        <option value = "Teacher-Assistant">Teacher Assistant</option>
+      </select>
+    </form>
+  <div>
+    <table>
+    {% for account in accountlist %}
+      <tr>
+          <td>{{ account }}</td>
+      </tr>
+    {% endfor %}
+      </table>
+  </div>
+</body>
+</html>

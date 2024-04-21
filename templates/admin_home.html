@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+<h1>Home</h1>
+  
+  <div>
+      <p> Welcome {{user.name}} </p>
+      <p><a href = "{% url 'courseList' %}">Course Catalog</a></p>
+      <p><a href = "{% url 'createCourse' %}">Create Course</a></p>
+      <p><a href = "{% url 'accountlist' %}">account list</a></p>
+      <p><a href = "{% url 'createAccount' %}">Create Account</a></p>
+  </div>
+
+</body>
+</html>
