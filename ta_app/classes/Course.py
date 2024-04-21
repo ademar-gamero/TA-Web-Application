@@ -9,7 +9,7 @@ class Course(object):
 
     def set_name(self, course_name):
         if not isinstance(course_name, str):
-            raise TypeError("ID must be an integer")
+            raise TypeError("Course name must be a string")
         self.course_name = course_name
 
     def set_id(self, course_id):
@@ -21,7 +21,7 @@ class Course(object):
 
     def set_description(self, description):
         if not isinstance(description, str):
-            raise TypeError("ID must be an integer")
+            raise TypeError("Course description must be a string")
         self.description = description
 
     def get_course_id(self):
