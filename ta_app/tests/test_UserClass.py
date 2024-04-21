@@ -1,5 +1,6 @@
 from django.test import TestCase
 from classes.UserClass import UserClass
+from ta_app.models import Course, Section, User
 
 
 class TestUserClass(TestCase):

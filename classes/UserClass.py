@@ -36,6 +36,11 @@ class UserClass(ABC):
                         raise ValueError("Assigned Sections must be listed by their ID")
             else:
                 raise ValueError("Assigned Sections must be listed by their ID")
+        try:
+            User.objects.get(username=username)
+            raise ValueError("Username is already taken")
+        except User.DoesNotExist:
+            pass
         self.username = username
         self.password = password
         self.name = name
@@ -45,8 +50,8 @@ class UserClass(ABC):
         self.address = address
         self.assigned = assigned
         self.assigned_sections = assigned_sections
-        self.user = User(self.username, self.password, self.name, self.role, self.email, self.phone_number, self.address,
-                    self.assigned, self.assigned_sections)
+        self.user = User(self.username, self.password, self.name, self.role, self.email, self.phone_number,
+                         self.address, self.assigned, self.assigned_sections)
         self.user.save()
         self.user_id = self.user.id
 
@@ -54,22 +59,53 @@ class UserClass(ABC):
         return f'{self.name} : {self.role}'
 
     def set_password(self, new_password):
-        pass
+        if new_password is not None:
+            if not isinstance(new_password, str):
+                raise ValueError("New Password must be a string")
+            if new_password.strip() == "":
+                raise ValueError("New Password must not be empty")
+            self.password = new_password
+        else:
+            raise ValueError("New Password must not be None")
 
     def set_username(self, new_username):
-        pass
+        if new_username is not None:
+            if not isinstance(new_username, str):
+                raise ValueError("New Username must be a string")
+            if new_username.strip() == "":
+                raise ValueError("New Username must not be empty")
+            try:
+                User.objects.get(username=new_username)
+                raise ValueError("Username is already taken")
+            except User.DoesNotExist:
+                self.password = new_username
+        else:
+            raise ValueError("New Username must not be None")
 
     def set_email(self, new_email):
-        pass
+        if not validate_email(new_email):
+            raise ValueError("Email is not valid")
+        self.email = new_email
 
     def set_phone_number(self, new_phone):
-        pass
+        if isinstance(new_phone, str):
+            self.phone_number = new_phone
+        else:
+            raise ValueError("New Phone number must be a string")
 
     def set_address(self, new_address):
-        pass
+        if isinstance(new_address, str):
+            self.address = new_address
+        else:
+            raise ValueError("New Address must be a string")
 
     def set_name(self, new_name):
-        pass
+        if isinstance(new_name, str):
+            if new_name.strip() == "":
+                raise ValueError("New Name cannot be empty")
+            self.name = new_name
+        else:
+            raise ValueError("New Name must be a string")
 
     def set_role(self, new_role):
         pass
