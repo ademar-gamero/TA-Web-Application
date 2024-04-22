@@ -251,11 +251,34 @@ class TestEditUser(TestCase):
 
     def setUp(self):
         self.user = UserClass(username='user', password='password', name="Name", role="Admin", email="bla@bla.com",
-                                  phone_number="1234567890", address="Home", assigned=False, assigned_sections=[])
+                                  phone_number="1234567890", address="Home", assigned=False)
         self.user.create_user()
         self.user2 = UserClass(username='user2', password='password2', name="Name2", role="Admin",
-                                   email="bla@bla.com")
+                                   email="bla@blast.com", phone_number="123",address="Apartment",assigned=False)
         self.user2.create_user()
+
+    def test_edit_user_duplicate_username(self):
+        self.user.edit_user("user2", None, None, None, None, None, None)
+        self.assertEqual("user", self.user.username, msg="Username was updated when it shouldnt have been")
+        count = User.objects.filter(username=self.user.username).count()
+        print(count)
+        self.assertTrue(count == 1, "Username was updated in the db, when it shouldnt have been")
+
+    def test_edit_user_duplicate_email(self):
+        self.user.edit_user(None, None, None, None, None, None, self.user2.email)
+        self.assertEqual("bla@bla.com", self.user.email, msg="Email was updated when it shouldnt have been")
+        count = User.objects.filter(email=self.user.email).count()
+        self.assertTrue(count == 1, "Username was updated in the db, when it shouldnt have been")
+
+    def test_edit_user_duplicate_phoneNumber(self):
+        self.user.edit_user(None, None, None, None, None, self.user2.phone_number, None)
+        self.assertEqual("1234567890", self.user.phone_number, msg="Phone number was updated when it shouldnt have been")
+        count = User.objects.filter(phone_number=self.user.phone_number).count()
+        self.assertTrue(count == 1, "Username was updated in the db, when it shouldnt have been")
+    
+    def test_edit_user_assigned(self):
+        self.user.edit_user(None,None,None,None,None,None,None,True)
+        self.assertEqual(True,self.user.assigned, "Assigned was not updated")
 
     def test_edit_user_username(self):
         self.user.edit_user("new", None, None, None, None, None, None)
