@@ -1,8 +1,10 @@
-class Course(object):
-    def __init__(self, course_id=0, course_name="unavailable", description="TBD"):
-        self.set_id(course_id)
-        self.set_name(course_name)
-        self.set_description(description)
+class CourseClass(object):
+    def __init__(self, course_id, course_name, description):
+        # want to redo this method a little bit different
+        self.course_id = course_id
+        self.course_name = course_name
+        self.description = description
+        pass
 
     def __str__(self):
         return f"{self.course_name} - {self.course_id}"
@@ -32,3 +34,8 @@ class Course(object):
 
     def get_course_description(self):
         return self.description
+
+    def create_course(self):
+        # New method. Will add the calling CourseClass object to the database,
+        # but will not allow ID+name combo duplicates.
+        pass
