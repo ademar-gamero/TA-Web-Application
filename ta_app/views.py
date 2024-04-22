@@ -32,7 +32,3 @@ class login_view(View):
         except User.DoesNotExist:
             messages.error(request, 'Invalid username or password.')
             return render(request, 'login.html')
-
-class Home(View):
-    def get(self,request):
-        pass
