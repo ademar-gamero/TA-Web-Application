@@ -1,9 +1,12 @@
 from django.test import TestCase
 from classes.UserClass import UserClass
-from ta_app.models import User
+from ta_app.models import User, Section, Course
 
 
 class TestUserClass(TestCase):
+
+    def setUp(self):
+        self.user = UserClass(username='user', password='password', name="Name", role="Admin", email="bla@bla.com")
 
     def test_createNullAll(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid entry"):
@@ -166,3 +169,30 @@ class TestUserClass(TestCase):
         self.assertEqual(temp.__str__(), "New : AD", "toString returns incorrectly")
     # check if creating a user with additional details (phone/address) that are faulty will be caught
 
+    def test_edit_username(self):
+        self.user.set_username("newname")
+        self.assertEqual("newname", self.user.username, "Username not correctly changed")
+
+    def test_edit_password(self):
+        self.user.set_password("newpass")
+        self.assertEqual("newpass", self.user.password, "Password not correctly changed")
+
+    def test_edit_name(self):
+        self.user.set_name("New Name")
+        self.assertEqual("New Name", self.user.name, "Name was not correctly changed")
+
+    def test_edit_email(self):
+        self.user.set_email("new@uwm.edu")
+        self.assertEqual("new@uwm.edu", self.user.email, "Email was not correctly changed")
+
+    def test_edit_role(self):
+        self.user.set_role("Instructor")
+        self.assertEqual("Instructor", self.user.role, "Role was not correctly changed")
+
+    def test_edit_phone_number(self):
+        self.user.set_phone_number("123-456-7890")
+        self.assertEqual("123-456-7890", self.user.phone_number, "Phone number was not correctly changed")
+
+    def test_edit_address(self):
+        self.user.set_address("The Moon")
+        self.assertEqual("The Moon", self.user.address, "Address was not correctly changed")
