@@ -10,10 +10,16 @@
       
     <form action="/Home/createCourse/" method="post">
       {% csrf_token %}
-        <input type="number" min="0" max="9999" name="course_id" placeholder = "course id "></br>
+        <input type="number" min="0" max="9999" name="course_id" placeholder = "course id"></br>
         <input type="text" name="course_name" placeholder = "course name"></br>
         <textarea name="description" rows="5" cols="30"></textarea></br>
         <input type="submit" value="Submit"></br>
     </form>
+        {% if check == True %}
+            <h1> Course Successfully Created </h1>
+        {% endif %}
+        {% if check == False %}
+            <h1> Course Creation Failed </h1>
+        {% endif %}
 </body>
 </html>
