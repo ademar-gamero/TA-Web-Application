@@ -1,4 +1,7 @@
 from abc import ABC
+
+from django.core.exceptions import ValidationError
+
 from ta_app.models import User, Roles, Section
 from django.core.validators import validate_email
 
@@ -19,8 +22,10 @@ class UserClass(ABC):
             raise ValueError("Username cannot contain spaces")
         if password.strip() != password:
             raise ValueError("Password cannot contain spaces")
-        if not validate_email(email):
-            raise ValueError("Email is not valid")
+        try:
+            validate_email(email)
+        except ValidationError:
+            raise ValueError("Invalid email address")
         if not (role is "Teacher-Assistant" or role is "Instructor" or role is "Admin"):
             raise ValueError("Invalid role")
         if not isinstance(phone_number, str):
@@ -122,15 +127,11 @@ class UserClass(ABC):
                 if self.assigned_sections.count(new_section) > 0:
                     raise ValueError("User is already assigned to this section")
                 self.assigned_sections.append(new_section)
-                if self.role == "Teacher's-Assistant":
-                    new_section.assign_ta(self)
-                if self.role == "Instructor":
-                    new_section.assign_instructor(self)
         else:
             raise ValueError("Invalid section entry")
 
     def remove_section(self, section_to_remove):
-        if isinstance(section_to_remove, SectionClass):
+        if isinstance(section_to_remove, Section):
             if self.assigned_sections is None:
                 raise ValueError("Section not in user's assigned sections")
             else:
@@ -140,33 +141,6 @@ class UserClass(ABC):
                     raise ValueError("Section not in user's assigned sections")
         else:
             raise ValueError("Invalid section entry")
-
-    def get_username(self):
-        return self.username
-
-    def get_password(self):
-        return self.password
-
-    def get_name(self):
-        return self.name
-
-    def get_role(self):
-        return self.role
-
-    def get_email(self):
-        return self.email
-
-    def get_phone_number(self):
-        return self.phone_number
-
-    def get_address(self):
-        return self.address
-
-    def get_assigned(self):
-        return self.assigned
-
-    def get_assigned_sections(self):
-        return self.assigned_sections
 
     def view_contact_info(self, username):
         if not isinstance(username, str):
@@ -181,6 +155,7 @@ class UserClass(ABC):
             return contact.email
 
     def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
+        old_username = self.username
         if username is not None:
             self.set_username(username)
         if password is not None:
@@ -195,17 +170,21 @@ class UserClass(ABC):
             self.set_phone_number(phone)
         if address is not None:
             self.set_address(address)
-        # and then save the updates to the user database
+        User.objects.filter(username=old_username).update(username=self.username, password=self.password,
+                                                          name=self.name,
+                                                          role=self.role, email=self.email,
+                                                          phone_number=self.phone_number,
+                                                          address=self.address)
 
     def create_user(self):
         try:
-            User.objects.get(username=self.get_username())
+            User.objects.get(username=self.username)
             raise ValueError("Username is already taken")
         except User.DoesNotExist:
-            user = User(username=self.get_username(), password=self.get_password(), name=self.get_name(),
-                        role=self.get_role(), email=self.get_email(), phone=self.get_phone_number(),
-                        address=self.get_address())
+            user = User(username=self.username, password=self.password, name=self.name,
+                        role=self.role(), email=self.email, phone=self.phone_number,
+                        address=self.address)
             user.save()
 
     def delete_user(self):
-        User.objects.filter(username=self.get_username()).delete()
+        User.objects.filter(username=self.username).delete()
