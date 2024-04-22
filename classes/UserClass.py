@@ -52,10 +52,6 @@ class UserClass(ABC):
         self.address = address
         self.assigned = assigned
         self.assigned_sections = []
-        self.user = User(self.username, self.password, self.name, self.role, self.email, self.phone_number,
-                         self.address, self.assigned, self.assigned_sections)
-        self.user.save()
-        self.user_id = self.user.id
 
     def __str__(self):
         return f'{self.name} : {self.role}'
@@ -131,6 +127,10 @@ class UserClass(ABC):
                 if self.assigned_sections.count(new_section) > 0:
                     raise ValueError("User is already assigned to this section")
                 self.assigned_sections.append(new_section)
+                if self.role == "Teacher's-Assistant":
+                    new_section.assign_ta(self)
+                if self.role == "Instructor":
+                    new_section.assign_instructor(self)
         else:
             raise ValueError("Invalid section entry")
 
@@ -173,8 +173,17 @@ class UserClass(ABC):
     def get_assigned_sections(self):
         return self.assigned_sections
 
-    def get_user_id(self):
-        return self.user_id
+    # def get_user_id(self):
+    #     return self.user_id
 
-    def view_contact_info(self, user_id):
-        pass
+    def view_contact_info(self, username):
+        if not isinstance(username, str):
+            raise ValueError("Invalid username")
+        try:
+            contact = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise ValueError("User does not exist")
+        if self.role == "Admin":
+            return contact.email, contact.phone_number, contact.address
+        else:
+            return contact.email
