@@ -185,10 +185,13 @@ class UserClass(ABC):
         else:
             return contact.email
 
-    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
+    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None, assigned=None):
         old_username = self.username
         if username is not None:
-            self.set_username(username)
+            try: 
+                User.objects.filter(username=username)
+            except User.DoesNotExist:
+                self.set_username(username)
         if password is not None:
             self.set_password(password)
         if name is not None:
@@ -196,16 +199,24 @@ class UserClass(ABC):
         if role is not None:
             self.set_role(role)
         if email is not None:
-            self.set_email(email)
+            try: 
+                User.objects.filter(username=email)
+            except User.DoesNotExist:
+                self.set_email(email)
         if phone is not None:
-            self.set_phone_number(phone)
+            try: 
+                User.objects.filter(username=username)
+            except User.DoesNotExist:
+                self.set_email(email)
         if address is not None:
             self.set_address(address)
+        if assigned is not None:
+            self.set_assigned(assigned)
         User.objects.filter(username=old_username).update(username=self.username, password=self.password,
                                                           name=self.name,
                                                           role=self.role, email=self.email,
                                                           phone_number=self.phone_number,
-                                                          address=self.address)
+                                                          address=self.address,assigned=self.assigned)
 
     def create_user(self):
         try:
