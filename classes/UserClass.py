@@ -38,11 +38,6 @@ class UserClass(ABC):
                         raise ValueError("Assigned Sections must be listed by their ID")
             else:
                 raise ValueError("Assigned Sections must be listed by their ID")
-        try:
-            User.objects.get(username=username)
-            raise ValueError("Username is already taken")
-        except User.DoesNotExist:
-            pass
         self.username = username
         self.password = password
         self.name = name
@@ -51,7 +46,6 @@ class UserClass(ABC):
         self.phone_number = phone_number
         self.address = address
         self.assigned = assigned
-        self.assigned_sections = []
 
     def __str__(self):
         return f'{self.name} : {self.role}'
@@ -120,7 +114,7 @@ class UserClass(ABC):
             raise ValueError("Assignment must be a boolean")
 
     def add_section(self, new_section):
-        if isinstance(new_section, Section):
+        if isinstance(new_section, SectionClass):
             if self.assigned_sections is None:
                 self.assigned_sections = [new_section]
             else:
@@ -135,7 +129,7 @@ class UserClass(ABC):
             raise ValueError("Invalid section entry")
 
     def remove_section(self, section_to_remove):
-        if isinstance(section_to_remove, Section):
+        if isinstance(section_to_remove, SectionClass):
             if self.assigned_sections is None:
                 raise ValueError("Section not in user's assigned sections")
             else:
@@ -173,9 +167,6 @@ class UserClass(ABC):
     def get_assigned_sections(self):
         return self.assigned_sections
 
-    # def get_user_id(self):
-    #     return self.user_id
-
     def view_contact_info(self, username):
         if not isinstance(username, str):
             raise ValueError("Invalid username")
@@ -187,3 +178,33 @@ class UserClass(ABC):
             return contact.email, contact.phone_number, contact.address
         else:
             return contact.email
+
+    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
+        if username is not None:
+            self.set_username(username)
+        if password is not None:
+            self.set_password(password)
+        if name is not None:
+            self.set_name(name)
+        if role is not None:
+            self.set_role(role)
+        if email is not None:
+            self.set_email(email)
+        if phone is not None:
+            self.set_phone_number(phone)
+        if address is not None:
+            self.set_address(address)
+        # and then save the updates to the user database
+
+    def create_user(self):
+        try:
+            User.objects.get(username=self.get_username())
+            raise ValueError("Username is already taken")
+        except User.DoesNotExist:
+            user = User(username=self.get_username(), password=self.get_password(), name=self.get_name(),
+                        role=self.get_role(), email=self.get_email(), phone=self.get_phone_number(),
+                        address=self.get_address())
+            user.save()
+
+    def delete_user(self):
+        User.objects.filter(username=self.get_username()).delete()

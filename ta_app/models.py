@@ -28,7 +28,7 @@ class Section(models.Model):
     section_type = models.CharField(max_length=7, choices=Types.choices, default=Types.LEC)
 
     def __str__(self):
-        return f"{self.course_parent.course_name}+{self.type}+{self.section_id}"
+        return f"{self.course_parent.course_name}+{self.section_type}+{self.section_id}"
 
 
 class User(models.Model):
