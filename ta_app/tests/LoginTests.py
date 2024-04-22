@@ -1,56 +1,38 @@
 from django.test import TestCase
-from ta_app.models import User, Roles
 from django.urls import reverse
+from ta_app.models import User
 
-class LoginTests(TestCase):
+class LoginTestCase(TestCase):
     def setUp(self):
-        user = User.objects.create(
-            name="Test User",
-            username="testuser",
-            email="test@example.com",
-            role=Roles.AD,
-            phone_number="1234567890",
-            address="123 Test St"
+        self.user = User.objects.create(
+            username='testuser',
+            password='testpassword123',
+            email='test@example.com',
+            name='Test User',
+            role='TA'
         )
-        user.set_password("password123")
-        user.save()
         self.login_url = reverse('login')
+    def test_successful_login(self):
+        response = self.client.post(self.login_url, {'username': 'testuser','password': 'testpassword123'}, follow=True)
+        self.assertRedirects(response, reverse('Home'))
+        self.assertTrue(self.client.session['_auth_user_id'], str(self.user.pk))
 
-    def test_login_success(self):
-        response = self.client.post(self.login_url, {
-            'username': 'testuser',
-            'password': 'password123'
-        })
-        self.assertRedirects(response, reverse('home'))
-
-    def test_login_failure(self):
-        response = self.client.post(self.login_url, {
-            'username': 'testuser',
-            'password': 'wrongpassword'
-        })
+    def test_incorrect_password(self):
+        response = self.client.post(self.login_url, {'username': 'testuser','password': 'wrongpassword'})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Invalid username or password')
+        self.assertIn('Invalid username or password.', response.content.decode())
 
-    def test_login_unknown_user(self):
-        response = self.client.post(self.login_url, {
-            'username': 'unknownuser',
-            'password': 'password123'
-        })
+    def test_empty_username(self):
+        response = self.client.post(self.login_url, {'username': '','password': 'testpassword123'})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Invalid username or password')
+        self.assertIn('Please enter your username.', response.content.decode())
 
-    def test_login_empty_username(self):
-        response = self.client.post(self.login_url, {
-            'username': '',
-            'password': 'password123'
-        })
+    def test_empty_password(self):
+        response = self.client.post(self.login_url, {'username': 'testuser','password': ''})
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'username', 'This field is required.')
+        self.assertIn('Please enter your password.', response.content.decode())
 
-    def test_login_empty_password(self):
-        response = self.client.post(self.login_url, {
-            'username': 'testuser',
-            'password': ''
-        })
+    def test_unknown_username(self):
+        response = self.client.post(self.login_url, {'username': 'unknown','password': 'testpassword123'})
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, 'form', 'password', 'This field is required.')
+        self.assertIn('Invalid username or password.', response.content.decode())

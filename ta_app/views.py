@@ -1,23 +1,37 @@
-from django.shortcuts import render
-from django.shortcuts import render, redirect
 from django.views import View
+from django.shortcuts import render, redirect
 from .models import User
-from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-# Create your views here.
 
 class login_view(View):
     def get(self, request):
         return render(request, 'login.html')
+
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        # Check for empty inputs and set specific error messages
+        if not username and not password:
+            messages.error(request, 'Username and password cannot be empty.')
+        elif not username:
+            messages.error(request, 'Please enter your username.')
+        elif not password:
+            messages.error(request, 'Please enter your password.')
 
-        if user is not None:
-            login(request, user)
-            return redirect('home')  # Make sure you have a URL name 'home' defined
-        else:
+        # Return to login page if any input checks failed
+        if not username or not password:
+            return render(request, 'login.html')
+
+        # Searches for user in the database
+        try:
+            user = User.objects.get(username=username, password=password)
+            # User is found:
+            request.session['username'] = user.id
+            return redirect('Home')  # Ensure this matches the URL name defined in urls.py
+        except User.DoesNotExist:
             messages.error(request, 'Invalid username or password.')
             return render(request, 'login.html')
+
+class Home(View):
+    def get(self,request):
+        pass

@@ -5,11 +5,10 @@ class Instructor(UserClass):
         super().__init__(username, password, name, Roles.INSTRUCTOR, email, phone_number, address)
         self.assigned_sections = []
 
-    def set_password(self, new_password):
-        pass
-
     def set_contact_info(self, email, phone_number, address):
-        pass
+        self.email = email
+        self.phone_number = phone_number
+        self.address = address
 
     def assign_TA_to_section(self):
         pass

@@ -31,6 +31,7 @@ class Section(models.Model):
 
 
 class User(models.Model):
+    user_id = models.IntegerField
     name = models.CharField(max_length=50)
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
@@ -43,5 +44,3 @@ class User(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.role}"
-
-# Create your models here.
