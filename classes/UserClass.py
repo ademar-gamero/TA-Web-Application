@@ -7,8 +7,6 @@ class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
                  assigned_sections=None):
-        if assigned_sections is None:
-            assigned_sections = []
         if username is None or password is None or name is None or role is None or email is None:
             raise ValueError("Missing necessary parameters. Must include username, password, name, role, and email.")
         if not isinstance(username, str) or username.strip() == "":
@@ -46,6 +44,9 @@ class UserClass(ABC):
         self.phone_number = phone_number
         self.address = address
         self.assigned = assigned
+        self.assigned_sections = []
+        if assigned_sections is not None:
+            self.assigned_sections = assigned_sections
 
     def __str__(self):
         return f'{self.name} : {self.role}'
@@ -114,7 +115,7 @@ class UserClass(ABC):
             raise ValueError("Assignment must be a boolean")
 
     def add_section(self, new_section):
-        if isinstance(new_section, SectionClass):
+        if isinstance(new_section, Section):
             if self.assigned_sections is None:
                 self.assigned_sections = [new_section]
             else:

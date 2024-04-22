@@ -196,3 +196,101 @@ class TestUserClass(TestCase):
     def test_edit_address(self):
         self.user.set_address("The Moon")
         self.assertEqual("The Moon", self.user.address, "Address was not correctly changed")
+
+
+class TestUserCreation(TestCase):
+
+    def setUp(self):
+        self.user = UserClass(username='user', password='password', name="Name", role="Admin", email="bla@bla.com",
+                              phone_number="1234567890", address="Home", assigned=False, assigned_sections=[])
+
+    def test_create_user(self):
+        self.user.create_user()
+        self.assertTrue(User.objects.filter(username=self.user.username).exists(), "User was not added to the database")
+        check = User.objects.get(username=self.user.username)
+        self.assertEqual(self.user.username, check.username, "Username was not correctly added to db")
+        self.assertEqual(self.user.password, check.password, "Password was not correctly added to db")
+        self.assertEqual(self.user.name, check.name, "Name was not correctly added to db")
+        self.assertEqual(self.user.role, check.role, "Role was not correctly added to db")
+        self.assertEqual(self.user.email, check.email, "Email was not correctly added to db")
+        self.assertEqual(self.user.phone_number, check.phone_number, "Phone number was not correctly added to db")
+        self.assertEqual(self.user.address, check.address, "Address was not correctly added to db")
+        self.assertEqual(self.user.assigned, check.assigned, "Assigned was not correctly added to db")
+        self.assertEqual(self.user.assigned_sections, check.assigned_sections, "Sections were not correctly added to db")
+
+
+class TestUserDeletion(TestCase):
+
+    def setUp(self):
+        self.user = UserClass(username='user', password='password', name="Name", role="Admin", email="bla@bla.com",
+                              phone_number="1234567890", address="Home", assigned=False, assigned_sections=[])
+
+    def test_delete(self):
+        self.user.create_user()
+        self.user.delete_user()
+        self.assertFalse(User.objects.filter(username=self.user.username).exists(), "User wasn't removed from the db")
+
+
+class TestEditUser(TestCase):
+
+    def setUp(self):
+        self.user = UserClass(username='user', password='password', name="Name", role="Admin", email="bla@bla.com",
+                              phone_number="1234567890", address="Home", assigned=False, assigned_sections=[])
+        self.user.create_user()
+        self.user2 = UserClass(username='user2', password='password2', name="Name2", role="Admin", email="bla@bla.com")
+        self.user2.create_user()
+
+    def test_edit_user_username(self):
+        self.user.edit_user("new", None, None, None, None, None, None)
+        self.assertEqual("new", self.user.username, msg="Username was not updated")
+        self.assertTrue(User.objects.filter(username=self.user.username).exists(), "Username wasn't updated in the db")
+        check = User.objects.get(username=self.user)
+        self.assertEqual("password", check.password, "Password should not have changed")
+        self.assertEqual("name", check.name, "Name should not have changed")
+        self.assertEqual("Admin", check.role, "Role should have changed")
+        self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
+        self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
+        self.assertEqual("Home", check.address, "Address should not have changed")
+
+    def test_edit_user_password(self):
+        self.user.edit_user(None, "newpass", None, None, None, None, None)
+        self.assertEqual("newpass", self.user.password, msg="Password was not updated")
+        check = User.objects.get(username="user")
+        self.assertEqual(self.user.password, check.password, "Password should not have changed")
+        self.assertEqual("name", check.name, "Name should not have changed")
+        self.assertEqual("Admin", check.role, "Role should have changed")
+        self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
+        self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
+        self.assertEqual("Home", check.address, "Address should not have changed")
+
+    def test_edit_user_usernameBad(self):
+        with self.assertRaises(ValueError, msg="Fails to catch invalid username"):
+            self.user.edit_user(True, None, None, None, None, None, None)
+
+    def test_edit_user_usernameDuplicate(self):
+        with self.assertRaises(ValueError, msg="Fails to catch duplicate username"):
+            self.user.edit_user("user2", None, None, None, None, None, None)
+
+    def test_edit_user_passwordBad(self):
+        with self.assertRaises(ValueError, msg="Fails to catch invalid password"):
+            self.user.edit_user(None, " ", None, None, None, None, None)
+
+    def test_edit_user_nameBad(self):
+        with self.assertRaises(ValueError, msg="Fails to catch invalid name"):
+            self.user.edit_user(None, None, 123, None, None, None, None)
+
+    def test_edit_user_roleBad(self):
+        with self.assertRaises(ValueError, msg="Fails to catch invalid role"):
+            self.user.edit_user(None, None, None, "Bear", None, None, None)
+
+    def test_edit_user_emailBad(self):
+        with self.assertRaises(ValueError, msg="Fails to catch invalid email"):
+            self.user.edit_user(None, None, None, None, "None", None, None)
+
+    def test_edit_user_phoneBad(self):
+        with self.assertRaises(ValueError, msg="Fails to catch invalid phone number"):
+            self.user.edit_user(None, None, None, None, None, [1, 2, 3], None)
+
+    def test_edit_user_addressBad(self):
+        with self.assertRaises(ValueError, msg="Fails to catch invalid address"):
+            self.user.edit_user(None, None, None, None, None, None, 200.2)
