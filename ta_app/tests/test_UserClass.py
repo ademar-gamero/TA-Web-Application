@@ -256,12 +256,86 @@ class TestEditUser(TestCase):
         self.user.edit_user(None, "newpass", None, None, None, None, None)
         self.assertEqual("newpass", self.user.password, msg="Password was not updated")
         check = User.objects.get(username="user")
-        self.assertEqual(self.user.password, check.password, "Password should not have changed")
+        self.assertEqual(self.user.password, check.password, "Password was not changed")
         self.assertEqual("name", check.name, "Name should not have changed")
         self.assertEqual("Admin", check.role, "Role should have changed")
         self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
         self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
         self.assertEqual("Home", check.address, "Address should not have changed")
+
+    def test_edit_user_name(self):
+        self.user.edit_user(None, None, "New Name", None, None, None, None)
+        self.assertEqual("New Name", self.user.name, msg="Name was not updated")
+        check = User.objects.get(username="user")
+        self.assertEqual("password", "Password should not have changed")
+        self.assertEqual("New Name", check.name, "Name should have changed")
+        self.assertEqual("Admin", check.role, "Role should not have changed")
+        self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
+        self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
+        self.assertEqual("Home", check.address, "Address should not have changed")
+
+    def test_edit_user_role(self):
+        self.user.edit_user(None, None, None, "Instructor", None, None, None)
+        self.assertEqual("Instructor", self.user.role, msg="Role was not updated")
+        check = User.objects.get(username="user")
+        self.assertEqual("password", "Password should not have changed")
+        self.assertEqual("Name", check.name, "Name should not have changed")
+        self.assertEqual("Instructor", check.role, "Role should have changed")
+        self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
+        self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
+        self.assertEqual("Home", check.address, "Address should not have changed")
+
+    def test_edit_user_email(self):
+        self.user.edit_user(None, None, None, None, "new@aol.com", None, None)
+        self.assertEqual("new@aol.com", self.user.email, msg="Email was not updated")
+        check = User.objects.get(username="user")
+        self.assertEqual("password", "Password should not have changed")
+        self.assertEqual("Name", check.name, "Name should not have changed")
+        self.assertEqual("Admin", check.role, "Role should not have changed")
+        self.assertEqual("new@aol.com", check.email, "Email should have changed")
+        self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
+        self.assertEqual("Home", check.address, "Address should not have changed")
+
+    def test_edit_user_phone(self):
+        self.user.edit_user(None, None, None, None, None, "555-5555", None)
+        self.assertEqual("555-5555", self.user.phone_number, msg="Phone was not updated")
+        check = User.objects.get(username="user")
+        self.assertEqual("password", "Password should not have changed")
+        self.assertEqual("Name", check.name, "Name should not have changed")
+        self.assertEqual("Admin", check.role, "Role should not have changed")
+        self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
+        self.assertEqual("555-5555", check.phone_number, "Phone number should have changed")
+        self.assertEqual("Home", check.address, "Address should not have changed")
+
+    def test_edit_user_address(self):
+        self.user.edit_user(None, None, None, None, None, None, "The Moon")
+        self.assertEqual("The Moon", self.user.address, msg="Address was not updated")
+        check = User.objects.get(username="user")
+        self.assertEqual("password", "Password should not have changed")
+        self.assertEqual("Name", check.name, "Name should not have changed")
+        self.assertEqual("Admin", check.role, "Role should not have changed")
+        self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
+        self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
+        self.assertEqual("The Moon", check.address, "Address should have changed")
+
+    def test_edit_user_all(self):
+        self.user.edit_user("new", "newpass", "New Name", "Instructor", "new@aol.com",
+                            "555-5555", "The Moon")
+        self.assertEqual("new", self.user.username, msg="Username was not updated")
+        self.assertEqual("newpass", self.user.password, msg="Password was not updated")
+        self.assertEqual("New Name", self.user.name, msg="Name was not updated")
+        self.assertEqual("Instructor", self.user.role, msg="Role was not updated")
+        self.assertEqual("new@aol.com", self.user.email, msg="Email was not updated")
+        self.assertEqual("555-5555", self.user.phone_number, msg="Phone was not updated")
+        self.assertEqual("The Moon", self.user.address, msg="Address was not updated")
+        self.assertTrue(User.objects.filter(username="new").exists(), "Username wasn't updated in the db")
+        check = User.objects.get(username="new")
+        self.assertEqual("newpass", "Password should have changed")
+        self.assertEqual("New Name", check.name, "Name should have changed")
+        self.assertEqual("Instructor", check.role, "Role should have changed")
+        self.assertEqual("new@aol.com", check.email, "Email should have changed")
+        self.assertEqual("555-5555", check.phone_number, "Phone number should have changed")
+        self.assertEqual("The Moon", check.address, "Address should have changed")
 
     def test_edit_user_usernameBad(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid username"):
