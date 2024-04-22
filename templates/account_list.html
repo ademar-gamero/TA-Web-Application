@@ -28,7 +28,7 @@
     <table>
     {% for account in accountlist %}
       <tr>
-          <td>{{ account }}</td>
+          <td><p><a href = "{% url 'accountDetails' pk=account.pk %}">{{ account }}</a></td>
       </tr>
     {% endfor %}
       </table>
