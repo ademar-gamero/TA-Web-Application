@@ -1,7 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.views import View
-from ta_app.models import User, Section, Course
-from classes import UserClass
+
 
 # Create your views here.
 class AccountCreation(View):

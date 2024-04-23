@@ -1,5 +1,5 @@
 from django.test import TestCase
-from classes.AdminClass import Admin
+from ta_app.classes.AdminClass import Admin
 
 
 class TestAdminClass(TestCase):
