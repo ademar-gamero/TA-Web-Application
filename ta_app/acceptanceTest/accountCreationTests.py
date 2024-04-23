@@ -20,7 +20,7 @@ class AccountCreationTests(TestCase):
         response = self.client.post("/accountCreation/", {'username': 'new', 'password': 'pass', 'name': 'Name',
                                                           'role': 'Instructor', 'email': 'email@email.com',
                                                           'phone_number': '1234567890', 'address': '123 Fake Street'})
-        self.assertTrue(User.objects.get(username="new").exists(), "User was not created")
+        self.assertTrue(User.objects.filter(username="new").exists(), "User was not created")
 
     def test_createAccountDuplicate(self):
         response = self.client.post("/accountCreation/", {'username': 'admin', 'password': 'pass', 'name': 'Test Admin',
