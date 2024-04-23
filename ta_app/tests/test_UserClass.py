@@ -15,17 +15,17 @@ class TestUserClass(TestCase):
 
     def test_createNullUsername(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid username"):
-            temp = UserClass(None, "pass", "name", "Teacher's-Assistant", "email@email.com")
+            temp = UserClass(None, "pass", "name", "Teacher-Assistant", "email@email.com")
     # shouldn't be able to create a user with a null username
 
     def test_createNullPassword(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid password"):
-            temp = UserClass("username", None, "name", "Teacher's-Assistant", "email@email.com")
+            temp = UserClass("username", None, "name", "Teacher-Assistant", "email@email.com")
     # shouldn't be able to create a user with a null password
 
     def test_createNullName(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid name"):
-            temp = UserClass("username", "pass", None, "Teacher's-Assistant", "email@email.com")
+            temp = UserClass("username", "pass", None, "Teacher-Assistant", "email@email.com")
     # shouldn't be able to create a user with a null name
 
     def test_createNullRole(self):
@@ -35,22 +35,22 @@ class TestUserClass(TestCase):
 
     def test_createNullEmail(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid email"):
-            temp = UserClass("username", "pass", "name", "Teacher's-Assistant", None)
+            temp = UserClass("username", "pass", "name", "Teacher-Assistant", None)
     # shouldn't be able to create a user with a null email
 
     def test_createEmptyUsername(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty username"):
-            temp = UserClass("", "pass", "name", "Teacher's-Assistant", "email@email.com")
+            temp = UserClass("", "pass", "name", "Teacher-Assistant", "email@email.com")
     # shouldn't be able to create a user with an empty username
 
     def test_createEmptyPassword(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty password"):
-            temp = UserClass("username", "", "name", "Teacher's-Assistant", "email@email.com")
+            temp = UserClass("username", "", "name", "Teacher-Assistant", "email@email.com")
     # shouldn't be able to create a user with an empty password
 
     def test_createEmptyName(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty name"):
-            temp = UserClass("username", "pass", "", "Teacher's-Assistant", "email@email.com")
+            temp = UserClass("username", "pass", "", "Teacher-Assistant", "email@email.com")
     # shouldn't be able to create a user with an empty name
 
     def test_createEmptyRole(self):
@@ -60,7 +60,7 @@ class TestUserClass(TestCase):
 
     def test_createEmptyEmail(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty email"):
-            temp = UserClass("username", "pass", "name", "Teacher's-Assistant", "")
+            temp = UserClass("username", "pass", "name", "Teacher-Assistant", "")
     # shouldn't be able to create a user with an empty email
 
     def test_createWhitespaceUsername(self):
@@ -70,12 +70,12 @@ class TestUserClass(TestCase):
 
     def test_createWhitespacePassword(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty password"):
-            temp = UserClass("username", "  ", "name", "Teacher's-Assistant", "email@email.com")
+            temp = UserClass("username", "  ", "name", "Teacher-Assistant", "email@email.com")
     # shouldn't be able to create a user with an empty password
 
     def test_createWhitespaceName(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty name"):
-            temp = UserClass("username", "pass", "   ", "Teacher's-Assistant", "email@email.com")
+            temp = UserClass("username", "pass", "   ", "Teacher-Assistant", "email@email.com")
     # shouldn't be able to create a user with an empty name
 
     def test_createWhitespaceRole(self):
@@ -85,12 +85,12 @@ class TestUserClass(TestCase):
 
     def test_createWhitespaceEmail(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty email"):
-            temp = UserClass("username", "pass", "name", "Teacher's-Assistant", "  ")
+            temp = UserClass("username", "pass", "name", "Teacher-Assistant", "  ")
     # shouldn't be able to create a user with an empty email
 
     def test_createBadEmail(self):
         with self.assertRaises(ValueError, msg="Fails to catch bad email"):
-            temp = UserClass("username", "pass", "name", "Teacher's-Assistant", "randomwords")
+            temp = UserClass("username", "pass", "name", "Teacher-Assistant", "randomwords")
     # shouldn't be able to create a user with a bad email (no @something.something)
 
     def test_createBadRole(self):
@@ -126,12 +126,12 @@ class TestUserClass(TestCase):
     # check if creating an Instructor with all necessary inputs returns successfully
 
     def test_createTA(self):
-        temp = UserClass(username="new", password="pass", name="New", email="new@uwm.edu", role="Teacher's-Assistant")
+        temp = UserClass(username="new", password="pass", name="New", email="new@uwm.edu", role="Teacher-Assistant")
         self.assertEqual(temp.username, "new", "Username is wrong")
         self.assertEqual(temp.password, "pass", "Password is wrong")
         self.assertEqual(temp.name, "New", "Name is wrong")
         self.assertEqual(temp.email, "new@uwm.edu", "Email is wrong")
-        self.assertEqual(temp.role, "Teacher's-Assistant", "Role is wrong")
+        self.assertEqual(temp.role, "Teacher-Assistant", "Role is wrong")
         self.assertEqual(temp.phone_number, "", "Phone number should be empty")
         self.assertEqual(temp.address, "", "Address should be empty")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
