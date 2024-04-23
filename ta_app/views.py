@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.views import View
 from django.shortcuts import render, redirect
 from .models import User
@@ -38,7 +39,11 @@ class login_view(View):
 class AccountCreationView(View):
 
     def get(self, request):
-        pass
+        current = request.session["role"]
+        if current == "Admin":
+            return render(request, "createAccount.html")
+        else:
+            raise PermissionDenied
 
     def post(self, request):
         pass
