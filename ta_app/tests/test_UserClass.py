@@ -108,7 +108,7 @@ class TestUserClass(TestCase):
         self.assertEqual(temp.address, "", "Address should be empty")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
         self.assertEqual(temp.assigned_sections, None, "Shouldn't be assigned to any sections")
-        self.assertEqual(temp.__str__(), "New : AD", "toString returns incorrectly")
+        self.assertEqual(temp.__str__(), "New : Admin", "toString returns incorrectly")
     # check if creating an Admin with all necessary inputs returns successfully
 
     def test_createInstructor(self):
@@ -122,7 +122,7 @@ class TestUserClass(TestCase):
         self.assertEqual(temp.address, "", "Address should be empty")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
         self.assertEqual(temp.assigned_sections, None, "Shouldn't be assigned to any sections")
-        self.assertEqual(temp.__str__(), "New : IN", "toString returns incorrectly")
+        self.assertEqual(temp.__str__(), "New : Instructor", "toString returns incorrectly")
     # check if creating an Instructor with all necessary inputs returns successfully
 
     def test_createTA(self):
@@ -136,7 +136,7 @@ class TestUserClass(TestCase):
         self.assertEqual(temp.address, "", "Address should be empty")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
         self.assertEqual(temp.assigned_sections, None, "Shouldn't be assigned to any sections")
-        self.assertEqual(temp.__str__(), "New : TA", "toString returns incorrectly")
+        self.assertEqual(temp.__str__(), "New : Teacher-Assistant", "toString returns incorrectly")
     # check if creating a TA with all necessary inputs returns successfully
 
     def test_createWithDetails(self):
@@ -151,7 +151,7 @@ class TestUserClass(TestCase):
         self.assertEqual(temp.address, "123 Fake Street", "Address is wrong")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
         self.assertEqual(temp.assigned_sections, None, "Shouldn't be assigned to any sections")
-        self.assertEqual(temp.__str__(), "New : AD", "toString returns incorrectly")
+        self.assertEqual(temp.__str__(), "New : Admin", "toString returns incorrectly")
     # check if creating a user with additional details (phone/address) returns successfully
 
     def test_createWithBadDetails(self):
@@ -166,7 +166,7 @@ class TestUserClass(TestCase):
         self.assertEqual(temp.address, "123 Fake Street", "Address is wrong")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
         self.assertEqual(temp.assigned_sections, None, "Shouldn't be assigned to any sections")
-        self.assertEqual(temp.__str__(), "New : AD", "toString returns incorrectly")
+        self.assertEqual(temp.__str__(), "New : Admin", "toString returns incorrectly")
     # check if creating a user with additional details (phone/address) that are faulty will be caught
 
     def test_edit_username(self):
