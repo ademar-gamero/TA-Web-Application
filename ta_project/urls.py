@@ -22,6 +22,7 @@ from ta_app.views.Home import Home
 from ta_app.views.courseList import courseList
 from ta_app.views.accountList import accountList
 from ta_app.views.accountView import accountView
+from ta_app.views.accountCreation import accountCreation
 from ta_app.views.loginView import login_view
 from django.views.generic.base import RedirectView
 
