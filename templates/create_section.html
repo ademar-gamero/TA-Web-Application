@@ -8,7 +8,7 @@
 <body>
     <div class="container">
         <h2>Create Section</h2>
-        <form method="post" action="{% url 'create_section' %}">
+        <form method="post" action="{% url 'createSection' %}">
             {% csrf_token %}
             <div>
                 <label for="course_parent">Course:</label>
@@ -37,6 +37,13 @@
                 <button type="submit">Create Section</button>
             </div>
         </form>
+        {% if check == False %}
+            <h1> Section was not Created </h1>
+        {% endif %}
+        {% if check == True %}
+            <h1> Section was Created </h1>
+        {% endif %}
+
     </div>
 </body>
 </html>

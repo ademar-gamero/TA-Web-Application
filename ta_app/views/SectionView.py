@@ -6,31 +6,23 @@ from ta_app.models import Course, Section
 
 from ta_app.classes.SectionClass import SectionClass
 class SectionView(View):
-
-    #a = 'section_form.html'
-    boo = None
-    parent = Course.objects.filter().all()
-    def get(self, request):
-        usr_role = request.session["role"]
-        #parent= Course.objects.filter().all()
-        if usr_role == "Admin":
-            return render(request, "create_section.html",{"courses":self.parent,"check":self.boo})
-        raise Http404("MyModel does not exist")
-
+    template_name = 'create_section.html'
 
     def post(self, request):
-        course_parent = request.POST.get("course_parent", None)
-        section_id = request.POST.get("section_id", None)
-        meeting_time = request.POST.get("meeting_time", None)
-        section_type = request.POST.get("section_type", None)
+        course_parent_id = request.POST.get("course_parent")
+        section_id = request.POST.get("section_id")
+        meeting_time = request.POST.get("meeting_time")
+        section_type = request.POST.get("section_type")
+
+        context = {'courses': Course.objects.all(), 'check': True}  # Default context
 
         try:
-            new_section = SectionClass(course_parent, section_id, meeting_time, section_type)
+            course_parent = Course.objects.get(id=course_parent_id)
+            new_section = SectionClass(course_parent=course_parent, section_id=section_id, meeting_time=meeting_time, section_type=section_type)
             new_section.create_section()
+        except Course.DoesNotExist:
+            context.update({'check': False, 'error': "Course not found"})
+        except ValueError as e:
+            context.update({'check': False, 'error': str(e)})
 
-        except ValueError:
-            boo=False
-            return render(request, "create_section.html",{"courses":self.parent,"check":self.boo})
-
-        boo = True
-        return render(request, "create_section.html", {"courses": self.parent, "check": self.boo})
+        return render(request, self.template_name, context)
