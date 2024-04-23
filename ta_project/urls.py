@@ -22,21 +22,15 @@ from ta_app.views.Home import Home
 from ta_app.views.courseList import courseList
 from ta_app.views.accountList import accountList
 from ta_app.views.accountView import accountView
-
-from ta_app.views import login_view
+from ta_app.views.loginView import login_view
 from django.views.generic.base import RedirectView
-
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('Home/',Home.as_view()),
     path('Home/courseList/',courseList.as_view(),name="courseList"),
     path('Home/accountList/',accountList.as_view(),name="accountList"),
-    path('Home/accountList/<int:pk>/',accountView.as_view(),name="accountDetails")
-
+    path('Home/accountList/<int:pk>/',accountView.as_view(),name="accountDetails"),
     path('login/', login_view.as_view(), name='login'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
-
-
 ]
