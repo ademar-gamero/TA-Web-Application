@@ -1,11 +1,13 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
 from ta_app.models import User
 
 
 class AccountCreationTests(TestCase):
 
+    client = None
     def setUp(self):
+        self.client = Client()
         self.user = User.objects.create(
             username='admin',
             password='password',
@@ -18,7 +20,7 @@ class AccountCreationTests(TestCase):
         response = self.client.post("/accountCreation/", {'username': 'new', 'password': 'pass', 'name': 'Name',
                                                           'role': 'Instructor', 'email': 'email@email.com',
                                                           'phone_number': '1234567890', 'address': '123 Fake Street'})
-        self.assertTrue(User.objects.filter(username='new').exists(), "User was not created")
+        self.assertTrue(User.objects.get(username="new").exists(), "User was not created")
 
     def test_createAccountDuplicate(self):
         response = self.client.post("/accountCreation/", {'username': 'admin', 'password': 'pass', 'name': 'Test Admin',
@@ -30,7 +32,7 @@ class AccountCreationTests(TestCase):
         response = self.client.post("/accountCreation/", {'username': 'new2', 'password': 'pass', 'name': 'Name2',
                                                           'role': 'Instructor', 'email': 'words',
                                                           'phone_number': '1234567890', 'address': '123 Fake Street'})
-        self.assertEqual(response.context['message'], "Invalid email address", "did not catch bad email")
+        self.assertEqual(response.context['message'], "Email is not valid", "did not catch bad email")
 
     def test_createEmpty(self):
         response = self.client.post("/accountCreation/", {'username': '', 'password': '', 'name': '',
@@ -41,7 +43,7 @@ class AccountCreationTests(TestCase):
                          "did not catch empty fields")
 
     def test_createAccountSpaceInUsername(self):
-        response = self.client.post("/accountCreation/", {'username': 'new 2', 'password': 'pass', 'name': 'Name2',
+        response = self.client.post("/accountCreation/", {'username': "new 2", 'password': 'pass', 'name': 'Name2',
                                                           'role': 'Instructor', 'email': 'test@email.com',
                                                           'phone_number': '1234567890', 'address': '123 Fake Street'})
         self.assertEqual(response.context['message'], "Username cannot contain spaces", "did not catch bad username")

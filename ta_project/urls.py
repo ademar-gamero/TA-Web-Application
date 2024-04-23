@@ -33,5 +33,6 @@ urlpatterns = [
     path('Home/accountList/',accountList.as_view(),name="accountList"),
     path('Home/accountList/<int:pk>/',accountView.as_view(),name="accountDetails"),
     path('login/', login_view.as_view(), name='login'),
+    path('accountCreation/',accountCreation.as_view(), name='accountCreation'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
 ]
