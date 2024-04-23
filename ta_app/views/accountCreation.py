@@ -10,10 +10,11 @@ class accountCreation(View):
 
     def get(self, request):
         current = request.session["role"]
+        print(current)
         if current == "Admin":
-            return render(request, "create_account.html", HttpResponse(status=200))
+            return render(request, "create_account.html")
         else:
-            return redirect('/Home/', HttpResponse(status=404))
+            return redirect('/Home/')
 
     def post(self, request):
         try:
