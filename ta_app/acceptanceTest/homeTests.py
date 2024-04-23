@@ -1,8 +1,11 @@
 from django.urls import reverse
 from django.test import TestCase, Client
 from ta_app.models import User
+
 class home(TestCase):
+
     green=None
+
     def setUp(self):
         self.green = Client()
         User(name="admin",username="admin",password="admin",email="admin@email.com",role="Admin",phone_number=1,address="1",assigned=False).save()
