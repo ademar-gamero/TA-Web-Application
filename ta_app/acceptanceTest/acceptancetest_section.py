@@ -14,6 +14,7 @@ class AcceptanceTestSection(TestCase):
                           phone_number=1, address="1", assigned=False).save()
         self.instructor = User(name="ins", username="ins", password="ins", email="admin@email.com", role="Instructor",
                           phone_number=1, address="1", assigned=False).save()
+
     def test_duplicate_section(self):
         Section.objects.all().delete()
        # resp = self.green.post("/login/", {"username": 'admin',"password": 'admin'}, follow=True)
@@ -55,7 +56,8 @@ class AcceptanceTestSection(TestCase):
             'section_type': 'LAB'
         })
         sec = Section.objects.get(section_id=27747)
-        self.assertContains(response.context['sections'],sec,"value was not displayed")
+        reslist = response.context["sections"]
+        self.assertTrue(sec in reslist,"value was not displayed")
 
     def test_sectionMultipleDisplay(self):
         response = self.client.post('/Home/createSection/', {
@@ -75,10 +77,18 @@ class AcceptanceTestSection(TestCase):
 
         sec2 = Section.objects.get(section_id=2525)
         
-        self.assertContains(response.context['sections'],sec,"value was not displayed")
-        self.assertContains(response.context['sections'],sec2,"value was not displayed")
+        reslist = response.context['sections']
+        cbool = False
+
+        if sec in reslist and sec2 in reslist:
+            cbool = True
+
+        self.assertTrue(cbool,"values were not displayed")
 
     def test_invalidSectionDisplay(self):
+
+        size_before = Section.objects.all().count()
+        print(size_before)
         response = self.client.post('/Home/createSection/', {
             'course_parent': 'ee',
             'section_id': 123,
@@ -87,7 +97,8 @@ class AcceptanceTestSection(TestCase):
         }, follow=True)
         clist = response.context['sections']
         size = len(clist)
-        self.assertTrue(size == 0,"invalid section was displayed")
+        print(size)
+        self.assertTrue(size == size_before,"invalid section was displayed")
 
 
 

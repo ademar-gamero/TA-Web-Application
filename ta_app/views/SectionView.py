@@ -8,13 +8,19 @@ from ta_app.Classes.SectionClass import SectionClass
 class SectionView(View):
     template_name = 'create_section.html'
 
+    def get(self, request):
+        courses = Course.objects.all()
+        sections = Section.objects.all()
+        return render(request, 'create_section.html', {'courses': courses,'sections':sections})
+
     def post(self, request):
         course_parent_id = request.POST.get("course_parent")
         section_id = request.POST.get("section_id")
         meeting_time = request.POST.get("meeting_time")
         section_type = request.POST.get("section_type")
-
-        context = {'courses': Course.objects.all(), 'check': True}  # Default context
+    
+        sections = Section.objects.all()
+        context = {'courses': Course.objects.all(), 'sections':sections, 'check': True}  # Default context
 
         try:
             course_parent = Course.objects.get(id=course_parent_id)
