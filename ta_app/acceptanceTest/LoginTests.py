@@ -15,7 +15,8 @@ class LoginTestCase(TestCase):
     def test_successful_login(self):
         response = self.client.post(self.login_url, {'username': 'testuser','password': 'testpassword123'}, follow=True)
         self.assertRedirects(response, reverse('Home'))
-        self.assertTrue(self.client.session['_auth_user_id'], str(self.user.pk))
+        self.assertTrue('role' in self.client.session and self.client.session['role'] == 'TA')
+        self.assertTrue('name' in self.client.session and self.client.session['name'] == 'Test User')
         # Successful login test
 
     def test_incorrect_password(self):
