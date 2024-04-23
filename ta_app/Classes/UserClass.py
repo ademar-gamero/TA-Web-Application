@@ -8,16 +8,16 @@ from django.core.validators import validate_email
 
 class UserClass:
 
-    def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
+    def __init__(self, username="", password="", name="", role="", email="", phone_number="", address="", assigned=False,
                  assigned_sections=None):
-        if username is None or password is None or name is None or role is None or email is None:
-            raise ValueError("Missing necessary parameters. Must include username, password, name, role, and email.")
+        if username == "" or password == "" or name == "" or role == "" or email == "":
+            raise ValueError("Must include username, password, name, role, and email.")
         if not isinstance(username, str) or username.strip() == "":
-            raise ValueError("Username must be a non-empty string")
+            raise ValueError("Username must not be empty")
         if not isinstance(password, str) or password.strip() == "":
-            raise ValueError("Password must be a non-empty string")
+            raise ValueError("Password must not be empty")
         if not isinstance(name, str) or name.strip() == "":
-            raise ValueError("Name must be a non-empty string")
+            raise ValueError("Name must not be empty")
         if username.strip() != username:
             raise ValueError("Username cannot contain spaces")
         if password.strip() != password:
