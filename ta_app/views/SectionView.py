@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from ta_app.models import Course, Section
 
-from ta_app.classes.SectionClass import SectionClass
+from ta_app.Classes.SectionClass import SectionClass
 class SectionView(View):
     template_name = 'create_section.html'
 
