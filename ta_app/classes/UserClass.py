@@ -1,4 +1,5 @@
 from abc import ABC
+
 from ta_app.models import User, Roles, Section
 
 from django.core.exceptions import ValidationError
@@ -6,6 +7,7 @@ from django.core.validators import validate_email
 
 
 from abc import ABC
+
 from ta_app.models import User, Roles, Section
 from django.core.validators import validate_email
 
@@ -14,6 +16,8 @@ class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
                  assigned_sections=None):
+
+
 
 
         if username is None or password is None or name is None or role is None or email is None:
@@ -28,7 +32,9 @@ class UserClass(ABC):
             raise ValueError("Username cannot contain spaces")
         if password.strip() != password:
             raise ValueError("Password cannot contain spaces")
+
         if not (role == "Teacher-Assistant" or role == "Instructor" or role == "Admin"):
+
             raise ValueError("Invalid role")
         if not isinstance(phone_number, str):
             raise ValueError("Invalid phone number")
@@ -37,10 +43,12 @@ class UserClass(ABC):
         if not isinstance(assigned, bool):
             raise ValueError("Assigned must be a boolean")
 
+
         try:
             validate_email(email)
         except ValidationError:
             raise ValueError("Email is not valid")
+
 
         self.username = username
         self.password = password
@@ -53,6 +61,8 @@ class UserClass(ABC):
         self.assigned_sections = []
         if assigned_sections is not None:
             self.assigned_sections = assigned_sections
+
+
 
 
     def __str__(self):
@@ -74,14 +84,18 @@ class UserClass(ABC):
                 raise ValueError("New Username must be a string")
             if new_username.strip() == "":
                 raise ValueError("New Username must not be empty")
+
             self.username = new_username
+
         else:
             raise ValueError("New Username must not be None")
 
     def set_email(self, new_email):
+
         try:
             validate_email(new_email)
         except ValidationError:
+
             raise ValueError("Email is not valid")
         self.email = new_email
 
@@ -108,6 +122,7 @@ class UserClass(ABC):
     def set_role(self, new_role):
         if isinstance(new_role, str):
             if not (new_role == "Teacher-Assistant" or new_role == "Instructor" or new_role == "Admin"):
+
                 raise ValueError("Invalid role")
             self.role = new_role
         else:
@@ -169,6 +184,7 @@ class UserClass(ABC):
     def get_assigned_sections(self):
         return self.assigned_sections
 
+
     def view_contact_info(self, username):
         if not isinstance(username, str):
             raise ValueError("Invalid username")
@@ -183,6 +199,7 @@ class UserClass(ABC):
 
     def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
         old_username = self.username
+
         if username is not None:
             try: 
                 User.objects.get(username=username)
@@ -205,6 +222,7 @@ class UserClass(ABC):
             except User.DoesNotExist:
                 self.set_phone_number(phone)
         if address is not None:
+
             self.set_address(address)
         User.objects.filter(username=old_username).update(username=self.username, password=self.password,
                                                           name=self.name,
@@ -217,6 +235,7 @@ class UserClass(ABC):
             User.objects.get(username=self.username)
             raise ValueError("Username is already taken")
         except User.DoesNotExist:
+
             user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
                         role=self.get_role(), email=self.get_email(), phone_number=self.get_phone_number(),
                         address=self.get_address(),assigned=self.get_assigned())

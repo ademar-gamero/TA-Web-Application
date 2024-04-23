@@ -102,26 +102,31 @@ class set_assigned(Common):
 
 class TestUserClass(Common):
 
-
-
     def test_createNullAll(self):
         with self.assertRaises(TypeError, msg="Fails to catch invalid entry"):
             temp = UserClass()
+
     # shouldn't be able to create a user with no name, password, etc
 
     def test_createNullUsername(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid username"):
+
             temp = UserClass(None, "pass", "name", "TA", "email@email.com")
+
     # shouldn't be able to create a user with a null username
 
     def test_createNullPassword(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid password"):
+
             temp = UserClass("username", None, "name", "TA", "email@email.com")
+
     # shouldn't be able to create a user with a null password
 
     def test_createNullName(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid name"):
+
             temp = UserClass("username", "pass", None, "TA", "email@email.com")
+
     # shouldn't be able to create a user with a null name
 
     def test_createNullRole(self):
@@ -131,22 +136,30 @@ class TestUserClass(Common):
 
     def test_createNullEmail(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid email"):
+
             temp = UserClass("username", "pass", "name", "TA", None)
+
     # shouldn't be able to create a user with a null email
 
     def test_createEmptyUsername(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty username"):
+
             temp = UserClass("", "pass", "name", "TA", "email@email.com")
+
     # shouldn't be able to create a user with an empty username
 
     def test_createEmptyPassword(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty password"):
+
             temp = UserClass("username", "", "name", "TA", "email@email.com")
+
     # shouldn't be able to create a user with an empty password
 
     def test_createEmptyName(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty name"):
+
             temp = UserClass("username", "pass", "", "TA", "email@email.com")
+
     # shouldn't be able to create a user with an empty name
 
     def test_createEmptyRole(self):
@@ -156,22 +169,30 @@ class TestUserClass(Common):
 
     def test_createEmptyEmail(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty email"):
+
             temp = UserClass("username", "pass", "name", "TA", "")
+
     # shouldn't be able to create a user with an empty email
 
     def test_createWhitespaceUsername(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty username"):
+
             temp = UserClass(" ", "pass", "name", "TA", "email@email.com")
+
     # shouldn't be able to create a user with an empty username
 
     def test_createWhitespacePassword(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty password"):
+
             temp = UserClass("username", "  ", "name", "TA", "email@email.com")
+
     # shouldn't be able to create a user with an empty password
 
     def test_createWhitespaceName(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty name"):
+
             temp = UserClass("username", "pass", "   ", "TA", "email@email.com")
+
     # shouldn't be able to create a user with an empty name
 
     def test_createWhitespaceRole(self):
@@ -181,12 +202,16 @@ class TestUserClass(Common):
 
     def test_createWhitespaceEmail(self):
         with self.assertRaises(ValueError, msg="Fails to catch empty email"):
+
             temp = UserClass("username", "pass", "name", "TA", "  ")
+
     # shouldn't be able to create a user with an empty email
 
     def test_createBadEmail(self):
         with self.assertRaises(ValueError, msg="Fails to catch bad email"):
+
             temp = UserClass("username", "pass", "name", "TA", "randomwords")
+
     # shouldn't be able to create a user with a bad email (no @something.something)
 
     def test_createBadRole(self):
@@ -203,8 +228,10 @@ class TestUserClass(Common):
         self.assertEqual(temp.phone_number, "", "Phone number should be empty")
         self.assertEqual(temp.address, "", "Address should be empty")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
+
         self.assertEqual(temp.assigned_sections, [], "Shouldn't be assigned to any sections")
         self.assertEqual(temp.__str__(), "New : Admin", "toString returns incorrectly")
+
     # check if creating an Admin with all necessary inputs returns successfully
 
     def test_createInstructor(self):
@@ -217,6 +244,7 @@ class TestUserClass(Common):
         self.assertEqual(temp.phone_number, "", "Phone number should be empty")
         self.assertEqual(temp.address, "", "Address should be empty")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
+
         self.assertEqual(temp.assigned_sections, [], "Shouldn't be assigned to any sections")
         self.assertEqual(temp.__str__(), "New : Instructor", "toString returns incorrectly")
     # check if creating an Instructor with all necessary inputs returns successfully
@@ -233,11 +261,14 @@ class TestUserClass(Common):
         self.assertEqual(temp.assigned, False, "Should not be assigned")
         self.assertEqual(temp.assigned_sections, [], "Shouldn't be assigned to any sections")
         self.assertEqual(temp.__str__(), "New : Teacher-Assistant", "toString returns incorrectly")
+
     # check if creating a TA with all necessary inputs returns successfully
 
     def test_createWithDetails(self):
         temp = UserClass(username="new", password="password", name="New", email="new@uwm.edu", role="Admin",
+
                     phone_number="123-4567", address="123 Fake Street")
+
         self.assertEqual(temp.username, "new", "Username is wrong")
         self.assertEqual(temp.password, "password", "Password is wrong")
         self.assertEqual(temp.name, "New", "Name is wrong")
@@ -246,6 +277,7 @@ class TestUserClass(Common):
         self.assertEqual(temp.phone_number, "123-4567", "Phone number is wrong")
         self.assertEqual(temp.address, "123 Fake Street", "Address is wrong")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
+
         self.assertEqual(temp.assigned_sections, [], "Shouldn't be assigned to any sections")
         self.assertEqual(temp.__str__(), "New : Admin", "toString returns incorrectly")
     # check if creating a user with additional details (phone/address) returns successfully
@@ -317,10 +349,12 @@ class delete_user(Common):
         self.assertFalse(User.objects.filter(username=self.assigned_user.username).exists(), "User wasn't removed from the db")
 
 
+
 class TestEditUser(TestCase):
 
     def setUp(self):
         self.user = UserClass(username='user', password='password', name="Name", role="Admin", email="bla@bla.com",
+
                                   phone_number="1234567890", address="Home", assigned=False)
         self.user.create_user()
         self.user2 = UserClass(username='user2', password='password2', name="Name2", role="Admin",
@@ -354,6 +388,7 @@ class TestEditUser(TestCase):
         check = User.objects.get(username=self.user.username)
         self.assertEqual("password", check.password, "Password should not have changed")
         self.assertEqual("Name", check.name, "Name should not have changed")
+
         self.assertEqual("Admin", check.role, "Role should have changed")
         self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
         self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
@@ -364,7 +399,9 @@ class TestEditUser(TestCase):
         self.assertEqual("newpass", self.user.password, msg="Password was not updated")
         check = User.objects.get(username="user")
         self.assertEqual(self.user.password, check.password, "Password was not changed")
+
         self.assertEqual("Name", check.name, "Name should not have changed")
+
         self.assertEqual("Admin", check.role, "Role should have changed")
         self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
         self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
@@ -374,7 +411,9 @@ class TestEditUser(TestCase):
         self.user.edit_user(None, None, "New Name", None, None, None, None)
         self.assertEqual("New Name", self.user.name, msg="Name was not updated")
         check = User.objects.get(username="user")
+
         self.assertEqual("password", check.password,"Password should not have changed")
+
         self.assertEqual("New Name", check.name, "Name should have changed")
         self.assertEqual("Admin", check.role, "Role should not have changed")
         self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
@@ -385,7 +424,9 @@ class TestEditUser(TestCase):
         self.user.edit_user(None, None, None, "Instructor", None, None, None)
         self.assertEqual("Instructor", self.user.role, msg="Role was not updated")
         check = User.objects.get(username="user")
+
         self.assertEqual("password", check.password,"Password should not have changed")
+
         self.assertEqual("Name", check.name, "Name should not have changed")
         self.assertEqual("Instructor", check.role, "Role should have changed")
         self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
@@ -396,7 +437,9 @@ class TestEditUser(TestCase):
         self.user.edit_user(None, None, None, None, "new@aol.com", None, None)
         self.assertEqual("new@aol.com", self.user.email, msg="Email was not updated")
         check = User.objects.get(username="user")
+
         self.assertEqual("password",check.password ,"Password should not have changed")
+
         self.assertEqual("Name", check.name, "Name should not have changed")
         self.assertEqual("Admin", check.role, "Role should not have changed")
         self.assertEqual("new@aol.com", check.email, "Email should have changed")
@@ -407,7 +450,9 @@ class TestEditUser(TestCase):
         self.user.edit_user(None, None, None, None, None, "555-5555", None)
         self.assertEqual("555-5555", self.user.phone_number, msg="Phone was not updated")
         check = User.objects.get(username="user")
+
         self.assertEqual("password",check.password ,"Password should not have changed")
+
         self.assertEqual("Name", check.name, "Name should not have changed")
         self.assertEqual("Admin", check.role, "Role should not have changed")
         self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
@@ -418,7 +463,9 @@ class TestEditUser(TestCase):
         self.user.edit_user(None, None, None, None, None, None, "The Moon")
         self.assertEqual("The Moon", self.user.address, msg="Address was not updated")
         check = User.objects.get(username="user")
+
         self.assertEqual("password", check.password,"Password should not have changed")
+
         self.assertEqual("Name", check.name, "Name should not have changed")
         self.assertEqual("Admin", check.role, "Role should not have changed")
         self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
@@ -437,7 +484,9 @@ class TestEditUser(TestCase):
         self.assertEqual("The Moon", self.user.address, msg="Address was not updated")
         self.assertTrue(User.objects.filter(username="new").exists(), "Username wasn't updated in the db")
         check = User.objects.get(username="new")
+
         self.assertEqual("newpass",self.user.password ,"Password should have changed")
+
         self.assertEqual("New Name", check.name, "Name should have changed")
         self.assertEqual("Instructor", check.role, "Role should have changed")
         self.assertEqual("new@aol.com", check.email, "Email should have changed")
@@ -471,6 +520,7 @@ class TestEditUser(TestCase):
     def test_edit_user_addressBad(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid address"):
             self.user.edit_user(None, None, None, None, None, None, 200.2)
+
             
             
             
@@ -480,4 +530,4 @@ class TestEditUser(TestCase):
             
             
             
-            
+
