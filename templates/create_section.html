@@ -14,7 +14,7 @@
                 <label for="course_parent">Course:</label>
                 <select name="course_parent" id="course_parent" required>
                     {% for course in courses %}
-                    <option value="{{ course.id }}">{{ course.course_name }}</option>
+                    <option value="{{ course.id }}">{{ course }}</option>
                     {% endfor %}
                 </select>
             </div>

@@ -8,6 +8,10 @@ from ta_app.Classes.SectionClass import SectionClass
 class SectionView(View):
     template_name = 'create_section.html'
 
+    def get(self, request):
+        a = Course.objects.all()
+        return render(request, 'create_section.html', {'courses': a})
+
     def post(self, request):
         course_parent_id = request.POST.get("course_parent")
         section_id = request.POST.get("section_id")
