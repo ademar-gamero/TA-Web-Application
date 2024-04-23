@@ -1,7 +1,7 @@
 
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import Course, Section, User
+from ta_app.models import Course, Section, User
 from datetime import datetime
 
 #acceptance test
@@ -14,12 +14,12 @@ class accountList(TestCase):
         self.courselist = {351: ["compsci", "this course covers algos and data structs"],
                       361: ["compsci", "this course covers software engineering"],
                       102: ["psych", "this course covers psychology"]}
-        v=1
-        z=2
-        self.admin = User(user_id=1,name="ad",username="admin",password="admin",email="admin@email.com",role="Admin",phone_number=1,address="1",assigned=False)
+
+
+        self.admin = User(name="ad",username="admin",password="admin",email="admin@email.com",role="Admin",phone_number=1,address="1",assigned=False)
         self.admin.save()
-        self.instructor = User(user_id=2,name="inst",username="instructor",password="instructor",email="instructor@email.com",role="Instructor",phone_number=2,address="1",assigned=False)
-        self.instructor2 = User(user_id=3,name="bob",username="instructor",password="instructor",email="inst@email.com",role="Instructor",phone_number=3,address="1",assigned=False)
+        self.instructor = User(name="inst",username="instructor",password="instructor",email="instructor@email.com",role="Instructor",phone_number=2,address="1",assigned=False)
+        self.instructor2 = User(name="bob",username="instructor",password="instructor",email="inst@email.com",role="Instructor",phone_number=3,address="1",assigned=False)
         self.instructor.save()
         self.Ausername = "admin"
         self.Apassword = "admin"

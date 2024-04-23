@@ -1,10 +1,7 @@
 
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import Course, Section, User
-
-class unittest(TestCase):
-    pass
+from ta_app.models import Course, Section, User
 
 #acceptance tests
 class courseList(TestCase):
@@ -46,19 +43,19 @@ class courseList(TestCase):
         self.assertEqual(404,resp.status_code,"role validation failed")
 
     def test_displayCourses(self):
-        resp = self.green.get("Home/courseList/")
+        resp = self.green.get("/Home/courseList/")
         for j in resp.context["courselist"]:
             self.assertIn(j.course_name,self.courselist[j.course_id],"not all courses are listed")    
 
     def test_searchCourseName(self):
         search_course = "compsci"
-        resp = self.green.post("Home/courseList/",{"course_name":search_course},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_name":search_course},follow=True)
         for j in resp.context["courselist"]:
             self.assertEqual(j.course_name,search_course,"search is not working")
 
     def test_searchIncorrectCourse(self):
         search_course = "logic" 
-        resp = self.green.post("Home/courseList/",{"course_name":search_course},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_name":search_course},follow=True)
         clist = resp.context["courselist"]
         checker = False
         if len(clist) == 0:
@@ -67,7 +64,7 @@ class courseList(TestCase):
 
     def test_searchIncorrectCourseID(self):
         search_courseid = 125
-        resp = self.green.post("Home/courseList/",{"course_id":search_courseid},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid},follow=True)
         clist = resp.context["courselist"]
         checker = False
         if len(clist) == 0:
@@ -76,21 +73,21 @@ class courseList(TestCase):
 
     def test_searchCourseID(self):
         search_courseid = 351
-        resp = self.green.post("Home/courseList/",{"course_id":search_courseid},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid},follow=True)
         for j in resp.context["courselist"]:
             self.assertEqual(j.course_id,search_courseid,"search shouldve found a course id but didnt")
 
     def test_searchCourseBoth(self):
         search_courseid = 351
         search_course = "compsci"
-        resp = self.green.post("Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
         for j in resp.context["courselist"]:
             self.assertEqual(j.course_name,search_course,"search did not work")
 
     def test_searchCourseBothIncorrect(self):
         search_courseid = 123
         search_course = "sci"
-        resp = self.green.post("Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
         clist = resp.context["courselist"]
         checker = False
         if len(clist) == 0:
@@ -100,7 +97,7 @@ class courseList(TestCase):
     def test_searchCourseBothReversed(self):
         search_courseid = 351
         search_course = "compsci"
-        resp = self.green.post("Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
         for j in resp.context["courselist"]:
             self.assertEqual(j.course_name,search_course,"search did not work")
 
