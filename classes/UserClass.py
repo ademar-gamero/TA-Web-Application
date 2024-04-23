@@ -156,19 +156,19 @@ class UserClass(ABC):
 
     def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
         old_username = self.username
-        if username is not None:
+        if username is not None and username != self.username:
             self.set_username(username)
-        if password is not None:
+        if password is not None and password != self.password:
             self.set_password(password)
-        if name is not None:
+        if name is not None and name != self.name:
             self.set_name(name)
-        if role is not None:
+        if role is not None and role != self.role:
             self.set_role(role)
-        if email is not None:
+        if email is not None and email != self.email:
             self.set_email(email)
-        if phone is not None:
+        if phone is not None and phone != self.phone_number:
             self.set_phone_number(phone)
-        if address is not None:
+        if address is not None and address != self.address:
             self.set_address(address)
         User.objects.filter(username=old_username).update(username=self.username, password=self.password,
                                                           name=self.name,
