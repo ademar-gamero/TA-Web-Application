@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from django.views import View
 from ta_app.models import User
-from ta_app.classes.UserClass import UserClass
+from ta_app.Classes.UserClass import UserClass
 
 class accountView(View):
     acc_edit = None

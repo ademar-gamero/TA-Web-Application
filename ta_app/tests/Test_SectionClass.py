@@ -1,7 +1,7 @@
 from django.test import TestCase
 from ta_app.models import Section, Course
 from django.utils import timezone
-from ta_app.classes.SectionClass import SectionClass
+from ta_app.Classes.SectionClass import SectionClass
 
 
 
