@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.views import View
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from ta_app.models import User
 from django.contrib import messages
 from ta_app.Classes.UserClass import UserClass
@@ -11,9 +11,9 @@ class accountCreation(View):
     def get(self, request):
         current = request.session["role"]
         if current == "Admin":
-            return render(request, "create_account.html")
+            return render(request, "create_account.html", HttpResponse(status=200))
         else:
-            raise PermissionDenied
+            return redirect('/Home/', HttpResponse(status=404))
 
     def post(self, request):
         try:

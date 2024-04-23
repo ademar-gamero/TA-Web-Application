@@ -28,11 +28,11 @@ from django.views.generic.base import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('Home/',Home.as_view()),
+    path('Home/',Home.as_view(), name="Home"),
     path('Home/courseList/',courseList.as_view(),name="courseList"),
     path('Home/accountList/',accountList.as_view(),name="accountList"),
     path('Home/accountList/<int:pk>/',accountView.as_view(),name="accountDetails"),
     path('login/', login_view.as_view(), name='login'),
-    path('accountCreation/',accountCreation.as_view(), name='accountCreation'),
+    path('Home/accountCreation/',accountCreation.as_view(), name='accountCreation'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
 ]
