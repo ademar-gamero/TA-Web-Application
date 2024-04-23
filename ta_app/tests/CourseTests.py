@@ -1,5 +1,5 @@
 from django.test import TestCase
-from ta_app.Classes.CourseClass import CourseClass
+from ta_app.classes.CourseClass import CourseClass
 
 
 # Create your tests here.

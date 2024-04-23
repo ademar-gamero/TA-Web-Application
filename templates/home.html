@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +15,11 @@
       {% endif %}
       {% if role == "Admin" %}
         <p><a href = "{% url 'createSection' %}">Create Section</a></p>
+      {% endif %}
+
+        <p><a href = "{% url 'accountList' %}">account list</a></p>
+      {% if role == "Admin" %}
+        <p><a href = "{% url 'createAccount' %}">Create Account</a></p>
       {% endif %}
   </div>
 
