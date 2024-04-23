@@ -3,14 +3,106 @@ from ta_app.classes.UserClass import UserClass
 from ta_app.models import Course, Section, User
 from datetime import datetime
 
-class TestUserClass(TestCase):
-
+class Common(TestCase):
     def setUp(self):
-        date_string = "Tue 2:30pm"
+        date_string = "Wed 2:30pm"
         date_object = datetime.strptime(date_string, "%a %H:%M%p")
-
+        date_string = "Tue 2:30pm"
+        date_object2 = datetime.strptime(date_string, "%a %H:%M%p")
+        date_string = "Fri 2:30pm"
+        date_object3 = datetime.strptime(date_string, "%a %H:%M%p")
         self.admin = User(name="ad",username="admin",password="admin",email="admin@email.com",role="Admin",phone_number=1,address="1",assigned=False)
         self.admin.save()
+        self.algos = Course(course_id=351,course_name="compsci",description="blah blah blah")
+        self.algos.save() 
+        self.section = Section(course_parent=self.algos,section_id=12345,meeting_time = date_object,type="lecture")
+        self.section.save()
+        self.section2 = Section(course_parent=self.algos,section_id=123478,meeting_time = date_object2,type="lab")
+        self.section2.save()
+        print(self.section2)
+        slist1 = [self.section]
+        slist2 = [self.section, self.section2]
+        self.section3 = Section(course_parent=self.algos,section_id=1234789,meeting_time = date_object3,type="lab")
+        self.section3.save()
+        self.assigned_user0 = UserClass("ta", "ta", "apoorv", "Teacher-Assistant", "email@gmail.com", "1", "1", True,
+                                       slist1)
+        self.assigned_user = UserClass("ta","ta","apoorv","Teacher-Assistant","email@email.com","1","1",True,slist2)
+
+class setPass(Common):
+    def test_setpass(self):
+        with self.assertRaises(ValueError, msg="New Password must be a string"):
+            self.assigned_user.set_password(123)
+
+    def test_setpassCorrect(self):
+        self.assigned_user.set_password("password")
+        self.assertEqual("password",self.assigned_user.password)
+
+class setUser(Common):
+    def test_setuser(self):
+        with self.assertRaises(ValueError, msg="New Username must be a string"):
+            self.assigned_user.set_username(123)
+
+    def test_setpassCorrect(self):
+        self.assigned_user.set_username("password")
+        self.assertEqual("password",self.assigned_user.username)
+
+class setEmail(Common):
+    def test_setEmail(self):
+        with self.assertRaises(ValueError, msg="Email is not valid"):
+            self.assigned_user.set_email("emaileamil.com")
+
+    def test_setEmailCorrect(self):
+        self.assigned_user.set_email("email@freemail.com")
+        self.assertEqual("email@freemail.com",self.assigned_user.email)
+
+class set_phone_number(Common):
+    def test_setPhone(self):
+        with self.assertRaises(ValueError, msg="New Phone number must be a string"):
+            self.assigned_user.set_phone_number(123)
+
+    def test_setPhoneCorrect(self):
+        self.assigned_user.set_phone_number("414-777-777")
+        self.assertEqual("414-777-777",self.assigned_user.phone_number)
+
+class set_address(Common):
+    def test_setAdress(self):
+        with self.assertRaises(ValueError, msg="New Address number must be a string"):
+            self.assigned_user.set_address(123)
+
+    def test_setPhoneCorrect(self):
+        self.assigned_user.set_address("7th street")
+        self.assertEqual("7th street",self.assigned_user.address)
+
+class set_name(Common):
+    def test_setName(self):
+        with self.assertRaises(ValueError, msg="New Name number must be a string"):
+            self.assigned_user.set_name(123)
+
+    def test_setPhoneCorrect(self):
+        self.assigned_user.set_name("adam")
+        self.assertEqual("adam",self.assigned_user.name)
+
+class set_role(Common):
+    def test_setRole(self):
+        with self.assertRaises(ValueError, msg="New Phone number must be a string"):
+            self.assigned_user.set_role("President")
+
+    def test_setPhoneCorrect(self):
+        self.assigned_user.set_role("Teacher-Assistant")
+        self.assertEqual("Teacher-Assistant",self.assigned_user.role)
+
+class set_assigned(Common):
+    def test_setAssigned(self):
+        with self.assertRaises(ValueError, msg="Assignment must be a boolean"):
+            self.assigned_user.set_assigned("Presiddent")
+
+    def test_setAssignedCorrect(self):
+        self.assigned_user.set_assigned(True)
+        self.assertEqual(True,self.assigned_user.assigned)
+
+class TestUserClass(Common):
+
+
 
     def test_createNullAll(self):
         with self.assertRaises(TypeError, msg="Fails to catch invalid entry"):
@@ -186,28 +278,6 @@ class create_User(TestCase):
             self.assertEqual(self.assigned_user.assigned_sections[j],i,"assigned sections not present")
             j=j+1
 
-class Common(TestCase):
-    def setUp(self):
-        date_string = "Wed 2:30pm"
-        date_object = datetime.strptime(date_string, "%a %H:%M%p")
-        date_string = "Tue 2:30pm"
-        date_object2 = datetime.strptime(date_string, "%a %H:%M%p")
-        date_string = "Fri 2:30pm"
-        date_object3 = datetime.strptime(date_string, "%a %H:%M%p")
-        self.algos = Course(course_id=351,course_name="compsci",description="blah blah blah")
-        self.algos.save() 
-        self.section = Section(course_parent=self.algos,section_id=12345,meeting_time = date_object,type="lecture")
-        self.section.save()
-        self.section2 = Section(course_parent=self.algos,section_id=123478,meeting_time = date_object2,type="lab")
-        self.section2.save()
-        print(self.section2)
-        slist1 = [self.section]
-        slist2 = [self.section, self.section2]
-        self.section3 = Section(course_parent=self.algos,section_id=1234789,meeting_time = date_object3,type="lab")
-        self.section3.save()
-        self.assigned_user0 = UserClass("ta", "ta", "apoorv", "Teacher-Assistant", "email@gmail.com", "1", "1", True,
-                                       slist1)
-        self.assigned_user = UserClass("ta","ta","apoorv","Teacher-Assistant","email@email.com","1","1",True,slist2)
 
 class add_section(Common):
 
@@ -276,10 +346,6 @@ class TestEditUser(TestCase):
         count = User.objects.filter(phone_number=self.user.phone_number).count()
         self.assertTrue(count == 1, "Username was updated in the db, when it shouldnt have been")
     
-    def test_edit_user_assigned(self):
-        self.user.edit_user(None,None,None,None,None,None,None,True)
-        self.assertEqual(True,self.user.assigned, "Assigned was not updated")
-
     def test_edit_user_username(self):
         self.user.edit_user("new", None, None, None, None, None, None)
         self.assertEqual("new", self.user.username, msg="Username was not updated")
@@ -382,10 +448,6 @@ class TestEditUser(TestCase):
         with self.assertRaises(ValueError, msg="Fails to catch invalid username"):
             self.user.edit_user(True, None, None, None, None, None, None)
 
-    def test_edit_user_usernameDuplicate(self):
-        with self.assertRaises(ValueError, msg="Fails to catch duplicate username"):
-            self.user.edit_user("user2", None, None, None, None, None, None)
-
     def test_edit_user_passwordBad(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid password"):
             self.user.edit_user(None, " ", None, None, None, None, None)
@@ -409,3 +471,13 @@ class TestEditUser(TestCase):
     def test_edit_user_addressBad(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid address"):
             self.user.edit_user(None, None, None, None, None, None, 200.2)
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            

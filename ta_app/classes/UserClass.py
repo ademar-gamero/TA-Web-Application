@@ -74,11 +74,7 @@ class UserClass(ABC):
                 raise ValueError("New Username must be a string")
             if new_username.strip() == "":
                 raise ValueError("New Username must not be empty")
-            try:
-                User.objects.get(username=new_username)
-                raise ValueError("Username is already taken")
-            except User.DoesNotExist:
-                self.username = new_username
+            self.username = new_username
         else:
             raise ValueError("New Username must not be None")
 
@@ -185,11 +181,11 @@ class UserClass(ABC):
         else:
             return contact.email
 
-    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None, assigned=None):
+    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
         old_username = self.username
         if username is not None:
             try: 
-                User.objects.filter(username=username)
+                User.objects.get(username=username)
             except User.DoesNotExist:
                 self.set_username(username)
         if password is not None:
@@ -200,23 +196,21 @@ class UserClass(ABC):
             self.set_role(role)
         if email is not None:
             try: 
-                User.objects.filter(username=email)
+                User.objects.get(email=email)
             except User.DoesNotExist:
                 self.set_email(email)
         if phone is not None:
-            try: 
-                User.objects.filter(username=username)
+            try:
+                User.objects.get(phone_number=phone)
             except User.DoesNotExist:
-                self.set_email(email)
+                self.set_phone_number(phone)
         if address is not None:
             self.set_address(address)
-        if assigned is not None:
-            self.set_assigned(assigned)
         User.objects.filter(username=old_username).update(username=self.username, password=self.password,
                                                           name=self.name,
                                                           role=self.role, email=self.email,
                                                           phone_number=self.phone_number,
-                                                          address=self.address,assigned=self.assigned)
+                                                          address=self.address)
 
     def create_user(self):
         try:
