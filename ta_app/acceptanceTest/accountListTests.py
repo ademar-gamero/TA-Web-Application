@@ -1,7 +1,7 @@
 
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import Course, Section, User
+from ta_app.models import Course, Section, User
 from datetime import datetime
 
 #acceptance test
