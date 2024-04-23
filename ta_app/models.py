@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Roles(models.TextChoices):
     AD = "Admin"
     TA = "Teacher-Assistant"
@@ -43,3 +44,5 @@ class User(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.role}"
+# Create your models here.
+
