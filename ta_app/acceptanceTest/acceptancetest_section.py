@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.test import Client
 from ta_app.models import Section, Course, User
-from ta_app.classes.SectionClass import SectionClass
+from ta_app.Classes.SectionClass import SectionClass
 
 class AcceptanceTestSection(TestCase):
     def setUp(self):
