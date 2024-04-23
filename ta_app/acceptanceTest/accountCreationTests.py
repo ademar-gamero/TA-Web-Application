@@ -25,7 +25,7 @@ class AccountCreationTests(TestCase):
 
     def test_roleValidationCorrect(self):
         response = self.client.post("/login/", {'username': 'admin', 'password': 'password'}, follow=True)
-        # self.assertRedirects(response, reverse('Home'))
+        self.assertRedirects(response, reverse('Home'))
         response = self.client.get("/Home/accountCreation/")
         self.assertEqual(200, response.status_code, "role validation failed")
 
@@ -41,6 +41,12 @@ class AccountCreationTests(TestCase):
                                                           'phone_number': '1234567890', 'address': '123 Fake Street'})
         self.assertTrue(User.objects.filter(username="new").exists(), "User was not created")
 
+    def test_createAccountSparse(self):
+        response = self.client.post("/Home/accountCreation/", {'username': 'new', 'password': 'pass', 'name': 'Name',
+                                                          'role': 'Instructor', 'email': 'email@email.com',
+                                                          'phone_number': '', 'address': ''})
+        self.assertTrue(User.objects.filter(username="new").exists(), "User was not created")
+
     def test_createAccountDuplicate(self):
         response = self.client.post("/Home/accountCreation/", {'username': 'admin', 'password': 'pass', 'name': 'Test Admin',
                                                           'role': 'Instructor', 'email': 'email@email.com',
@@ -52,6 +58,12 @@ class AccountCreationTests(TestCase):
                                                           'role': 'Instructor', 'email': 'words',
                                                           'phone_number': '1234567890', 'address': '123 Fake Street'})
         self.assertEqual(response.context['message'], "Email is not valid", "did not catch bad email")
+
+    def test_createAccountBadRole(self):
+        response = self.client.post("/Home/accountCreation/", {'username': 'Zog', 'password': 'pass', 'name': 'Zog',
+                                                          'role': 'Barbarian', 'email': 'words',
+                                                          'phone_number': '1234567890', 'address': '123 Fake Street'})
+        self.assertEqual(response.context['message'], "Invalid role", "did not catch bad role")
 
     def test_createEmpty(self):
         response = self.client.post("/Home/accountCreation/", {'username': '', 'password': '', 'name': '',
