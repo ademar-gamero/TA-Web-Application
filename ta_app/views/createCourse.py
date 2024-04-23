@@ -10,7 +10,9 @@ class createCourse(View):
 
     def post(self, request):
         courseNumber = request.POST.get("course_id")
-        courseid = int(courseNumber)
+        courseid=""
+        if courseNumber != '':
+            courseid = int(courseNumber)
         name = request.POST.get("course_name")
         description = request.POST.get("description")
         # We want these to return None if there's nothing there, so don't add the second parameter. The
