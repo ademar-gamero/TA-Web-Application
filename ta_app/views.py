@@ -2,6 +2,7 @@ from django.views import View
 from django.shortcuts import render, redirect
 from .models import User
 from django.contrib import messages
+from Classes.UserClass import UserClass
 
 class login_view(View):
     def get(self, request):
@@ -34,9 +35,11 @@ class login_view(View):
             return render(request, 'login.html')
 
 
-class account_creation_view(View):
+class AccountCreationView(View):
+
     def get(self, request):
-        return render(request, "createAccount.html")
+        pass
 
     def post(self, request):
         pass
+

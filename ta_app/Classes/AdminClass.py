@@ -1,4 +1,4 @@
-from ta_app.classes.UserClass import UserClass
+from ta_app.Classes.UserClass import UserClass
 from classes.Course import Course
 from classes.Section import Section
 

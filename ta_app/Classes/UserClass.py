@@ -6,7 +6,7 @@ from ta_app.models import User, Roles, Section
 from django.core.validators import validate_email
 
 
-class UserClass(ABC):
+class UserClass:
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
                  assigned_sections=None):
@@ -26,7 +26,7 @@ class UserClass(ABC):
             validate_email(email)
         except ValidationError:
             raise ValueError("Invalid email address")
-        if not (role is "Teacher-Assistant" or role is "Instructor" or role is "Admin"):
+        if not (role == "Teacher-Assistant" or role == "Instructor" or role == "Admin"):
             raise ValueError("Invalid role")
         if not isinstance(phone_number, str):
             raise ValueError("Invalid phone number")

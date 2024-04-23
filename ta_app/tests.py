@@ -1,7 +1,7 @@
 
 from django.test import TestCase
-from classes.TA import TA
-from classes.ClassUser import ClassUser
+from Classes.TA import TA
+from Classes.UserClass import UserClass
 
 class Teacher_Assitant(TestCase):
     def setUp(self):
