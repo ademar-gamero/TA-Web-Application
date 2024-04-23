@@ -1,4 +1,3 @@
-
 from django.test import TestCase
 from classes.TA import TA
 from classes.ClassUser import ClassUser
@@ -50,4 +49,3 @@ class Teacher_Assitant(TestCase):
     def test_editContactInfoInvalidCheck(self):
         self.ta.edit_contact_info("americanemail.com")
         self.assertEqual(self.ta.email,"email@email.com","email validation failed")
-
