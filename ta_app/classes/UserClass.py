@@ -20,17 +20,18 @@ class UserClass(ABC):
 
 
 
-        if username is None or password is None or name is None or role is None or email is None:
-            raise ValueError("Missing necessary parameters. Must include username, password, name, role, and email.")
+        if (username == "" or password == "" or name == "" or role == "" or email == ""
+                or username is None or password is None or name is None or role is None or email is None):
+            raise ValueError("Must include username, password, name, role, and email.")
         if not isinstance(username, str) or username.strip() == "":
             raise ValueError("Username must be a non-empty string")
         if not isinstance(password, str) or password.strip() == "":
             raise ValueError("Password must be a non-empty string")
         if not isinstance(name, str) or name.strip() == "":
             raise ValueError("Name must be a non-empty string")
-        if username.strip() != username:
+        if username.replace(" ", "") != username:
             raise ValueError("Username cannot contain spaces")
-        if password.strip() != password:
+        if password.replace(" ", "") != password:
             raise ValueError("Password cannot contain spaces")
 
         if not (role == "Teacher-Assistant" or role == "Instructor" or role == "Admin"):
@@ -242,6 +243,7 @@ class UserClass(ABC):
             for i in self.assigned_sections:
                 user.assigned_section.add(i)
             user.save()
+            print("Created user")
 
     def delete_user(self):
         try:

@@ -29,12 +29,13 @@ from ta_app.views.SectionView import SectionView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('Home/',Home.as_view(),name='Home'),
+    path('Home/',Home.as_view(), name="Home"),
     path('Home/courseList/',courseList.as_view(),name="courseList"),
     path('Home/createSection/',SectionView.as_view(),name="createSection"),
     path('Home/accountList/',accountList.as_view(),name="accountList"),
     path('Home/accountList/<int:pk>/',accountView.as_view(),name="accountDetails"),
     path('login/', login_view.as_view(), name='login'),
+    path('Home/accountCreation/',accountCreation.as_view(), name='accountCreation'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
 ]
 
