@@ -46,3 +46,54 @@ class AcceptanceTestSection(TestCase):
         }, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['check'], "Section was not created when it should have been.")
+
+    def test_sectionDisplay(self):
+        response = self.client.post('/Home/createSection/', {
+            'course_parent': self.course.id,  # Use the course ID
+            'section_id': 27747,
+            'meeting_time': '2023-01-01T14:00:00Z',
+            'section_type': 'LAB'
+        })
+        sec = Section.objects.get(section_id=27747)
+        self.assertContains(response.context['sections'],sec,"value was not displayed")
+
+    def test_sectionMultipleDisplay(self):
+        response = self.client.post('/Home/createSection/', {
+            'course_parent': self.course.id,  # Use the course ID
+            'section_id': 27747,
+            'meeting_time': '2023-01-01T14:00:00Z',
+            'section_type': 'LAB'
+        })
+
+        sec = Section.objects.get(section_id=27747)
+        response = self.client.post('/Home/createSection/', {
+            'course_parent': self.course.id,  # Use the course ID
+            'section_id': 2525,
+            'meeting_time': '2023-01-01T14:00:00Z',
+            'section_type': 'LAB'
+        })
+
+        sec2 = Section.objects.get(section_id=2525)
+        
+        self.assertContains(response.context['sections'],sec,"value was not displayed")
+        self.assertContains(response.context['sections'],sec2,"value was not displayed")
+
+    def test_invalidSectionDisplay(self):
+        response = self.client.post('/Home/createSection/', {
+            'course_parent': 'ee',
+            'section_id': 123,
+            'meeting_time': '2023-01-01T15:00:00Z',
+            'section_type': 'LEC'
+        }, follow=True)
+        clist = response.context['sections']
+        size = len(clist)
+        self.assertTrue(size == 0,"invalid section was displayed")
+
+
+
+
+
+
+
+
+

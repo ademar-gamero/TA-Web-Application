@@ -43,7 +43,15 @@
         {% if check == True %}
             <h1> Section was Created </h1>
         {% endif %}
-
+        <div class="container">
+          <table>
+          {%for section in sections %}
+          <tr>
+            {{ section }}
+          </tr>
+          {% endfor %}
+        </table>
+        </div>
     </div>
 </body>
 </html>
