@@ -7,7 +7,7 @@ from django.http import Http404
 class accountList(View):
     def get(self,request):
         accounts = User.objects.all()
-        return render(request,"accountList.html",{"accountlist":accounts})
+        return render(request,"account_list.html",{"accountlist":accounts})
     def post(self,request):
 
          name = request.POST.get('name','')
