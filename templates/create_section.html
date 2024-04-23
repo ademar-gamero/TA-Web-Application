@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Section</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Section</h2>
+        <form method="post" action="{% url 'create_section' %}">
+            {% csrf_token %}
+            <div>
+                <label for="course_parent">Course:</label>
+                <select name="course_parent" id="course_parent" required>
+                    {% for course in courses %}
+                    <option value="{{ course.id }}">{{ course.course_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="section_id">Section ID:</label>
+                <input type="text" name="section_id" id="section_id" required>
+            </div>
+            <div>
+                <label for="meeting_time">Meeting Time:</label>
+                <input type="datetime-local" name="meeting_time" id="meeting_time" required>
+            </div>
+            <div>
+                <label for="section_type">Section Type:</label>
+                <select name="section_type" id="section_type" required>
+                    <option value="LEC">Lecture</option>
+                    <option value="LAB">Lab</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit">Create Section</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
