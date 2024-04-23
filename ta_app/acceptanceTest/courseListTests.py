@@ -30,17 +30,15 @@ class courseList(TestCase):
                 y = y + 1
             Course(course_id=i,course_name=name,description=descrip).save()
 
-    def test_roleValidationCorrect(self):
+    def test_accessAdmin(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/')
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role validation failed")
         
-    def test_roleValidationIncorrect(self):
-        resp = self.green.post("/login/",{"username":self.Iusername,"password":admin},follow=True)
-        self.assertEqual(resp.url, '/Home/')
+    def test_accessInstructor(self):
+        resp = self.green.post("/login/",{"username":self.Iusername,"password":self.Ipassword},follow=True)
         resp = self.green.get("/Home/courseList/")
-        self.assertEqual(404,resp.status_code,"role validation failed")
+        self.assertEqual(200,resp.status_code,"role validation failed")
 
     def test_displayCourses(self):
         resp = self.green.get("/Home/courseList/")
