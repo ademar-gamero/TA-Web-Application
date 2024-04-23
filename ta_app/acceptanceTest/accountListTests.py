@@ -63,11 +63,11 @@ class accountList(TestCase):
         username = self.Iusername
         resp = self.green.post("Home/accountList/",{"username":username},follow=True)
         for j in resp.context["accountlist"]:
-            self.assertEqual(j.username,search_course,"search is not working")
+            self.assertEqual(j.username,username,"search is not working")
 
     def test_searchIncorrectUserName(self):
         username = "Teacher_Assistant" 
-        resp = self.green.post("Home/accountList/",{"username":usename},follow=True)
+        resp = self.green.post("Home/accountList/",{"username":username},follow=True)
         alist = resp.context["accountlist"]
         checker = False
         if len(alist) == 0:
@@ -102,7 +102,7 @@ class accountList(TestCase):
     def test_searchUserNameRole(self):
         username = self.instructor.username
         role = self.instructor.role
-        resp = self.green.post("Home/accountList/",{"username":name,"role":role},follow=True)
+        resp = self.green.post("Home/accountList/",{"username":username,"role":role},follow=True)
         for j in resp.context["accountlist"]:
             self.assertEqual(j.role,role,"search did not work")
             self.assertEqual(j.username,username,"search did not work")
@@ -115,7 +115,7 @@ class accountList(TestCase):
             self.assertEqual(j.username,username,"search did not work")
             self.assertEqual(j.name,name,"search did not work")
 
-    def test_searchUserNameRole(self):
+    def test_searchUserNameRoleThree(self):
         username = self.instructor.username
         name = self.instructor.name
         role = self.instructor.role

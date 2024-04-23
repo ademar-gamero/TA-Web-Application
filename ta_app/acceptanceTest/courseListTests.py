@@ -15,10 +15,8 @@ class courseList(TestCase):
         self.courselist = {351: ["compsci", "this course covers algos and data structs"],
                       361: ["compsci", "this course covers software engineering"],
                       102: ["psych", "this course covers psychology"]}
-        v=1
-        z=2
-        User(user_id=v,name="admin",username="admin",password="admin",email="admin@email.com",role="Admin",phone_number=1,address="1",assigned=False).save()
-        User(user_id=z,name="instructor",username="instructor",password="instructor",email="instructor@email.com",role="Instructor",phone_number=1,address="1",assigned=False).save()
+        User(name="admin",username="admin",password="admin",email="admin@email.com",role="Admin",phone_number=1,address="1",assigned=False).save()
+        User(name="instructor",username="instructor",password="instructor",email="instructor@email.com",role="Instructor",phone_number=1,address="1",assigned=False).save()
         self.Ausername = "admin"
         self.Apassword = "admin"
         self.Iusername = "instructor"

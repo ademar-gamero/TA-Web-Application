@@ -31,7 +31,6 @@ class editAccount(TestCase):
         self.instructor2.assigned_section.add(self.sec)
         self.instructor2.save()
 
-
     def test_accessEditAcc(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
         self.assertEqual(resp.url, '/Home/')
@@ -45,7 +44,6 @@ class editAccount(TestCase):
         self.assertEqual(resp.url, '/Home/')
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
-        detail_url = reverse('accountDetails',args=[45])
         resp = self.green.get(self.detail_url)
         self.assertEqual(400,resp.status_code,"page was not displayed")
 
@@ -56,8 +54,18 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail.url,{"name":self.instructor2.name},follow=True)
-        self.assertContains(resp,"Name: "+self.instructor2.name)
+
+        form = {
+        'name': 'chairman',  
+        'username': resp.context['user.username'],
+        'email': resp.context['user.email'],
+        'password': resp.context['user.password'],
+        'phone_number': resp.context['user.phone_number'],
+        'role': resp.context['user.role'],  
+        }
+        
+        resp = self.green.post(self.detail_url, form ,follow=True)
+        self.assertContains(resp, f'value="{form["name"]}"')
 
     def test_editDuplicateUserName(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
@@ -76,8 +84,9 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
+
         resp = self.green.post(self.detail.url,{"username":"chairman"},follow=True)
-        self.assertContains(resp,"Name: " + "chairman")
+        self.assertContains(resp, f'value="{form_data["name"]}"')
 
     def test_editRole(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
@@ -146,8 +155,8 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail.url,{"password":self.instructor2.password},follow=True)
-        self.assertContains(resp,"password: "+self.instructor2.password)
+        resp = self.green.post(self.detail.url,{"password":"Talking Heads"},follow=True)
+        self.assertContains(resp,"password: "+"Talking Heads")
 
     def test_sameEditPhoneNumber(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
