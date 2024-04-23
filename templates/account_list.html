@@ -20,8 +20,9 @@
     <form action="/Home/accountList/" method="post">
       {% csrf_token %}
       <select name="roles" id="roles">
-        <option value="Instructor">Instructor</option>
-        <option value = "Teacher-Assistant">Teacher Assistant</option>
+        <option value="IN">Instructor</option>
+        <option value = "TA">Teacher Assistant</option>
+          <option value = "AD"> Admin</option>
       </select>
     </form>
   <div>
