@@ -4,4 +4,6 @@ from django.views import View
 
 class Home(View):
     def get(self,request):
-        pass
+        curr_role = request.session["role"]
+        curr_name = request.session["name"]
+        return render(request, "home.html",{"role":curr_role,"name":curr_name})
