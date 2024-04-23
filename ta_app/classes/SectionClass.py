@@ -6,7 +6,6 @@ class SectionClass:
             raise ValueError("course_parent must be an instance of Course")
         if course_parent is None:
             raise ValueError("course_parent must be not None")
-
         self.course_parent = course_parent
         self.section_id = section_id
         self.meeting_time = meeting_time

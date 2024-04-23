@@ -1,0 +1,28 @@
+from django.views import View
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from ta_app.models import Course, Section
+
+from ta_app.classes.SectionClass import SectionClass
+class SectionView(View):
+    template_name = 'create_section.html'
+
+    def post(self, request):
+        course_parent_id = request.POST.get("course_parent")
+        section_id = request.POST.get("section_id")
+        meeting_time = request.POST.get("meeting_time")
+        section_type = request.POST.get("section_type")
+
+        context = {'courses': Course.objects.all(), 'check': True}  # Default context
+
+        try:
+            course_parent = Course.objects.get(id=course_parent_id)
+            new_section = SectionClass(course_parent=course_parent, section_id=section_id, meeting_time=meeting_time, section_type=section_type)
+            new_section.create_section()
+        except Course.DoesNotExist:
+            context.update({'check': False, 'error': "Course not found"})
+        except ValueError as e:
+            context.update({'check': False, 'error': str(e)})
+
+        return render(request, self.template_name, context)
