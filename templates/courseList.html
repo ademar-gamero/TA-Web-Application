@@ -1,0 +1,29 @@
+
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course List</title>
+</head>
+<body>
+<h1>Course List Page</h1>
+  
+    <form action="/Home/courseList/" method="post">
+      {% csrf_token %}
+      <input type="number" min="0" max="9999" name="course_id" placeholder = "course id ">
+    </form>
+    <form action="/Home/courseList/" method="post">
+      {% csrf_token %}
+      <input type="text" name="course_name" placeholder = "course name">
+    </form>
+  <div>
+    <table>
+    {% for course in courselist %}
+      <tr>
+          <td>{{ course }}</td>
+      </tr>
+    {% endfor %}
+      </table>
+  </div>
+</body>
+</html>

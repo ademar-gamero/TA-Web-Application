@@ -1,0 +1,36 @@
+
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Account</title>
+</head>
+<body>
+    <h1>Create Account</h1>
+    <div>
+    <form action="/Home/createAccount" method="post"> 
+      {% csrf_token %}
+        Name: <input type="text" name="name"></br>
+        Username: <input type="text" name="username"></br>
+        Email: <input type="text" name="email"></br>
+        Password: <input type="text" name="password"></br>
+        Phone Number: <input type="text" name="phone_number"></br>
+        Assigned:<select name="role" id="role-selection">
+          <option value="Admin">Admin</option>
+          <option value="Instructor">Instructor</option>
+          <option value="Teacher-Assistant">Teacher Assistant</option>
+          </select></br>
+        Assigned:<select name="assigned" id="assigned-select">
+          <option value="True">True</option>
+          <option value="False">False</option>
+          </select></br>
+      Assign Sections:<select name="assigned_sections" id="section-select">
+        {% for section in sections %} 
+          <option value = section> section.course section </option>
+        {% endfor %}
+        </select></br>
+          <input type="submit" value="Submit">
+    </form>
+    </div>
+</body>
+</html>
