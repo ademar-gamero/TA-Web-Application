@@ -21,7 +21,7 @@ class courseList(View):
             return render(request, "courseList.html",{"courselist":courses})
         if id == '' and name != '':
             courses = Course.objects.filter(course_name = name)
-            return render(request, "courseList.html",{"cojurselist":courses})
+            return render(request, "courseList.html",{"courselist":courses})
         return render(request,"courseList.html",{"courselist":courses}) 
 
 

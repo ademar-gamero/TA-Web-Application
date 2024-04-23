@@ -25,35 +25,35 @@ class accountList(TestCase):
         self.Apassword = "admin"
         self.Iusername = "instructor"
         self.Ipassword = "instructor"
-        self.algos = Course(course_id=351,course_name="compsci",decription="blah blah blah")
+        self.algos = Course(course_id=351,course_name="compsci",description="blah blah blah")
         self.algos.save()
-        date_str = "Tue/Thurs 2:30pm"
-        date = datetime.strptime(date_str,"%a/%a %I:%M%p")
+        date_str = "Tue 2:30pm"
+        date = datetime.strptime(date_str,"%a %I:%M%p")
         self.sec = Section(course_parent = self.algos,section_id=1,meeting_time=date,type="lecture")
         self.sec.save()
         self.accountList = [self.admin,self.instructor]
 
     def test_access(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/')
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role validation failed")
         
     def test_displayAccounts(self):
-        resp = self.green.get("Home/accountList/")
+        resp = self.green.get("/Home/accountList/")
         for j in resp.context["accountlist"]:
-            self.assertIn(j,self.accountList[j],"not all accounts are listed")    
+            self.assertIn(j,self.accountList,"not all accounts are listed")
 
     def test_searchCorrectName(self):
         name = self.instructor.name
-        resp = self.green.post("Home/accountlist/",{"name":name},follow=True)
+        resp = self.green.post("/Home/accountList/",{"name":name},follow=True)
         for j in resp.context["accountlist"]:
             self.assertEqual(j.name,name,"search shouldve found a course id but didnt")
 
     def test_searchIncorrectCourseID(self):
         name = "Quentin Tarantino"
-        resp = self.green.post("Home/accountList/",{"name":name},follow=True)
-        clist = resp.context["courselist"]
+        resp = self.green.post("/Home/accountList/",{"name":name},follow=True)
+
+        clist = resp.context["accountlist"]
         checker = False
         if len(clist) == 0:
             checker = True
@@ -61,13 +61,13 @@ class accountList(TestCase):
 
     def test_searchAccountUserName(self):
         username = self.Iusername
-        resp = self.green.post("Home/accountList/",{"username":username},follow=True)
+        resp = self.green.post("/Home/accountList/",{"username":username},follow=True)
         for j in resp.context["accountlist"]:
             self.assertEqual(j.username,username,"search is not working")
 
     def test_searchIncorrectUserName(self):
         username = "Teacher_Assistant" 
-        resp = self.green.post("Home/accountList/",{"username":username},follow=True)
+        resp = self.green.post("/Home/accountList/",{"username":username},follow=True)
         alist = resp.context["accountlist"]
         checker = False
         if len(alist) == 0:
@@ -76,15 +76,14 @@ class accountList(TestCase):
 
     def test_searchAccountRole(self):
         role = self.instructor.role
-        print(role)
-        resp = self.green.post("Home/accountList/",{"roles":role},follow=True)
+        resp = self.green.post("/Home/accountList/",{"role":role},follow=True)
         for j in resp.context["accountlist"]:
             self.assertEqual(j.role,role,"search is not working")
             
     def test_searchIncorrectAccountRole(self):
         role = "Teacher-Assistant"
         print(role)
-        resp = self.green.post("Home/accountList/",{"roles":role},follow=True)
+        resp = self.green.post("/Home/accountList/",{"role":role},follow=True)
         alist = resp.context["accountlist"]
         checker = False
         if len(alist) == 0:
@@ -94,7 +93,7 @@ class accountList(TestCase):
     def test_searchNameRole(self):
         name = self.instructor.name
         role = self.instructor.role
-        resp = self.green.post("Home/accountList/",{"name":name,"role":role},follow=True)
+        resp = self.green.post("/Home/accountList/",{"name":name,"role":role},follow=True)
         for j in resp.context["accountlist"]:
             self.assertEqual(j.role,role,"search did not work")
             self.assertEqual(j.name,name,"search did not work")
@@ -102,7 +101,7 @@ class accountList(TestCase):
     def test_searchUserNameRole(self):
         username = self.instructor.username
         role = self.instructor.role
-        resp = self.green.post("Home/accountList/",{"username":username,"role":role},follow=True)
+        resp = self.green.post("/Home/accountList/",{"username":username,"role":role},follow=True)
         for j in resp.context["accountlist"]:
             self.assertEqual(j.role,role,"search did not work")
             self.assertEqual(j.username,username,"search did not work")
@@ -110,7 +109,7 @@ class accountList(TestCase):
     def test_searchUsernameName(self):
         username = self.instructor.username
         name = self.instructor.name
-        resp = self.green.post("Home/accountList/",{"username":username,"name":name},follow=True)
+        resp = self.green.post("/Home/accountList/",{"username":username,"name":name},follow=True)
         for j in resp.context["accountlist"]:
             self.assertEqual(j.username,username,"search did not work")
             self.assertEqual(j.name,name,"search did not work")
@@ -119,7 +118,7 @@ class accountList(TestCase):
         username = self.instructor.username
         name = self.instructor.name
         role = self.instructor.role
-        resp = self.green.post("Home/accountList/",{"name":name,"username":username,"role":role},follow=True)
+        resp = self.green.post("/Home/accountList/",{"name":name,"username":username,"role":role},follow=True)
         for j in resp.context["accountlist"]:
             self.assertEqual(j.name,name,"search did not work")
             self.assertEqual(j.username,username,"search did not work")
