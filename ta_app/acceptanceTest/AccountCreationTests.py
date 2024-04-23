@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from ta_app.models import User
 
+
 class AccountCreationTests(TestCase):
 
     def setUp(self):
@@ -12,6 +13,7 @@ class AccountCreationTests(TestCase):
             name='Test Admin',
             role='Administrator'
         )
+
     def test_createAccount(self):
         response = self.client.post("/accountCreation/", {'username': 'new', 'password': 'pass', 'name': 'Name',
                                                           'role': 'Instructor', 'email': 'email@email.com',
