@@ -17,19 +17,19 @@ class home(TestCase):
 
     def test_roleValidationAdminAccountList(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertRedirects(resp,"/Home/",302,msg_prefix="redirect unsuccessful")
+        self.assertRedirects(resp,"/Home/", msg_prefix="redirect unsuccessful")
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role validation failed")
 
     def test_rvAdminCorrectLinks(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertRedirects(resp,"/Home/",302,msg_prefix="redirect unsuccessful")
+        self.assertRedirects(resp,"/Home/", msg_prefix="redirect unsuccessful")
         resp = self.green.get('/Home/')
-        self.assertContains(resp,'<a href="%s">Course Catalog</a>' % reverse("courseList"),"missing link",html=True)
-        self.assertContains(resp,'<a href="%s">Create Course</a>' % reverse("createAccount"),"missing link",html=True)
-        self.assertContains(resp,'<a href="%s">Account List</a>' % reverse("accountList"),"missing link",html=True)
-        self.assertContains(resp,'<a href="%s">Create Account</a>' % reverse("createAccount"),"missing link",html=True)
-        self.assertContains(resp,'<a href="%s">Create Section</a>' % reverse("createSection"),"missing link",html=True)
+        self.assertContains(resp, '<a href="%s">Course Catalog</a>' % reverse("courseList"), html=True, msg_prefix="missing link")
+        self.assertContains(resp, '<a href="%s">Create Course</a>' % reverse("createCourse"),html=True, msg_prefix="missing link")
+        self.assertContains(resp, '<a href="%s">Account List</a>' % reverse("accountList"),html=True, msg_prefix="missing link")
+        self.assertContains(resp, '<a href="%s">Create Account</a>' % reverse("accountCreation"),html=True, msg_prefix="missing link")
+        self.assertContains(resp, '<a href="%s">Create Section</a>' % reverse("createSection"),html=True, msg_prefix="missing link")
 
 
 
