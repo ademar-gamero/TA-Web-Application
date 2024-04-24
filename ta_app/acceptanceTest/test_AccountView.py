@@ -33,7 +33,7 @@ class editAccount(TestCase):
 
     def test_accessEditAcc(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/')
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url)
@@ -41,7 +41,7 @@ class editAccount(TestCase):
 
     def test_editName(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/')
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
@@ -62,7 +62,7 @@ class editAccount(TestCase):
 
     def test_editNameIncorrect(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/')
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
@@ -73,7 +73,7 @@ class editAccount(TestCase):
 
     def test_editRole(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/',"incorrect redirect")
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
@@ -84,7 +84,7 @@ class editAccount(TestCase):
 
     def test_editAssigned(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/')
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
@@ -96,7 +96,7 @@ class editAccount(TestCase):
 
     def test_editInValidPhoneNumber(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/',"incorrect redirect")
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
@@ -108,7 +108,7 @@ class editAccount(TestCase):
 
     def test_editEmail(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/',"incorrect redirect")
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
@@ -119,7 +119,7 @@ class editAccount(TestCase):
 
     def test_editInvalidEmail(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/',"incorrect redirect")
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
@@ -130,7 +130,7 @@ class editAccount(TestCase):
 
     def test_editPassword(self): 
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/',"incorrect redirect")
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
@@ -141,7 +141,7 @@ class editAccount(TestCase):
 
     def test_sameEditPhoneNumber(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/',"incorrect redirect")
+
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)

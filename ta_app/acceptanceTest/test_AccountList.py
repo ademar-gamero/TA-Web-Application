@@ -124,3 +124,9 @@ class accountList(TestCase):
             self.assertEqual(j.username,username,"search did not work")
             self.assertEqual(j.role,role,"search did not work")
 
+    def test_searchNone(self):
+        username = ''
+        name = ''
+        role = ''
+        resp = self.green.post("/Home/accountList/", {"name": name, "username": username, "role": role}, follow=True)
+        self.assertTrue(resp.context['accountlist'] == [],"search found objects it shouldnt have")

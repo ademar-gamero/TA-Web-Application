@@ -25,7 +25,6 @@ class Test_SectionClass(TestCase):
         self.section4 = Section.objects.create(course_parent=self.course, section_id=445,
                                                meeting_time=self.meeting_time, type='SEM')  # Assuming 'SEM' as a type
 
-
     def test_section_creation(self):
         self.assertIsNotNone(self.section1)
         self.assertIsNotNone(self.section2)
@@ -73,3 +72,4 @@ class Test_SectionClass(TestCase):
         self.section4.delete()
         with self.assertRaises(Section.DoesNotExist):
             Section.objects.get(section_id=section_id)
+
