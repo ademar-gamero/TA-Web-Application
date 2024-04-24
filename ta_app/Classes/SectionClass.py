@@ -13,6 +13,7 @@ class SectionClass:
 
     def create_section(self):
         # Check for duplicates before creating a new section
+
         try:
             Section.objects.get(section_id=self.section_id)
         except Section.DoesNotExist:
@@ -24,6 +25,7 @@ class SectionClass:
             )
             return True
         raise ValueError("section has already been created")
+
     def edit_section_id(self, new_id):
         self.section_id = new_id
 
