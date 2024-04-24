@@ -17,13 +17,13 @@ class home(TestCase):
 
     def test_roleValidationAdminAccountList(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/')
+        self.assertRedirects(resp,"/Home/",302,msg_prefix="redirect unsuccessful")
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role validation failed")
 
     def test_rvAdminCorrectLinks(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-        self.assertEqual(resp.url, '/Home/')
+        self.assertRedirects(resp,"/Home/",302,msg_prefix="redirect unsuccessful")
         resp = self.green.get('/Home/')
         self.assertContains(resp,'<a href="%s">Course Catalog</a>' % reverse("courseList"),"missing link",html=True)
         self.assertContains(resp,'<a href="%s">Create Course</a>' % reverse("createAccount"),"missing link",html=True)

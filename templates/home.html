@@ -8,7 +8,7 @@
 <h1>Home</h1>
   
   <div>
-      <p> Welcome {{ name }} </p>
+      <p> Welcome to the TA Scheduler App {{ name }} !! </p>
       <p><a href = "{% url 'courseList' %}">Course Catalog</a></p>
       {% if role == "Admin" %}
         <p><a href = "{% url 'createCourse' %}">Create Course</a></p>
@@ -17,7 +17,7 @@
         <p><a href = "{% url 'createSection' %}">Create Section</a></p>
       {% endif %}
 
-        <p><a href = "{% url 'accountList' %}">account list</a></p>
+        <p><a href = "{% url 'accountList' %}">Account List</a></p>
       {% if role == "Admin" %}
         <p><a href = "{% url 'accountCreation' %}">Create Account</a></p>
       {% endif %}
