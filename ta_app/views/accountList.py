@@ -17,25 +17,18 @@ class accountList(View):
 
         if name != '' and username != '' and role !='':
             accounts = User.objects.filter(name = name,username=username,role=role)
-            return render(request,"account_list.html",{"accountlist":accounts})
         if name != '' and username != '' and role =='':
             accounts = User.objects.filter(name = name,username=username)
-            return render(request,"account_list.html",{"accountlist":accounts})
         if name != '' and username == '' and role !='':
             accounts = User.objects.filter(name = name,role=role)
-            return render(request,"account_list.html",{"accountlist":accounts})
         if name == '' and username != '' and role !='':
             accounts = User.objects.filter(username=username,role=role)
-            return render(request,"account_list.html",{"accountlist":accounts})
         if name == '' and username == '' and role !='':
             accounts = User.objects.filter(role=role)
-            return render(request,"account_list.html",{"accountlist":accounts})
         if name == '' and username != '' and role =='':
             accounts = User.objects.filter(username=username)
-            return render(request,"account_list.html",{"accountlist":accounts})
         if name != '' and username == '' and role =='':
             accounts = User.objects.filter(name=name)
-            return render(request,"account_list.html",{"accountlist":accounts})
         return render(request,"account_list.html",{"accountlist":accounts})
     
 
