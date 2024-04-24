@@ -3,40 +3,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Account</title>
+    <title>Edit Account</title>
 </head>
 <body>
-    <h1 align="center">Create Account</h1>
+    <h1 align="center">Edit Account</h1>
     <div align="center">
-    <form action="/Home/accountCreation/" method="post">
+    <form action="/Home/accountEdit/" method="post">
       {% csrf_token %}
         <table>
             <tr>
-                <td><label for="name">Name: </label></td>
+                <td><label for="name">New Name: </label></td>
                 <td><input type="text" id="name" name="name"></td>
             </tr>
             <tr>
-                <td><label for="username">Username: </label></td>
+                <td><label for="username">New Username: </label></td>
                 <td><input type="text" id="username" name="username"></td>
             </tr>
             <tr>
-                <td><label for="email">Email: </label></td>
+                <td><label for="email">New Email: </label></td>
                 <td><input type="text" id="email" name="email"></td>
             </tr>
             <tr>
-                <td><label for="password">Password: </label></td>
+                <td><label for="password">New Password: </label></td>
                 <td><input type="password" id="password" name="password"></td>
             </tr>
             <tr>
-                <td><label for="phone_number">Phone Number: </label></td>
+                <td><label for="phone_number">New Phone Number: </label></td>
                 <td><input type="text" id="phone_number" name="phone_number"></td>
             </tr>
             <tr>
-                <td><label for="address">Address: </label></td>
+                <td><label for="address">New Address: </label></td>
                 <td><input type="text" id="address" name="address"></td>
             </tr>
             <tr>
-                <td><label for="role-selection">Role: </label></td>
+                <td><label for="role-selection">New Role: </label></td>
                 <td><select name="role" id="role-selection">
                   <option value="Admin">Admin</option>
                   <option value="Instructor">Instructor</option>
@@ -45,21 +45,15 @@
             </tr>
         </table>
         <br>
+        <table>
+            <tr>
+                <td><label for="password">Enter password to confirm: </label></td>
+                <td><input type="password" id="password" name="password"></td>
+            </tr>
+        </table>
         <input type="submit" value="Submit">
     </form>
 	    <h3>{{ message }}</h3>
     </div>
-	<div style="position:absolute; bottom:0; margin:auto; width:97%;">
-		<table style="margin-right:0; margin-left:auto; border-spacing:15px;">
-			<tr>
-				<td><a href = "{% url 'courseList' %}">Home</a></td>
-				<td><a href = "{% url 'courseList' %}">Course Catalog</a></td>
-				<td><a href = "{% url 'createCourse' %}">Create Course</a></td>
-				<td><a href = "{% url 'createSection' %}">Create Section</a></td>
-				<td><a href = "{% url 'accountList' %}">Account List</a></td>
-                <td><a href = "{% url 'createAccount' %}">Create Account</a></td>
-			</tr>
-		</table>
-	</div>
 </body>
 </html> 
