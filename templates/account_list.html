@@ -11,21 +11,22 @@
     <form action="/Home/accountList/" method="post">
       {% csrf_token %}
       <input type="text" name="name" placeholder = "name">
-    </form>
-    <form action="/Home/accountList/" method="post">
-      {% csrf_token %}
-      <input type="text" name="username" placeholder = "username">
-    </form>
-    <label for="roles">select role</label>
-    <form action="/Home/accountList/" method="post">
-      {% csrf_token %}
+      <input type="text" name="username" placeholder = "username"></br></br>
+      <label for="roles">Role Filter</label></br>
       <select name="roles" id="roles">
-        <option value="IN">Instructor</option>
-        <option value = "TA">Teacher Assistant</option>
-          <option value = "AD"> Admin</option>
+        <option value="">None</option>
+        <option value="Admin">Admin</option>
+        <option value="Instructor">Instructor</option>
+        <option value = "Teacher-Assistant">Teacher Assistant</option>
       </select>
+      <br></br>
+      <input type="submit" value="Submit">
     </form>
   <div>
+      
+    {%if not accountlist %}
+      <p> no accounts found </p>
+    {% endif %}
     <table>
     {% for account in accountlist %}
       <tr>

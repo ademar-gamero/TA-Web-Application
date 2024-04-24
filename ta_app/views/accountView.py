@@ -12,10 +12,10 @@ class accountView(View):
         self.acc_pk = pk
         account = User.objects.get(pk=self.acc_pk) 
         self.acc_edit = UserClass(account.username,account.password,account.name,account.role,
-        account.email,account.phone_number,account.address,account.assigned,account.assigned_sections)
+        account.email,account.phone_number,account.address,account.assigned,account.assigned_section)
         return render(request,"courseList.html",{'user': account,"check":self.val})
 
-    def post(self,request):
+    def post(self,request,pk):
         name = request.POST.get('name')    
         username = request.POST.get('username')    
         email = request.POST.get('email')    
@@ -25,9 +25,12 @@ class accountView(View):
         address = request.POST.get('address')
 
         self.val = False
-
+        account = User.objects.get(pk=self.acc_pk)
+        self.acc_edit = UserClass(account.username, account.password, account.name, account.role,
+                                  account.email, account.phone_number, account.address, account.assigned,
+                                  account.assigned_section)
         try:
-            self.acc_edit.edit_user(username,password,name,role,email,phone_number,address)
+            self.acc_edit.edit_user(username=username,password=password,name=name,role=role,email=email,phone=phone_number,address=address)
         except ValueError:
             return render(request,"courseList.html",{'user': self.acc_edit,'check':self.val})
         self.val = True
