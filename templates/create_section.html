@@ -3,6 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .center {
+            margin: auto;
+            width: 25%;
+            border: 3px solid black;
+            padding: 25px;
+        }
+        .center2 {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        .center3 {
+            margin: auto;
+            width: 100%;
+        }
+        table, th, td {
+            border:1px solid black;
+        }
+        
+    </style>
     <title>Create Section</title>
 </head>
 <body>
@@ -38,19 +59,27 @@
             </div>
         </form>
         {% if check == False %}
-            <h1> Section was not Created </h1>
+            <h3> Section was not Created </h3>
         {% endif %}
         {% if check == True %}
-            <h1> Section was Created </h1>
+            <h3> Section was Created </h3>
         {% endif %}
-        <div class="container">
-          <table>
+        <div class="center">
+          <h2 class = "center3"> Saved Sections </h2>
+          <table class="center2">
+            <tr>
+              <th>Course</th>
+              <th>Section ID</th>
+              <th>Type</th>
+            </tr>
           {%for section in sections %}
-          <tr>
-            {{ section }}
-          </tr>
-          {% endfor %}
-        </table>
+            <tr>
+              <td>{{ section.course_parent.course_name }}</td>
+              <td>{{ section.section_id }}</td>
+              <td>{{ section.type }}</td>
+            </tr>
+            {% endfor %}
+          </table>
         </div>
     </div>
 </body>

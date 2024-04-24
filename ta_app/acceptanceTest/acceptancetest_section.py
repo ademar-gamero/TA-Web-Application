@@ -33,7 +33,7 @@ class AcceptanceTestSection(TestCase):
             'course_parent': self.course.id,  # Use the course ID
             'section_id': 27747,
             'meeting_time': '2023-01-01T14:00:00Z',
-            'section_type': 'LAB'
+            'section_type': 'lab'
         })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['check'], "Section was not created when it should have been.")
@@ -93,7 +93,7 @@ class AcceptanceTestSection(TestCase):
             'course_parent': 'ee',
             'section_id': 123,
             'meeting_time': '2023-01-01T15:00:00Z',
-            'section_type': 'LEC'
+            'section_type': 'Lecture'
         }, follow=True)
         clist = response.context['sections']
         size = len(clist)

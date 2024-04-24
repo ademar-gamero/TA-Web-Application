@@ -13,15 +13,17 @@ class SectionClass:
 
     def create_section(self):
         # Check for duplicates before creating a new section
-        if Section.objects.filter(course_parent=self.course_parent, section_id=self.section_id, meeting_time=self.meeting_time, type=self.section_type).exists():
-            raise ValueError("Duplicate section exists.")
-        Section.objects.create(
-            course_parent=self.course_parent,
-            section_id=self.section_id,
-            meeting_time=self.meeting_time,
-            type=self.section_type  # Ensuring it maps to 'type', not 'section_type'
-        )
-        return True
+        try:
+            Section.objects.get(section_id=self.section_id)
+        except Section.DoesNotExist:
+            Section.objects.create(
+                course_parent=self.course_parent,
+                section_id=self.section_id,
+                meeting_time=self.meeting_time,
+                type=self.section_type  # Ensuring it maps to 'type', not 'section_type'
+            )
+            return True
+        raise ValueError("section has already been created")
     def edit_section_id(self, new_id):
         self.section_id = new_id
 
