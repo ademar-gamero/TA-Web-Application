@@ -139,11 +139,13 @@ class UserClass(ABC):
         if isinstance(new_section, Section):
             if self.assigned_sections is None:
                 self.assigned_sections = [new_section]
-                self.set_assigned(True)
             else:
                 if self.assigned_sections.count(new_section) > 0:
                     raise ValueError("User is already assigned to this section")
                 self.assigned_sections.append(new_section)
+            # assigned is set to True if this is a Lab section
+            if new_section.type == "LAB":
+                self.set_assigned(True)
         else:
             raise ValueError("Invalid section entry")
 
