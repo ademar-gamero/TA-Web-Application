@@ -4,32 +4,48 @@
     <meta charset="UTF-8">
     <title>Account List</title>
 </head>
+<style>
+th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 10px;
+}
+</style>
 <body>
-    <h1>User Account Roster</h1>
-    <table>
-        <tr>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Email</th>
-            {% if isAdmin %}
-                <th>Phone Number</th>
-                <th>Address</th>
-            {% endif %}
-        </tr>
-        {% for account in account_list %}
-            <tr>
-                <td>username</td>
-                <td>name</td>
-                <td>email</td>
-                {% if isAdmin %}
-                    <td>phone number</td>
-                    <td>address</td>
-                    <td>edit account</td>
-                    <td>delete account</td>
-                {% endif %}
-            </tr>
-        {% endfor %}
-    </table>
+    <h1 align="center">User Account Roster</h1>
+	<br>
+	<div align="center">
+		<table style="width:75%; border-collapse: collapse;">
+			<tr>
+				<th>Username</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Role</th>
+				{% if isAdmin %}
+					<th>Phone Number</th>
+					<th>Address</th>
+					<th>Edit Info</th>
+					<th>Delete User</th>
+				{% endif %}
+			</tr>
+			{% for account in account_list %}
+				<tr>
+					<td>username</td>
+					<td>name</td>
+					<td>email</td>
+					<td>role</td>
+					{% if isAdmin %}
+						<td>phone number</td>
+						<td>address</td>
+						<td>edit account</td>
+						<td>delete account</td>
+					{% endif %}
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
 
 </body>
 </html>
