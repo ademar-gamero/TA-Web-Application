@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account List</title>
+</head>
+<body>
+    <h1>User Account Roster</h1>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Email</th>
+            {% if isAdmin %}
+                <th>Phone Number</th>
+                <th>Address</th>
+            {% endif %}
+        </tr>
+        {% for account in account_list %}
+            <tr>
+                <td>username</td>
+                <td>name</td>
+                <td>email</td>
+                {% if isAdmin %}
+                    <td>phone number</td>
+                    <td>address</td>
+                    <td>edit account</td>
+                    <td>delete account</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
