@@ -2,7 +2,6 @@ from django.test import TestCase
 from ta_app.Classes.CourseClass import CourseClass
 
 
-# Create your tests here.
 class CommonCourses(TestCase):
     def setUp(self):
         self.default = CourseClass(0, "test name", "test description")
@@ -44,6 +43,22 @@ class CourseInit(CommonCourses):
         with self.assertRaises(TypeError, msg="Float name data fails to raise TypeError"):
             CourseClass(0, 1.1, "test description")
 
+    def test_nameInputWhiteSpaceGood(self):
+        # will any leading and trailing whitespace surrounding the course_name be removed and allow a
+        # CourseClass object to be created
+        temp = CourseClass(0, "  test name  ", "test description")
+        self.assertEqual("test name", temp.course_name, "course name is incorrect value")
+
+    def test_nameInputWhiteSpaceOnly(self):
+        # will constructor throw an exception if course_name only contains whitespace
+        with self.assertRaises(ValueError, msg="Empty name data fails to raise ValueError"):
+            temp = CourseClass(0, "   ", "test description")
+
+    def test_nameInputDigit(self):
+        # will constructor throw an exception if course_name input is only digits?
+        with self.assertRaises(ValueError, msg="Course name as numeric value fails to raise ValueError"):
+            CourseClass(0, "123", "test description")
+
     def test_descriptionInputInt(self):
         # will constructor throw an exception if int data is passed to the description?
         with self.assertRaises(TypeError, msg="Integer description data fails to raise TypeError"):
@@ -53,6 +68,23 @@ class CourseInit(CommonCourses):
         # will constructor throw an exception if floating-point data is passed to the description?
         with self.assertRaises(TypeError, msg="Float description data fails to raise TypeError"):
             CourseClass(0, "test name", 1.1)
+
+    def test_descriptionInputWhiteSpaceGood(self):
+        # will any leading and trailing whitespace surrounding the description be removed and allow a
+        # CourseClass object to be created
+        temp = CourseClass(0, "test name", "  test description  ")
+        self.assertEqual("test description", temp.description, "course description is incorrect value")
+
+    def test_descriptionInputWhiteSpaceOnly(self):
+        # will constructor throw an exception if description only contains whitespace
+        with self.assertRaises(ValueError, msg="Empty description data fails to raise ValueError"):
+            temp = CourseClass(0, "test name", "   ")
+
+    def test_descriptionInputTrimIsDigit(self):
+        # will constructor allow a CourseClass object be created that has a description that is a
+        # string of just digits?
+        temp = CourseClass(0, "test name", " 123 ")
+        self.assertEqual("123", temp.description, "course description is incorrect value")
 
 
 class CourseString(CommonCourses):
@@ -106,6 +138,21 @@ class CourseSetName(CommonCourses):
         self.default.set_name("CompSci")
         self.assertEqual("CompSci", self.default.course_name, "Course name is not updated by set_name")
 
+    def test_setNameStringDigit(self):
+        # will set_name prevent a string of only digits from being set as course_name?
+        with self.assertRaises(ValueError, msg="Course name as numeric value fails to raise ValueError"):
+            self.default.set_name("123")
+
+    def test_setNameWhiteSpaceOnly(self):
+        # will set_name prevent input of only whitespace from being set as the course_name?
+        with self.assertRaises(ValueError, msg="Empty course name data fails to raise ValueError"):
+            self.default.set_name("   ")
+
+    def test_setNameWhiteSpaceGood(self):
+        # will set_name properly trim any leading or trailing whitespace from the input?
+        self.default.set_name("  CompSci  ")
+        self.assertEqual("CompSci", self.default.course_name, "Course name is incorrect value")
+
 
 class CourseSetDescription(CommonCourses):
     def test_setDescriptionNoInput(self):
@@ -123,6 +170,21 @@ class CourseSetDescription(CommonCourses):
         self.default.set_description("test test test")
         self.assertEqual("test test test", self.default.description,
                          "Course description is not updated by set_description")
+
+    def test_setDescriptionWhiteSpaceOnly(self):
+        # will set_description prevent input of only whitespace from being set as the description?
+        with self.assertRaises(ValueError, msg="Empty description data fails to raise ValueError"):
+            self.default.set_description("   ")
+
+    def test_setDescriptionWhiteSpaceGood(self):
+        # will set_description properly trim any leading or trailing whitespace from the input?
+        self.default.set_description("  A computer science course  ")
+        self.assertEqual("A computer science course", self.default.description, "Course description is incorrect value")
+
+    def test_setDescriptionIsDigit(self):
+        # will set_description allow input of only digits to be set as the description of a CourseClass object?
+        self.default.set_description("  123  ")
+        self.assertEqual("123", self.default.description, "Course description is incorrect value")
 
 
 class CourseGetCourseID(CommonCourses):
@@ -195,3 +257,10 @@ class CourseCreateCourse(CommonCourses):
         temp1.create_course()
         self.assertEqual(True, temp2.create_course(),
                          "Adding a course with same ID but different name did not return True")
+
+    def test_addSameWhiteSpace(self):
+        # will CourseClass constructor return duplicate courses correctly to prevent duplicate database additions
+        temp1 = self.cs361
+        temp2 = CourseClass(361, " CompSci ", " A computer science course ")
+        temp1.create_course()
+        self.assertEqual(False, temp2.create_course(), "Course objects should have been duplicates")
