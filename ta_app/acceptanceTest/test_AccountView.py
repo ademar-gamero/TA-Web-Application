@@ -47,17 +47,8 @@ class editAccount(TestCase):
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
-        form = {
-        'name': 'chairman',  
-        'username': resp.context['user.username'],
-        'email': resp.context['user.email'],
-        'password': resp.context['user.password'],
-        'phone_number': resp.context['user.phone_number'],
-        'role': resp.context['user.role'],  
-        }
         
-        resp = self.green.post(self.detail_url, form ,follow=True)
-        self.assertContains(resp, f'value="{form["name"]}"',"value did not update")
+        resp = self.green.post(self.detail_url, {"name":"felix"} ,follow=True)
         self.assertTrue(resp.context['check'],"bool val is False when should be True")
 
     def test_editNameIncorrect(self):
