@@ -209,6 +209,7 @@ class UserClass(ABC):
         if username is not None:
             try: 
                 User.objects.get(username=username)
+                raise ValueError("Username already in use")
             except User.DoesNotExist:
                 self.set_username(username)
         if password is not None:
