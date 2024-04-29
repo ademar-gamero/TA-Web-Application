@@ -20,7 +20,7 @@ class editAccount(TestCase):
         self.Apassword = "admin"
         self.Iusername = "instructor"
         self.Ipassword = "instructor"
-        self.algos = Course(course_id=351,course_name="compsci",description="blah blah blah")
+        self.algos = Course(course_id=351,course_name="compsci",description="blah blah blah",semester="Summer")
         self.algos.save()
         date_str = "Tue 2:30pm"
         date = datetime.strptime(date_str,"%a %I:%M%p")

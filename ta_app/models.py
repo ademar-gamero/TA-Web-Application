@@ -34,7 +34,8 @@ class Section(models.Model):
     section_id = models.IntegerField(null=True)
     meeting_time = models.DateTimeField(null=True)
     type = models.CharField(max_length=7, choices=Types.choices, default=Types.LEC)
-
+    start_time = models.DateTimeField(null=True)
+    end_time = models.DateTimeField(null=True)
 
     def __str__(self):
         return f"{self.course_parent.course_name} {self.type} {self.section_id}"
