@@ -23,6 +23,19 @@
                 <input type="text" name="section_id" id="section_id" required>
             </div>
             <div>
+            <fieldset>
+                <legend>Days:</legend>
+                <label><input type="checkbox" name="days" value="Monday"> Monday</label>
+                <label><input type="checkbox" name="days" value="Tuesday"> Tuesday</label>
+                <label><input type="checkbox" name="days" value="Wednesday"> Wednesday</label>
+                <label><input type="checkbox" name="days" value="Thursday"> Thursday</label>
+                <label><input type="checkbox" name="days" value="Friday"> Friday</label>
+            </fieldset>
+
+            </div>
+
+
+            <div>
                 <label for="meeting_time">Meeting Time:</label>
                 <input type="datetime-local" name="meeting_time" id="meeting_time" required>
             </div>
@@ -33,6 +46,9 @@
                     <option value="LAB">Lab</option>
                 </select>
             </div>
+
+
+
             <div>
                 <button type="submit">Create Section</button>
             </div>
@@ -43,7 +59,6 @@
         {% if check == True %}
             <h1> Section was Created </h1>
         {% endif %}
-
     </div>
 </body>
 </html>
