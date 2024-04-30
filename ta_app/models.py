@@ -32,10 +32,10 @@ class Course(models.Model):
 class Section(models.Model):
     course_parent = models.ForeignKey(Course, on_delete=models.CASCADE)
     section_id = models.IntegerField(null=True)
-    meeting_time = models.DateTimeField(null=True)
     type = models.CharField(max_length=7, choices=Types.choices, default=Types.LEC)
     start_time = models.DateTimeField(null=True)
     end_time = models.DateTimeField(null=True)
+    location = models.CharField(max_length=500,null=True)
 
     def __str__(self):
         return f"{self.course_parent.course_name} {self.type} {self.section_id}"
@@ -50,7 +50,7 @@ class User(models.Model):
     phone_number = models.CharField(max_length=100)
     address = models.CharField(max_length=256)
     assigned = models.BooleanField(null=True)
-    assigned_section = models.ManyToManyField(Section, blank=True)
+    assigned_section = models.ManyToManyField(Section, blank=True, related_name='assigned_users')
 
 
     def __str__(self):
