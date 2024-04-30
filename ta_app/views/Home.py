@@ -14,11 +14,6 @@ class Home(View):
         curr_name = request.session["name"]
         return render(request, "home.html", {"role": curr_role, "name": curr_name})
 
-        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response['Pragma'] = 'no-cache'
-        response['Expires'] = '0'
-        return response
-
     def post(self, request):
         if 'logout' in request.POST:
             request.session.flush()
