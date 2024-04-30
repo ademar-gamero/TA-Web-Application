@@ -204,6 +204,7 @@ class UserClass(ABC):
         if username is not None:
             try: 
                 User.objects.get(username=username)
+                raise  ValueError("Username already in user. Please choose a unique username.")
             except User.DoesNotExist:
                 self.set_username(username)
         if password is not None:
@@ -215,6 +216,7 @@ class UserClass(ABC):
         if email is not None:
             try: 
                 User.objects.get(email=email)
+                raise ValidationError("Email already in use. Please use a unique email.")
             except User.DoesNotExist:
                 self.set_email(email)
         if phone is not None:
@@ -236,22 +238,24 @@ class UserClass(ABC):
             User.objects.get(username=self.username)
             raise ValueError("Username is already taken")
         except User.DoesNotExist:
-
-            user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
-                        role=self.get_role(), email=self.get_email(), phone_number=self.get_phone_number(),
-                        address=self.get_address(),assigned=self.get_assigned())
-            for i in self.assigned_sections:
-                user.assigned_section.add(i)
-            user.save()
-            print("Created user")
+            try:
+                User.objects.get(username=self.email)
+                raise ValueError("Email is already taken")
+            except User.DoesNotExist:
+                user = User.objects.create(username=self.get_username(), password=self.get_password(),
+                                           name=self.get_name(), role=self.get_role(), email=self.get_email(),
+                                           hone_number=self.get_phone_number(), address=self.get_address(),
+                                           assigned=self.get_assigned())
+                for i in self.assigned_sections:
+                    user.assigned_section.add(i)
+                user.save()
+                print("Created user")
 
     def delete_user(self):
         try:
             val_to_del = User.objects.get(username=self.get_username())
-        except User.DoesNotExist:
-            val_to_del = False
-        if val_to_del != False:
             val_to_del.delete()
-        else:
+            return True
+        except User.DoesNotExist:
             return False
 

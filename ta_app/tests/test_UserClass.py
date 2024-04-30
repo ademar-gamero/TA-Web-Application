@@ -1,7 +1,7 @@
 from django.test import TestCase
 from ta_app.Classes.UserClass import UserClass
 from ta_app.models import Course, Section, User
-from datetime import datetime
+from datetime import datetime, time
 
 class Common(TestCase):
     def setUp(self):
@@ -521,7 +521,42 @@ class TestEditUser(TestCase):
         with self.assertRaises(ValueError, msg="Fails to catch invalid address"):
             self.user.edit_user(None, None, None, None, None, None, 200.2)
 
-            
+
+class SectionConflictTests(TestCase):
+
+    def setUp(self):
+        self.course1 = Course.objects.create(101, "Math", "blah")
+        self.section1 = Section.objects.create(parent=self.course1, section_id=100, type="LAB",
+                                               start_time=time(12, 0), end_time=time(1, 30),
+                                               meeting_day=["MO", "WE"])
+        self.section2 = Section.objects.create(parent=self.course1, section_id=200, type="LAB",
+                                               start_time=time(9, 0), end_time=time(10, 30),
+                                               meeting_day=["MO", "WE"])
+        self.section3 = Section.objects.create(parent=self.course1, section_id=300, type="LAB",
+                                               start_time=time(9, 0), end_time=time(10, 30),
+                                               meeting_day=["TU", "TH"])
+        self.section4 = Section.objects.create(parent=self.course1, section_id=400, type="LAB",
+                                               start_time=time(10, 0), end_time=time(11, 30),
+                                               meeting_day=["MO", "FR"])
+        self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="TA", email="ta@uwm.edu")
+        self.ta.create_user()
+
+    def test_assignSingle(self):
+        self.ta.add_section(self.section1)
+        self.assertEqual(self.ta.assigned_sections[0], self.section1, "Section 1 should be assigned")
+
+    def test_assignNoConflict(self):
+        self.ta.add_section(self.section1)
+        self.ta.add_section(self.section2)
+        self.assertEqual(self.ta.assigned_sections[0], self.section1, "Section 1 should be assigned")
+        self.assertEqual(self.ta.assigned_sections[1], self.section2, "Section 2 should be assigned")
+
+    def test_assignConflict(self):
+        self.ta.add_section(self.section2)
+        with self.assertRaises(ValueError, msg="Did not catch conflicting time"):
+            self.ta.add_section(self.section4)
+
+
             
             
             
