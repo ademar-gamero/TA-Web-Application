@@ -545,7 +545,13 @@ class SectionConflictTests(TestCase):
         self.ta.add_section(self.section1)
         self.assertEqual(self.ta.assigned_sections[0], self.section1, "Section 1 should be assigned")
 
-    def test_assignNoConflict(self):
+    def test_assignNoConflictDifferentDays(self):
+        self.ta.add_section(self.section2)
+        self.ta.add_section(self.section3)
+        self.assertEqual(self.ta.assigned_sections[0], self.section2, "Section 1 should be assigned")
+        self.assertEqual(self.ta.assigned_sections[1], self.section3, "Section 2 should be assigned")
+
+    def test_assignNoConflictSameDays(self):
         self.ta.add_section(self.section1)
         self.ta.add_section(self.section2)
         self.assertEqual(self.ta.assigned_sections[0], self.section1, "Section 1 should be assigned")
