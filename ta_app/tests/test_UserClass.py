@@ -587,3 +587,30 @@ class SectionAssignementTests(TestCase):
         self.instructor.add_section(self.lecture1)
         with self.assertRaises(ValueError, msg="Did not catch conflicting times"):
             self.instructor.add_section(self.lecture3)
+
+    def test_assignTaNoLecture(self):
+        with self.assertRaises(ValueError, msg="Did not catch lack of required lecture assignment before lab assigned"):
+            self.ta.add_section(self.lab1)
+
+    def test_assignTaLecture(self):
+        self.ta.add_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
+        self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+
+    def test_assignTaToLab(self):
+        self.ta.add_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
+        self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+        self.ta.add_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lab1, "Lecture should be removed, swapped with lab")
+        self.assertFalse(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+
+    def test_assignTaToLabsNoConflictDifferentDays(self):
+        self.ta.add_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
+        self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+        self.ta.add_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lab1, "Lecture should be removed, swapped with lab")
+        self.assertFalse(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.ta.add_section(self.lab3)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab3, "Lab wasn't added successfully")
