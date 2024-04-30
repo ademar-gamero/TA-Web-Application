@@ -2,7 +2,7 @@ from ta_app.models import Course
 
 
 class CourseClass(object):
-    def __init__(self, course_id, course_name, description):
+    def __init__(self, course_id, course_name, description, semester):
         # course_id data validation:
         if not isinstance(course_id, int):
             raise TypeError("ID must be an integer")
@@ -29,12 +29,20 @@ class CourseClass(object):
         # Note: the user should have more freedom with the description input, thus, we will allow
         # descriptions that are just digits to be set.
 
+        # semester data validation:
+        # Note: this will catch instances of non-string input and None.
+        # The plan is to have semester be a dropdown menu on the form, so we should not have to
+        # really account for bad user input like leading or trailing whitespace.
+        if semester not in ["Fall", "Winter", "Spring", "Summer"]:
+            raise ValueError("Invalid semester")
+
         self.course_id = course_id
         self.course_name = course_name
         self.description = description
+        self.semester = semester
 
     def __str__(self):
-        return f"{self.course_name} - {self.course_id}"
+        return f"{self.course_name}-{self.course_id} - {self.semester}"
 
     def set_name(self, course_name):
         if not isinstance(course_name, str):
@@ -61,6 +69,11 @@ class CourseClass(object):
             raise ValueError("Course description cannot be left empty")
         self.description = description
 
+    def set_semester(self, semester):
+        if semester not in ["Fall", "Winter", "Spring", "Summer"]:
+            raise ValueError("Invalid semester")
+        self.semester = semester
+
     def get_course_id(self):
         return self.course_id
 
@@ -70,19 +83,23 @@ class CourseClass(object):
     def get_course_description(self):
         return self.description
 
+    def get_course_semester(self):
+        return self.semester
+
     def create_course(self):
         # Note: data validation is enforced in the constructor and all setters, thus, we can assume
         # any existing CourseClass objects have valid data
         courseid = self.get_course_id()
         name = self.get_course_name()
         descr = self.get_course_description()
+        sem = self.get_course_semester()
 
-        # check that the database does not already contain the id+name combination
+        # check that the database does not already contain the id+name+semester combination
         # return False if it's already there
-        find_course = Course.objects.all().filter(course_id=courseid).filter(course_name=name)
+        find_course = Course.objects.all().filter(course_id=courseid).filter(course_name=name).filter(semester=sem)
         if find_course.exists():  # if there's something in the returned QuerySet
             return False  # then it already exists
 
         # otherwise, create new entry and return True
-        Course.objects.create(course_id=courseid, course_name=name, description=descr)
+        Course.objects.create(course_id=courseid, course_name=name, description=descr, semester=sem)
         return True
