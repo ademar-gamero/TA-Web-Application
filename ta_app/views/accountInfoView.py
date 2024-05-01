@@ -1,19 +1,24 @@
-
+from django.views.generic.detail import DetailView
 from django.shortcuts import render
 from django.views import View
 from ta_app.models import User
 from ta_app.Classes.UserClass import UserClass
+from django.shortcuts    import redirect
 
-class accountView(View):
+class accountInfoView(View):
     acc_edit = None
     acc_pk = None
     val = None
+
     def get(self,request,pk):
-        self.acc_pk = pk
-        account = User.objects.get(pk=self.acc_pk) 
+        curr_acc = request.session["role"]
+        if curr_acc != "Admin":
+            return redirect("/Home/")
+        
+        account = User.objects.get(pk=pk) 
         self.acc_edit = UserClass(account.username,account.password,account.name,account.role,
         account.email,account.phone_number,account.address,account.assigned,account.assigned_section)
-        return render(request,"courseList.html",{'user': account,"check":self.val})
+        return render(request, "accountInfo.html", {'user': account, "check":self.val})
 
     def post(self,request,pk):
         name = request.POST.get('name')    
@@ -25,16 +30,15 @@ class accountView(View):
         address = request.POST.get('address')
 
         self.val = False
-        account = User.objects.get(pk=self.acc_pk)
+        account = User.objects.get(pk=pk)
         self.acc_edit = UserClass(account.username, account.password, account.name, account.role,
                                   account.email, account.phone_number, account.address, account.assigned,
                                   account.assigned_section)
         try:
             self.acc_edit.edit_user(username=username,password=password,name=name,role=role,email=email,phone=phone_number,address=address)
-        except ValueError:
-            return render(request,"courseList.html",{'user': self.acc_edit,'check':self.val})
-        self.val = True
-        updated_acc = User.objects.get(pk=self.acc_pk)
-        return render(request,"courseList.html",{'user': updated_acc, 'check':self.val })
+        except ValueError as error:
+            return render(request, "accountInfo.html", {'user': self.acc_edit, 'message':error.__str__()})
+        updated_account = User.objects.get(pk=pk)
+        return render(request, "accountInfo.html", {'user': updated_account,'message': f'Account \'{updated_account.username}\' edited successfully!'})
 
             
