@@ -258,4 +258,18 @@ class UserClass(ABC):
             return True
         except User.DoesNotExist:
             return False
+    
+    def check_conflicts(self,meeting_day,start_time,end_time):
+        possible_conflict = False
+        for section in self.assigned_sections:
+            for day1 in section.meeting_day:
+                for day2 in meeting_day:
+                    if day1 == day2:
+                        possible_conflict = True
+                if possible_conflict == True:
+                    if start_time >= section.start_time and end_time <= end_time:
+                        raise ValueError("The section that is being assigned conflicts with another section assignment")
+                possible_conflict = False
+
+
 
