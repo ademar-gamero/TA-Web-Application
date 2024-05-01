@@ -17,13 +17,11 @@
 <body>
     <div class="container">
         <h2>Login</h2>
-        <!-- Display any error messages from Django's messaging framework -->
         {% if messages %}
             {% for message in messages %}
                 <div class="error">{{ message }}</div>
             {% endfor %}
         {% endif %}
-        <!-- Login Form -->
         <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
             <div>
