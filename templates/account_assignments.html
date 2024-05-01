@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Assignments</title>
+</head>
+<body>
+    <h1 align = "center">{{user.name user.role}} Assignments</h1>
+    <div align = "center">
+        <table>
+          <tr>
+            <td>Assigned: {{user.assigned}}</td>
+          </tr>
+          <tr>
+            <td><label for="role">Assigned Sections:</label></td>
+          </tr>
+            <tr>
+              <th>Course</th>
+              <th>Section ID</th>
+              <th>Type</th>
+              <th>Delete</th>
+            </tr>
+          {%for section in sections %}
+            <tr>
+              <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
+              <td>{{ section.section_id }}</td>
+              <td>{{ section.type }}</td>
+              <td> delete link </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <form action="/Home/accountList/accountAssignment/{{user.pk}}/" method="post"> 
+        {% csrf_token %}
+            Add Section:
+            <td><select name="section" id="section-selection">
+              {% for newsection in allSections %}
+                <option value="{{ newsection }}">{{newsection.course_parent newsection.course_id newsection.course_type }}</option>  
+              {% endfor %}
+          </select></td>
+          <input type="submit" value="Submit">
+        </form>
+        <br>
+      <h3>{{ message }}</h3>
+      <br>
+      <a href = "/Home/accountList/"> Go Back </a></br>
+      <br>
+      <a href = "/Home/"> Go Home </a> </br>
+    </div>
+</body>
+</html>

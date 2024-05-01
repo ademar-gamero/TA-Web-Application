@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views import View
 from ta_app.models import User
 from ta_app.Classes.UserClass import UserClass
-from django.shortcuts    import redirect
+from django.shortcuts import redirect
 
 class accountInfoView(View):
     acc_edit = None
@@ -18,7 +18,7 @@ class accountInfoView(View):
         account = User.objects.get(pk=pk) 
         self.acc_edit = UserClass(account.username,account.password,account.name,account.role,
         account.email,account.phone_number,account.address,account.assigned,account.assigned_section)
-        return render(request, "accountInfo.html", {'user': account, "check":self.val})
+        return render(request, "accountInfo.html", {'user': account})
 
     def post(self,request,pk):
         name = request.POST.get('name')    
