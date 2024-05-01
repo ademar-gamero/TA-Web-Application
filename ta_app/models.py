@@ -42,7 +42,7 @@ class User(models.Model):
     address = models.CharField(max_length=256)
     assigned = models.BooleanField(null=True)
     assigned_section = models.ManyToManyField(Section, blank=True)
+    skills = models.CharField(max_length=500, null=True)
 
     def __str__(self):
         return f"{self.name} {self.role}"
-# Create your models here.

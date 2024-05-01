@@ -94,11 +94,20 @@ class set_role(Common):
 class set_assigned(Common):
     def test_setAssigned(self):
         with self.assertRaises(ValueError, msg="Assignment must be a boolean"):
-            self.assigned_user.set_assigned("Presiddent")
+            self.assigned_user.set_assigned("President")
 
     def test_setAssignedCorrect(self):
         self.assigned_user.set_assigned(True)
         self.assertEqual(True,self.assigned_user.assigned)
+
+class set_skills(Common):
+    def test_setSkills(self):
+        with self.assertRaises(ValueError, msg="Skills must be a string"):
+            self.assigned_user.set_skills(True)
+
+    def test_setSkillsCorrect(self):
+        self.assigned_user.set_skills("CS 361")
+        self.assertEqual("CS 361",self.assigned_user.skills)
 
 class TestUserClass(Common):
 
@@ -520,14 +529,4 @@ class TestEditUser(TestCase):
     def test_edit_user_addressBad(self):
         with self.assertRaises(ValueError, msg="Fails to catch invalid address"):
             self.user.edit_user(None, None, None, None, None, None, 200.2)
-
-            
-            
-            
-            
-            
-            
-            
-            
-            
 

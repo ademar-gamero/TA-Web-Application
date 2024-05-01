@@ -15,7 +15,7 @@ from django.core.validators import validate_email
 class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
-                 assigned_sections=None):
+                 assigned_sections=None, skills=" "):
 
 
 
@@ -35,7 +35,6 @@ class UserClass(ABC):
             raise ValueError("Password cannot contain spaces")
 
         if not (role == "Teacher-Assistant" or role == "Instructor" or role == "Admin"):
-
             raise ValueError("Invalid role")
         if not isinstance(phone_number, str):
             raise ValueError("Invalid phone number")
@@ -62,7 +61,7 @@ class UserClass(ABC):
         self.assigned_sections = []
         if assigned_sections is not None:
             self.assigned_sections = assigned_sections
-
+        self.skills = skills
 
 
 
@@ -92,7 +91,6 @@ class UserClass(ABC):
             raise ValueError("New Username must not be None")
 
     def set_email(self, new_email):
-
         try:
             validate_email(new_email)
         except ValidationError:
@@ -158,6 +156,12 @@ class UserClass(ABC):
         else:
             raise ValueError("Invalid section entry")
 
+    def set_skills(self, new_skills):
+        if isinstance(new_skills, str):
+            self.skills = new_skills
+        else:
+            raise ValueError("Skills must be a string")
+
     def get_username(self):
         return self.username
 
@@ -184,6 +188,9 @@ class UserClass(ABC):
 
     def get_assigned_sections(self):
         return self.assigned_sections
+
+    def get_skills(self):
+        return self.skills
 
 
     def view_contact_info(self, username):
@@ -239,7 +246,7 @@ class UserClass(ABC):
 
             user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
                         role=self.get_role(), email=self.get_email(), phone_number=self.get_phone_number(),
-                        address=self.get_address(),assigned=self.get_assigned())
+                        address=self.get_address(),assigned=self.get_assigned(), skills=self.get_skills())
             for i in self.assigned_sections:
                 user.assigned_section.add(i)
             user.save()
