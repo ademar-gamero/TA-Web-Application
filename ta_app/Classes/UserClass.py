@@ -257,7 +257,7 @@ class UserClass(ABC):
             val_to_del.delete()
             return True
         except User.DoesNotExist:
-            return False
+            raise ValueError("This user does not exist can not be deleted")
     
     def check_conflicts(self,meeting_day,start_time,end_time):
         possible_conflict = False
