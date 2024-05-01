@@ -11,12 +11,14 @@
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
+            text-align: center;
         }
         a {
             display: block;
             margin-bottom: 10px;
             color: #007BFF;
             text-decoration: none;
+            text-align: center;
         }
         a:hover {
             color: #0056b3;
@@ -31,14 +33,13 @@
         button:hover, input[type="submit"]:hover {
             background-color: #0056b3;
         }
-        .error { color: red; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Home</h2>
+        <h2><center>Home</center></h2>
         <div>
-            <p> Welcome to the TA Scheduler App, {{ name }}! </p>
+            <p><center> Welcome to the TA Scheduler App, {{ name }}! </center></p>
             <a href = "{% url 'courseList' %}">Course Catalog</a>
             {% if role == "Admin" %}
                 <a href = "{% url 'createCourse' %}">Create Course</a>
