@@ -33,8 +33,8 @@ class Section(models.Model):
     course_parent = models.ForeignKey(Course, on_delete=models.CASCADE)
     section_id = models.IntegerField(null=True)
     type = models.CharField(max_length=7, choices=Types.choices, default=Types.LEC)
-    start_time = models.DateTimeField(null=True)
-    end_time = models.DateTimeField(null=True)
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
     location = models.CharField(max_length=500,null=True)
 
     def __str__(self):

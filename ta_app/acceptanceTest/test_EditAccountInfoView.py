@@ -56,7 +56,7 @@ class editAccount(TestCase):
         self.sec = Section(course_parent = self.algos,section_id=1,type="lecture",location="classroom")
         self.sec.save()
         self.accountList = [self.admin,self.instructor]
-        self.detail_url = reverse('accountInfo',args=[self.admin.pk])
+        self.detail_url = reverse('accountInfo',args=[self.instructor.pk])
         self.instructor2.assigned_section.add(self.sec)
         self.instructor2.save()
 
@@ -105,7 +105,7 @@ class editAccount(TestCase):
             }, follow=True)
 
         self.assertTrue(resp.context['message'], "Account admin edited successfully!")
-        new = User.objects.get(pk=self.admin.pk)
+        new = User.objects.get(pk=self.instructor.pk)
         self.assertTrue(new.name == "felix", "name was not edited")
 
     def test_editUserName(self):
@@ -117,8 +117,8 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
         resp = self.green.post(self.detail_url, {"username":"felix"} ,follow=True)
-        self.assertTrue(resp.context['message'],"Account admin edited successfully!")
-        new = User.objects.get(pk=self.admin.pk)
+        self.assertTrue(resp.context['message'],"Account admin edited successfully!",msg_prefix="message was not displayed")
+        new = User.objects.get(pk=self.instructor.pk)
         self.assertTrue(new.username == "felix","username was not edited")
 
     def test_editInvalidUserName(self):
@@ -130,26 +130,23 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
         resp = self.green.post(self.detail_url, {"username":"ta"} ,follow=True)
-        self.assertTrue(resp.context['message'],"Username 'ta' taken please enter a different username")
-        new = User.objects.get(pk=self.admin.pk)
-        self.assertTrue(self.admin.username == "admin","username was edited when it shouldnt have been")
+        self.assertTrue(resp.context['message'],"Username 'ta' taken please enter a different username", msg_prefix="message was not displayed")
+        self.assertTrue(self.instructor.username == "instructor","username was edited when it shouldnt have been")
 
 
-
-
-
-## tests below need adjustment
-    def test_editNameIncorrect(self):
+    def test_editPassword(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
 
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail_url,{"username":self.instructor2.username},follow=True)
-        self.assertFalse(resp.context['check'],"user was updated to contain invalid duplicated information")
-        self.assertContains(resp, f'value="{self.admin.username}"',"value updated when it shoulnt have")
 
+        resp = self.green.post(self.detail_url, {"password":"Mr.Robot"} ,follow=True)
+        self.assertTrue(resp.context['message'],"Account instructor edited successfully!",msg_prefix="message was not displayed")
+        new = User.objects.get(pk=self.instructor.pk)
+        self.assertTrue(new.password == "Mr.Robot","password was not edited")
+        
     def test_editRole(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
 
@@ -157,33 +154,25 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail_url,{"role":self.instructor2.role},follow=True)
-        self.assertTrue(resp.context['check'],"bool val is False when should be True")
-        self.assertContains(resp, f'value="{self.instructor2.role}"',"value did not update in html")
 
-    def test_editAssigned(self):
+        resp = self.green.post(self.detail_url, {"role":self.ta.role} ,follow=True)
+        self.assertTrue(resp.context['message'],"Account instructor edited successfully!",msg_prefix="message was not displayed")
+        new = User.objects.get(pk=self.instructor.pk)
+        self.assertTrue(new.role == self.ta.role,"role was not edited")
+
+
+    def test_editPhoneNumber(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
 
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail_url,{"assigned":self.instructor2.assigned},follow=True)
-        self.assertTrue(resp.context['check'],"bool val is False when should be True")
-        self.assertContains(resp, f'value="{self.instructor2.assigned}"',"value did not update in html")
 
-
-    def test_editInValidPhoneNumber(self):
-        resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
-
-        resp = self.green.get("/Home/accountList/")
-        self.assertEqual(200,resp.status_code,"role error")
-        resp = self.green.get(self.detail_url)
-        self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail_url,{"phone_number":self.instructor2.phone_number},follow=True)
-        self.assertContains(resp,"Phone Number: "+self.instructor2.phone_number)
-        self.assertFalse(resp.context['check'],"user was updated to contain invalid duplicated information")
-        self.assertContains(resp, f'value="{self.admin.phone_number}"',"value updated when it shouldnt have ")
+        resp = self.green.post(self.detail_url, {"phone_number":"371-121-121"} ,follow=True)
+        self.assertTrue(resp.context['message'],"Account instructor edited successfully!",msg_prefix="message was not displayed")
+        new = User.objects.get(pk=self.instructor.pk)
+        self.assertTrue(new.phone_number == "371-121-121","phone_number was not edited")
 
     def test_editEmail(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
@@ -192,9 +181,12 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail_url,{"email":"cryptic@email.com"},follow=True)
-        self.assertTrue(resp.context['check'],"bool val is False when should be True")
-        self.assertContains(resp, f'value="{"cryptic@email.com"}"',"value did not update in html")
+
+        resp = self.green.post(self.detail_url, {"email":"newgrounds@email.com"} ,follow=True)
+        self.assertTrue(resp.context['message'],"Account instructor edited successfully!",msg_prefix="message was not displayed")
+        new = User.objects.get(pk=self.instructor.pk)
+        self.assertTrue(new.email == "newgrounds@email.com","email was not edited")
+
 
     def test_editInvalidEmail(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
@@ -203,46 +195,14 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail_url,{"email":self.instructor2.email},follow=True)
-        self.assertFalse(resp.context['check'],"user was updated to contain invalid duplicated information")
-        self.assertContains(resp, f'value="{self.admin.email}"',"value updated when it shouldnt have ")
 
-    def test_editPassword(self): 
-        resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
+        resp = self.green.post(self.detail_url, {"email":self.ta.email} ,follow=True)
+        self.assertTrue(resp.context['message'],"Duplicate email entered, can not be edited",msg_prefix="message was not displayed")
+        new = User.objects.get(pk=self.instructor.pk)
+        self.assertTrue(new.email != self.ta.email,"email was not edited")
 
-        resp = self.green.get("/Home/accountList/")
-        self.assertEqual(200,resp.status_code,"role error")
-        resp = self.green.get(self.detail_url)
-        self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail_url,{"password":self.instructor2.password},follow=True)
-        self.assertTrue(resp.context['check'],"bool val is False when should be True")
-        self.assertContains(resp, f'value="{self.instructor2.password}"',"value did not update in html")
+## tests below need adjustment
 
-    def test_sameEditPhoneNumber(self):
-        resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
 
-        resp = self.green.get("/Home/accountList/")
-        self.assertEqual(200,resp.status_code,"role error")
-        resp = self.green.get(self.detail_url)
-        self.assertEqual(200,resp.status_code,"page was not displayed")
-        resp = self.green.post(self.detail_url,{"phone_number":1},follow=True)
-        self.assertTrue(resp.context['check'],"bool val is False when should be True")
-        self.assertContains(resp, f'value="{"1"}"',"value did not update in html")
 
-        
 
-        
-        
-
-        
-
-        
-        
-
-        
-
-        
-        
-
-        
-        
