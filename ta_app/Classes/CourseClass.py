@@ -96,7 +96,7 @@ class CourseClass(object):
 
         # check that the database does not already contain the id+name+semester combination
         # return False if it's already there
-        find_course = Course.objects.all().filter(course_id=courseid).filter(course_name=name).filter(semester=sem)
+        find_course = Course.objects.all().filter(course_id=courseid,course_name=name,semester=sem)
         if find_course.exists():  # if there's something in the returned QuerySet
             return False  # then it already exists
 
