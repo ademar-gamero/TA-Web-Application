@@ -12,13 +12,21 @@ class Types(models.TextChoices):
     LEC = "lecture"
 
 
+class Semester(models.TextChoices):
+    FALL = "Fall"
+    WINT = "Winter"
+    SPRI = "Spring"
+    SUMM = "Summer"
+
+
 class Course(models.Model):
     course_id = models.IntegerField(null=True)
     course_name = models.CharField(max_length=50)
     description = models.TextField(null=True,blank=True)
+    semester = models.CharField(max_length=6, choices=Semester.choices, default=Semester.FALL)
 
     def __str__(self):
-        return f"{self.course_id} {self.course_name}"
+        return f"{self.course_id} {self.course_name} - {self.semester}"
 
 
 class Section(models.Model):
@@ -26,7 +34,6 @@ class Section(models.Model):
     section_id = models.IntegerField(null=True)
     meeting_time = models.DateTimeField(null=True)
     type = models.CharField(max_length=7, choices=Types.choices, default=Types.LEC)
-
 
     def __str__(self):
         return f"{self.course_parent.course_name} {self.type} {self.section_id}"
