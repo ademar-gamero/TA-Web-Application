@@ -367,6 +367,6 @@ class CourseCreateCourse(CommonCourses):
     def test_addSameWhiteSpace(self):
         # will CourseClass constructor return duplicate courses correctly to prevent duplicate database additions
         temp1 = self.cs361
-        temp2 = CourseClass(361, " CompSci ", " A computer science course ", "Fall")
+        temp2 = CourseClass(361, " CompSci ", " A computer science course ", "Spring")
         temp1.create_course()
         self.assertEqual(False, temp2.create_course(), "Course objects should have been duplicates")
