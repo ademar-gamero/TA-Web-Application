@@ -7,20 +7,20 @@
 <body>
     <h1>Create Course</h1>
     <div>
-      
+      {{ session }}
     <form action="/Home/createCourse/" method="post">
       {% csrf_token %}
         <input type="number" min="0" max="9999" name="course_id" placeholder = "course id"></br>
         <input type="text" name="course_name" placeholder = "course name"></br>
+        <select name="semester" id="semester" required>
+            {% for semester_key, semester_value in semesters %}
+             <option value="{{ semester_key }}">{{ semester_value }}</option>
+            {% endfor %}
+        </select></br>
         <textarea name="description" rows="5" cols="30"></textarea></br>
         <input type="submit" value="Submit"></br>
     </form>
-        {% if check == True %}
-            <h1> Course Successfully Created </h1>
-        {% endif %}
-        {% if check == False %}
-            <h1> Course Creation Failed </h1>
-        {% endif %}
+       {{ errorMessage }}
     </div>
 </body>
 </html>
