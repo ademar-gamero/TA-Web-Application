@@ -41,8 +41,8 @@ th, td {
 			<tr>
 				<th>Username</th>
 				<th>Name</th>
+                <th>Role</th>
 				<th>Email</th>
-				<th>Role</th>
 				{% if isAdmin %}
 					<th>Phone Number</th>
 					<th>Address</th>
@@ -54,8 +54,8 @@ th, td {
 				<tr>
 					<td><a href = "{% url 'accountDetails' pk=account.pk %}">{{account.username}}</a></td>
 					<td>{{account.name}}</td>
+                    <td>{{account.role}}</td>
 					<td>{{account.email}}</td>
-					<td>{{account.role}}</td>
 					{% if isAdmin %}
 						<td>{{account.phone_number}}</td>
 						<td>{{account.address}}</td>
