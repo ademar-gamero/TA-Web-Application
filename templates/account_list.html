@@ -49,19 +49,21 @@ th, td {
 					<th>Edit Info</th>
 					<th>Delete User</th>
 				{% endif %}
+                <th>Assigned Sections</th>
 			</tr>
 			{% for account in account_list %}
 				<tr>
-					<td><a href = "{% url 'accountDetails' pk=account.pk %}">{{account.username}}</a></td>
+					<td>{{account.username}}</td>
 					<td>{{account.name}}</td>
                     <td>{{account.role}}</td>
 					<td>{{account.email}}</td>
 					{% if isAdmin %}
 						<td>{{account.phone_number}}</td>
 						<td>{{account.address}}</td>
-						<td><a href = "{% url 'editAccount' pk=account.pk %}">edit {{account.username}}</a></td>
+						<td><a href = "{% url 'accountInfo' pk=account.pk %}">edit {{account.username}}</a></td>
 						<td><a href = "{% url 'deleteAccount' pk=account.pk %}">delete {{account.username}}</a></td>
 					{% endif %}
+                    <td><a href = "{% url 'accountAssignment' pk=account.pk %}">{{account.username}}'s Assignments</a></td>
 				</tr>
 			{% endfor %}
 		</table>
