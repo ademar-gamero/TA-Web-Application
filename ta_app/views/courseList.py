@@ -1,48 +1,22 @@
-from django.contrib import messages
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.views import View
 from ta_app.models import Course
+from django.contrib import messages
 
 class courseList(View):
-    def get(self,request):
+    def get(self, request):
         courses = Course.objects.all()
-        print(courses)
-        return render(request,"courseList.html",{"courselist":courses}) 
-    def post(self,request):
-        if 'delete_course_id' in request.POST:
-            course_id = request.POST.get('delete_course_id')
-            course = Course.objects.filter(course_id=course_id)
-            if course.exists():
+        is_admin = request.session.get('role') == 'Admin'  # Check if user is an admin
+        return render(request, "courseList.html", {"courselist": courses, "is_admin": is_admin})
+
+    def post(self, request):
+        # Handle deletion confirmation for admins
+        if 'delete_id' in request.POST and request.session.get('role') == 'Admin':
+            course_id = request.POST.get('delete_id')
+            try:
+                course = Course.objects.get(id=course_id)
                 course.delete()
-            else:
-                messages.error(request, "Course not found.")
-            return redirect('courseList')
-        else:
-            id = request.POST.get('course_id', '')
-            name = request.POST.get('course_name', '')
-            courses = Course.objects.all()
-            if id:
-                courses = courses.filter(course_id=int(id))
-            if name:
-                courses = courses.filter(course_name__icontains=name)
-            return render(request, "courseList.html", {"courselist": courses})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                messages.success(request, 'Course successfully deleted.')
+            except Course.DoesNotExist:
+                messages.error(request, 'Course not found.')
+        return redirect('courseList')
