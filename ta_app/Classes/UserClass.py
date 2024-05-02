@@ -16,10 +16,6 @@ class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
                  assigned_sections=None):
-
-
-
-
         if (username == "" or password == "" or name == "" or role == "" or email == ""
                 or username is None or password is None or name is None or role is None or email is None):
             raise ValueError("Must include username, password, name, role, and email.")
@@ -44,12 +40,10 @@ class UserClass(ABC):
         if not isinstance(assigned, bool):
             raise ValueError("Assigned must be a boolean")
 
-
         try:
             validate_email(email)
         except ValidationError:
             raise ValueError("Email is not valid")
-
 
         self.username = username
         self.password = password
@@ -62,9 +56,6 @@ class UserClass(ABC):
         self.assigned_sections = []
         if assigned_sections is not None:
             self.assigned_sections = assigned_sections
-
-
-
 
     def __str__(self):
         return f'{self.name} : {self.role}'
@@ -92,11 +83,9 @@ class UserClass(ABC):
             raise ValueError("New Username must not be None")
 
     def set_email(self, new_email):
-
         try:
             validate_email(new_email)
         except ValidationError:
-
             raise ValueError("Email is not valid")
         self.email = new_email
 
@@ -143,6 +132,9 @@ class UserClass(ABC):
                 if self.assigned_sections.count(new_section) > 0:
                     raise ValueError("User is already assigned to this section")
                 self.assigned_sections.append(new_section)
+            if ((self.role == "Teacher-Assistant" and new_section.type == "LAB") or
+                    (self.role == "Instructor" and new_section.type == "LEC")):
+                self.set_assigned(True)
         else:
             raise ValueError("Invalid section entry")
 
@@ -185,7 +177,6 @@ class UserClass(ABC):
     def get_assigned_sections(self):
         return self.assigned_sections
 
-
     def view_contact_info(self, username):
         if not isinstance(username, str):
             raise ValueError("Invalid username")
@@ -204,7 +195,7 @@ class UserClass(ABC):
         if username is not None:
             try: 
                 User.objects.get(username=username)
-                raise  ValueError("Username already in user. Please choose a unique username.")
+                raise ValueError("Username already in user. Please choose a unique username.")
             except User.DoesNotExist:
                 self.set_username(username)
         if password is not None:
@@ -216,7 +207,7 @@ class UserClass(ABC):
         if email is not None:
             try: 
                 User.objects.get(email=email)
-                raise ValidationError("Email already in use. Please use a unique email.")
+                raise ValueError("Email already in use. Please use a unique email.")
             except User.DoesNotExist:
                 self.set_email(email)
         if phone is not None:
@@ -259,14 +250,14 @@ class UserClass(ABC):
         except User.DoesNotExist:
             raise ValueError("This user does not exist can not be deleted")
     
-    def check_conflicts(self,meeting_day,start_time,end_time):
+    def check_conflicts(self, meeting_day, start_time, end_time):
         possible_conflict = False
         for section in self.assigned_sections:
             for day1 in section.meeting_day:
                 for day2 in meeting_day:
                     if day1 == day2:
                         possible_conflict = True
-                if possible_conflict == True:
+                if possible_conflict:
                     if start_time >= section.start_time and end_time <= end_time:
                         raise ValueError("The section that is being assigned conflicts with another section assignment")
                 possible_conflict = False

@@ -530,7 +530,7 @@ class TestEditUser(TestCase):
             self.user.edit_user(None, None, None, None, None, None, 200.2)
 
 
-class SectionAssignementTests(TestCase):
+class SectionAssignmentTests(TestCase):
 
     def setUp(self):
         self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="TA", email="ta@uwm.edu")
