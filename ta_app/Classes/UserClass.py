@@ -131,6 +131,9 @@ class UserClass(ABC):
             else:
                 if self.assigned_sections.count(new_section) > 0:
                     raise ValueError("User is already assigned to this section")
+                if self.assigned:
+                    # checks for conflicts if user already assigned. if it finds one, this will throw an error
+                    self.check_conflicts(new_section.meeting_day, new_section.start_time, new_section.end_time)
                 self.assigned_sections.append(new_section)
             if ((self.role == "Teacher-Assistant" and new_section.type == "LAB") or
                     (self.role == "Instructor" and new_section.type == "LEC")):
@@ -195,7 +198,7 @@ class UserClass(ABC):
         if username is not None:
             try: 
                 User.objects.get(username=username)
-                raise ValueError("Username already in user. Please choose a unique username.")
+                raise ValueError("Username already in use. Please choose a unique username.")
             except User.DoesNotExist:
                 self.set_username(username)
         if password is not None:
@@ -259,7 +262,8 @@ class UserClass(ABC):
                         possible_conflict = True
                 if possible_conflict:
                     if start_time >= section.start_time and end_time <= end_time:
-                        raise ValueError("The section that is being assigned conflicts with another section assignment")
+                        raise ValueError("The section being assigned conflicts with another section assignment :"
+                                         + section.__str__())
                 possible_conflict = False
 
 
