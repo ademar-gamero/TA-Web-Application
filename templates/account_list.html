@@ -3,10 +3,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Account List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .center {
+            margin: auto;
+            width: 25%;
+            border: 3px solid black;
+            padding: 25px;
+        }
+        .center2 {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        .center3 {
+            margin: auto;
+            width: 100%;
+        }
+        table, th, td {
+            border:1px solid black;
+        }
+        
+    </style>
+    <title>Account Roster</title>
 </head>
 <body>
-<h1>Account List Page</h1>
+<h1>Account Roster </h1>
   
     <form action="/Home/accountList/" method="post">
       {% csrf_token %}
@@ -23,17 +45,35 @@
       <input type="submit" value="Submit">
     </form>
   <div>
-      
-    {%if not accountlist %}
-      <p> no accounts found </p>
-    {% endif %}
-    <table>
-    {% for account in accountlist %}
+
+  <div class="center">
+    <h2 class = "center3"> Saved Sections </h2>
+    <table class="center2">
       <tr>
-          <td><p><a href = "{% url 'accountInfo' pk=account.pk %}">{{ account }}</a></td>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Edit Account Info</th>
+        <th>Account Assignments</th>
+        <th>Delete Account</th>
+
       </tr>
-    {% endfor %}
-      </table>
+    {%for account in accountList %}
+      <tr>
+        <td>{{ account.username}}</td>
+        <td>{{ account.name }}</td>
+        <td>{{ account.role }}</td>
+        <td>{{ account.email }}</td>
+        <td>{{ account.phone_number }}</td>
+        <td><a href = "{% url 'accountInfo' pk=account.pk %}">Edit Account Info</a></td>
+        <td><a href = "{% url 'accountAssignment' pk=account.pk %}">Account Assignments</a></td>
+        <td>Delete</td>
+      </tr>
+      {% endfor %}
+    </table>
   </div>
+      
 </body>
 </html>
