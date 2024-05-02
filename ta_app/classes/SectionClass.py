@@ -31,6 +31,12 @@ class SectionClass:
 
     def edit_meeting_days(self, new_days):
         self.meeting_days = new_days
+    def add_meeting_days(self,new_days):
+        pass
+    def remove_meeting_days(self,day):
+        pass
+
+
     def edit_meeting_time(self, new_time):
         self.meeting_time = new_time
 
@@ -53,6 +59,3 @@ class SectionClass:
         section = Section.objects.get(id=self.section_id)
         section.delete()
         return True
-
-
-
