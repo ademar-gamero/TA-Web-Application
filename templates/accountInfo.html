@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account {{ user }}</title>
+</head>
+<body>
+    <h1 align = "center">Edit Account Info</h1>
+    <div align = "center">
+    <form action="/Home/accountList/accountInfo/{{user.pk}}/" method="post"> 
+      {% csrf_token %}
+        <table>
+          <tr>
+            <td><label for="name">Name: </label></td> 
+            <td><input type="text" name="name" value = {{user.name}}></td>
+          </tr>
+          <tr>
+            <td><label for="username">Username: </label></td>
+            <td><input type="text" name="username" value = {{user.username}}></td>
+          </tr>
+          <tr>
+            <td><label for="email">Email:</label></td>
+            <td><input type="text" name="email" value = {{user.email}}></td>
+          </tr>
+          <tr>
+            <td><label for="password">Password:</label></td>
+            <td><input type="text" name="password" value = {{user.password}}></td>
+          </tr>
+          <tr>
+            <td><label for="phone_number">Phone Number: </label></td>
+            <td><input type="text" name="phone_number" value = {{user.phone_number}}></td>
+          </tr>
+          <tr>
+            <td><label for="address">Address: </label></td>
+            <td><input type="text" name="address" value = {{user.address}}></td>
+          </tr>
+          <tr>
+            <td><label for="role">Role:</label></td>
+            <td><select name="role" id="role-selection">
+              <option value="{{ user.role }}">Current Role: {{ user.role }}</option>  
+              <option value="Admin">Admin</option>
+              <option value="Instructor">Instructor</option>
+              <option value="Teacher-Assistant">Teacher Assistant</option>
+          </select></td>
+          </tr>
+        </table>
+        <br>
+          <input type="submit" value="Submit">
+    </form>
+      <h3>{{ message }}</h3>
+      <br>
+      <a href = "/Home/accountList/"> Go Back </a></br>
+      <br>
+      <a href = "/Home/"> Go Home </a> </br>
+    </div>
+</body>
+</html>
