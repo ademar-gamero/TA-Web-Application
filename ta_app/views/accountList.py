@@ -16,27 +16,29 @@ class accountList(View):
 
     def post(self,request):
         isAdmin = False
-        name = request.POST.get('name','')
-        username = request.POST.get('username','')
-        role = request.POST.get('roles','')
+        name = request.POST.get('name', '')
+        username = request.POST.get('username', '')
+        role = request.POST.get('roles', '')
         accounts = []
         if request.session["role"] == "Admin":
             isAdmin = True
-
-        if name != '' and username != '' and role != '':
-            accounts = User.objects.filter(name=name, username=username, role=role)
-        if name != '' and username != '' and role == '':
-            accounts = User.objects.filter(name=name, username=username)
-        if name != '' and username == '' and role != '':
-            accounts = User.objects.filter(name=name, role=role)
-        if name == '' and username != '' and role != '':
-            accounts = User.objects.filter(username=username, role=role)
-        if name == '' and username == '' and role != '':
-            accounts = User.objects.filter(role=role)
-        if name == '' and username != '' and role == '':
-            accounts = User.objects.filter(username=username)
-        if name != '' and username == '' and role == '':
-            accounts = User.objects.filter(name=name)
+        if request.POST.get('input_button') == "Submit":
+            if name != '' and username != '' and role != '':
+                accounts = User.objects.filter(name=name, username=username, role=role)
+            if name != '' and username != '' and role == '':
+                accounts = User.objects.filter(name=name, username=username)
+            if name != '' and username == '' and role != '':
+                accounts = User.objects.filter(name=name, role=role)
+            if name == '' and username != '' and role != '':
+                accounts = User.objects.filter(username=username, role=role)
+            if name == '' and username == '' and role != '':
+                accounts = User.objects.filter(role=role)
+            if name == '' and username != '' and role == '':
+                accounts = User.objects.filter(username=username)
+            if name != '' and username == '' and role == '':
+                accounts = User.objects.filter(name=name)
+        else:
+            accounts = User.objects.all()
         return render(request,"account_list.html", {"account_list": accounts, "isAdmin": isAdmin})
     
 
