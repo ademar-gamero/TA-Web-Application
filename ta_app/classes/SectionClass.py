@@ -21,6 +21,7 @@ class SectionClass:
         Section.objects.create(
             course_parent=self.course_parent,
             section_id=self.section_id,
+            meeting_days=self.meeting_days,
             meeting_time=self.meeting_time,
             type=self.section_type  # Ensuring it maps to 'type', not 'section_type'
         )
@@ -52,6 +53,7 @@ class SectionClass:
             course_parent=self.course_parent,
             section_id=self.section_id,
             meeting_time=self.meeting_time,
+            meeting_days=self.meeting_days,
             type=self.section_type
         )
 
