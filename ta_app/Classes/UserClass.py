@@ -15,7 +15,7 @@ from django.core.validators import validate_email
 class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
-                 assigned_sections=None):
+                 assigned_sections=None, skills=" "):
         if (username == "" or password == "" or name == "" or role == "" or email == ""
                 or username is None or password is None or name is None or role is None or email is None):
             raise ValueError("Must include username, password, name, role, and email.")
@@ -31,7 +31,6 @@ class UserClass(ABC):
             raise ValueError("Password cannot contain spaces")
 
         if not (role == "Teacher-Assistant" or role == "Instructor" or role == "Admin"):
-
             raise ValueError("Invalid role")
         if not isinstance(phone_number, str):
             raise ValueError("Invalid phone number")
@@ -39,7 +38,8 @@ class UserClass(ABC):
             raise ValueError("Invalid phone number")
         if not isinstance(assigned, bool):
             raise ValueError("Assigned must be a boolean")
-
+        if not isinstance(skills, str):
+            raise ValueError("Skills must be a string")
         try:
             validate_email(email)
         except ValidationError:
@@ -56,6 +56,7 @@ class UserClass(ABC):
         self.assigned_sections = []
         if assigned_sections is not None:
             self.assigned_sections = assigned_sections
+        self.skills = skills
 
     def __str__(self):
         return f'{self.name} : {self.role}'
@@ -153,6 +154,12 @@ class UserClass(ABC):
         else:
             raise ValueError("Invalid section entry")
 
+    def set_skills(self, new_skills):
+        if isinstance(new_skills, str):
+            self.skills = new_skills
+        else:
+            raise ValueError("Skills must be a string")
+
     def get_username(self):
         return self.username
 
@@ -180,6 +187,9 @@ class UserClass(ABC):
     def get_assigned_sections(self):
         return self.assigned_sections
 
+    def get_skills(self):
+        return self.skills
+
     def view_contact_info(self, username):
         if not isinstance(username, str):
             raise ValueError("Invalid username")
@@ -192,7 +202,7 @@ class UserClass(ABC):
         else:
             return contact.email
 
-    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
+    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None, skills=None):
         old_username = self.username
 
         if username is not None:
@@ -219,31 +229,26 @@ class UserClass(ABC):
             except User.DoesNotExist:
                 self.set_phone_number(phone)
         if address is not None:
-
             self.set_address(address)
+        if skills is not None:
+            self.set_skills(skills)
         User.objects.filter(username=old_username).update(username=self.username, password=self.password,
                                                           name=self.name,
                                                           role=self.role, email=self.email,
                                                           phone_number=self.phone_number,
-                                                          address=self.address)
+                                                          address=self.address, skills=self.skills)
 
     def create_user(self):
         try:
             User.objects.get(username=self.username)
             raise ValueError("Username is already taken")
         except User.DoesNotExist:
-            try:
-                User.objects.get(username=self.email)
-                raise ValueError("Email is already taken")
-            except User.DoesNotExist:
-                user = User.objects.create(username=self.get_username(), password=self.get_password(),
-                                           name=self.get_name(), role=self.get_role(), email=self.get_email(),
-                                           hone_number=self.get_phone_number(), address=self.get_address(),
-                                           assigned=self.get_assigned())
-                for i in self.assigned_sections:
-                    user.assigned_section.add(i)
-                user.save()
-                print("Created user")
+            user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
+                        role=self.get_role(), email=self.get_email(), phone_number=self.get_phone_number(),
+                        address=self.get_address(),assigned=self.get_assigned(), skills=self.get_skills())
+            for i in self.assigned_sections:
+                user.assigned_section.add(i)
+            user.save()
 
     def delete_user(self):
         try:

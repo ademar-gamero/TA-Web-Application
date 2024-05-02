@@ -2,10 +2,18 @@ from django.views import View
 from django.shortcuts import render, redirect
 from ta_app.models import User
 from django.contrib import messages
+from django.contrib.messages import get_messages
 
 class login_view(View):
     def get(self, request):
-        return render(request, 'login.html')
+        messages_list = get_messages(request)
+        relevant_messages = []
+        for message in messages_list:
+            if 'logged out' in message.message or 'username' or 'password' in message.message:
+                relevant_messages.append(message)
+
+        context = {'messages': relevant_messages}
+        return render(request, 'login.html', context)
 
     def post(self, request):
         username = request.POST.get('username')

@@ -105,12 +105,21 @@ class set_role(Common):
 class set_assigned(Common):
     def test_setAssigned(self):
         with self.assertRaises(ValueError, msg="Assignment must be a boolean"):
-            self.assigned_user.set_assigned("Presiddent")
+            self.assigned_user.set_assigned("President")
 
     def test_setAssignedCorrect(self):
         self.assigned_user.set_assigned(True)
         self.assertEqual(True, self.assigned_user.assigned)
 
+
+class set_skills(Common):
+    def test_setSkills(self):
+        with self.assertRaises(ValueError, msg="Skills must be a string"):
+            self.assigned_user.set_skills(True)
+
+    def test_setSkillsCorrect(self):
+        self.assigned_user.set_skills("CS 361")
+        self.assertEqual("CS 361",self.assigned_user.skills)
 
 class TestUserClass(Common):
 
@@ -614,3 +623,4 @@ class SectionAssignmentTests(TestCase):
         self.assertFalse(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
         self.ta.add_section(self.lab3)
         self.assertEqual(self.ta.assigned_sections[1], self.lab3, "Lab wasn't added successfully")
+        

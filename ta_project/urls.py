@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from ta_app.views.deleteCourse import deleteCourse
 from ta_app.views.Home import Home
 from ta_app.views.courseList import courseList
 from ta_app.views.accountList import accountList
@@ -39,6 +40,7 @@ urlpatterns = [
     path('login/', login_view.as_view(), name='login'),
     path('Home/accountCreation/',accountCreation.as_view(), name='accountCreation'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
+    path('deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
     #path('logout/', logout_view.as_view(), name='logout'),
 ]
 
