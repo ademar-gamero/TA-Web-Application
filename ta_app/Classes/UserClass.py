@@ -15,7 +15,7 @@ from django.core.validators import validate_email
 class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
-                 assigned_sections=None, skills=" "):
+                 assigned_sections=None, skills=""):
         if (username == "" or password == "" or name == "" or role == "" or email == ""
                 or username is None or password is None or name is None or role is None or email is None):
             raise ValueError("Must include username, password, name, role, and email.")
