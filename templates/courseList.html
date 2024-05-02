@@ -3,10 +3,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .center {
+            margin: auto;
+            width: 25%;
+            border: 3px solid black;
+            padding: 25px;
+        }
+        .center2 {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        .center3 {
+            margin: auto;
+            width: 100%;
+        }
+        table, th, td {
+            border:1px solid black;
+        }
+        
+    </style>
     <title>Course List</title>
 </head>
 <body>
-<h1>Course List Page</h1>
+<h1>Search Courses</h1>
   
     <form action="/Home/courseList/" method="post">
       {% csrf_token %}
@@ -17,18 +39,37 @@
       <input type="submit" value="Submit">
     </form>
 
-  <div>
-    <h3> Courses: </h3>
+  <div class="center">
+    <h2 class = "center3"> Course Catalog </h2>
     {%if not courselist %}
       <p> no courses found </p>
     {% endif %}
-    <table>
-    {% for course in courselist %}
+    <table class="center2">
       <tr>
-          <td>{{ course }}</td>
+        <th>Course Subject</th>
+        <th>Course ID</th>
+        <th>Course Title</th>
+        <th>Semester</th>
+        <th>Edit Course Info</th>
+        <th>Edit Course Sections</th>
+        <th>Delete Course</th>
+
       </tr>
-    {% endfor %}
-      </table>
+    {%for course in courseList %}
+      <tr>
+        <td>{{ course.course_subject}}</td>
+        <td>{{ course.course_id }}</td>
+        <td>{{ course.course_title }}</td>
+        <td>{{ course.semester }}</td>
+        <td>{{ account.phone_number }}</td>
+        <td>Edit Course Info</td>
+        <td>Edit Course Sections</td>
+        <td>Delete</td>
+      </tr>
+      {% endfor %}
+      <br>
+      <a href = "/Home/"> Go Home </a> 
+    </table>
   </div>
 </body>
 </html>

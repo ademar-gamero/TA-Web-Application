@@ -28,7 +28,7 @@
     <title>Account Roster</title>
 </head>
 <body>
-<h1>Account Roster </h1>
+<h1>Search Accounts</h1>
   
     <form action="/Home/accountList/" method="post">
       {% csrf_token %}
@@ -47,7 +47,7 @@
   <div>
 
   <div class="center">
-    <h2 class = "center3"> Saved Sections </h2>
+    <h2 class = "center3"> Account Roster </h2>
     <table class="center2">
       <tr>
         <th>Username</th>
@@ -73,6 +73,8 @@
       </tr>
       {% endfor %}
     </table>
+        <br>
+      <a href = "/Home/"> Go Home </a>
   </div>
       
 </body>

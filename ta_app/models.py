@@ -21,7 +21,8 @@ class Types(models.TextChoices):
 
 class Course(models.Model):
     course_id = models.IntegerField(null=True)
-    course_name = models.CharField(max_length=50)
+    course_subject = models.CharField(max_length=50)
+    course_title = models.CharField(max_length=256,null=True)
     semester = models.CharField(max_length=7, choices=Semesters.choices,default=None)
     description = models.TextField(null=True,blank=True)
     
