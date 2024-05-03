@@ -3,12 +3,16 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from ta_app.models import Course, Section
+from django.contrib import messages
 
 from ta_app.Classes.SectionClass import SectionClass
 class SectionView(View):
     template_name = 'create_section.html'
 
     def get(self, request):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         courses = Course.objects.all()
         sections = Section.objects.all()
         return render(request, 'create_section.html', {'courses': courses,'sections':sections})

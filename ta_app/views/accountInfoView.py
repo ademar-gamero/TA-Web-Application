@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.views.generic.detail import DetailView
 from django.shortcuts import render
 from django.views import View
@@ -11,6 +12,9 @@ class accountInfoView(View):
     val = None
 
     def get(self,request,pk):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         curr_acc = request.session["role"]
         if curr_acc != "Admin":
             return redirect("/Home/")

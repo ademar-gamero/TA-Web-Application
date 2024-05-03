@@ -5,6 +5,9 @@ from django.contrib import messages
 
 class courseList(View):
     def get(self, request):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         courses = Course.objects.all()
         is_admin = request.session.get('role') == 'Admin'  # Check if user is an admin
         return render(request, "courseList.html", {"courselist": courses, "is_admin": is_admin})

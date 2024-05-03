@@ -5,6 +5,9 @@ from django.contrib import messages
 
 class deleteCourse(View):
     def get(self, request, course_id):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         course = Course.objects.filter(pk=course_id).first()
         if course:
             return render(request, 'delete_course.html', {'course': course})

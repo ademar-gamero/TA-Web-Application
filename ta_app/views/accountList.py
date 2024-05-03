@@ -1,4 +1,4 @@
-
+from django.contrib import messages
 from django.shortcuts import render,redirect
 from django.views import View
 from ta_app.models import Course, User
@@ -8,6 +8,9 @@ from django.http import Http404
 class accountList(View):
 
     def get(self,request):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         isAdmin = False
         accounts = User.objects.all()
         if request.session["role"] == "Admin":
