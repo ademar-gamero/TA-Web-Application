@@ -1,34 +1,46 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from ta_app.Classes.CourseClass import CourseClass
+from ta_app.models import Semester
 
 
 # Create your views here.
 class createCourse(View):
     def get(self, request):
-        return render(request, "create_course.html", {})
+        semesters = Semester.choices  # get the semester choice options
+
+        # make sure that the user is of appropriate role status
+        current = request.session["role"]
+        if current == "Admin":
+            return render(request, "create_course.html", {'semesters': semesters})
+        else:
+            return redirect('/Home/')
 
     def post(self, request):
+        semester = request.POST.get("semester")
         courseNumber = request.POST.get("course_id")
-        courseid = int(courseNumber)
+        courseid=""
+        if courseNumber != '':
+            courseid = int(courseNumber)
         name = request.POST.get("course_name")
         description = request.POST.get("description")
-        # We want these to return None if there's nothing there, so don't add the second parameter. The
-        # default in this case will automatically be None.
-        # So the CourseClass() constructor will throw a TypeError if we try to create an instance of
-        # the class with one of the parameters as None. Our try except block, here in the post method,
-        # will then throw an exception and nothing will actually be posted to the database.
 
-        check = False
-        course = None
+        semesters = Semester.choices  # get the semester choice options
+
+        course = None  # tracks if the CourseClass object has been successfully created (data validation)
+        check = False  # tracks if the course has been successfully added to the database
         try:
-            course = CourseClass(course_id=courseid, course_name=name, description=description)
+            course = CourseClass(course_id=courseid, course_name=name, description=description, semester=semester)
         except TypeError as e:
-            return render(request, "create_course.html", {'check': check, 'errorMessage': e.__str__()})
+            return render(request, "create_course.html", {'semesters': semesters, 'errorMessage': e.__str__()})
         except ValueError as e:
-            return render(request, "create_course.html", {'check': check, 'errorMessage': e.__str__()})
+            return render(request, "create_course.html", {'semesters': semesters, 'errorMessage': e.__str__()})
 
-        if course.create_course() == True:  # if "course.create_course() returns True"
-            check = True
+        check = course.create_course()  # set flag to value returned by the method responsible for database additions
 
-        return render(request, "create_course.html", {'check': check})
+        if check == True:
+            return render(request, "create_course.html", {'semesters': semesters,
+                                                          'errorMessage': "Course Created Successfully!"})
+        else:
+            return render(request, "create_course.html", {'semesters': semesters,
+                                                          'errorMessage': "Duplicate course not added!"})

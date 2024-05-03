@@ -18,10 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from ta_app.views.deleteCourse import deleteCourse
 from ta_app.views.Home import Home
 from ta_app.views.courseList import courseList
 from ta_app.views.accountList import accountList
-from ta_app.views.accountView import accountView
+from ta_app.views.accountInfoView import accountInfoView
 from ta_app.views.createCourse import createCourse
 from ta_app.views.accountCreation import accountCreation
 from ta_app.views.loginView import login_view
@@ -34,10 +35,12 @@ urlpatterns = [
     path('Home/courseList/',courseList.as_view(),name="courseList"),
     path('Home/createSection/',SectionView.as_view(),name="createSection"),
     path('Home/accountList/',accountList.as_view(),name="accountList"),
-    path('Home/accountList/<int:pk>/',accountView.as_view(),name="accountDetails"),
+    path('Home/accountList/accountInfo/<int:pk>/',accountInfoView.as_view(),name="accountInfo"),
     path('Home/createCourse/',createCourse.as_view(), name="createCourse"),
     path('login/', login_view.as_view(), name='login'),
     path('Home/accountCreation/',accountCreation.as_view(), name='accountCreation'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
+    path('deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
+    #path('logout/', logout_view.as_view(), name='logout'),
 ]
 

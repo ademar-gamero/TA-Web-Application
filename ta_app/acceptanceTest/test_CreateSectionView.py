@@ -14,6 +14,7 @@ class AcceptanceTestSection(TestCase):
                           phone_number=1, address="1", assigned=False).save()
         self.instructor = User(name="ins", username="ins", password="ins", email="admin@email.com", role="Instructor",
                           phone_number=1, address="1", assigned=False).save()
+
     def test_duplicate_section(self):
         Section.objects.all().delete()
        # resp = self.green.post("/login/", {"username": 'admin',"password": 'admin'}, follow=True)
@@ -32,7 +33,7 @@ class AcceptanceTestSection(TestCase):
             'course_parent': self.course.id,  # Use the course ID
             'section_id': 27747,
             'meeting_time': '2023-01-01T14:00:00Z',
-            'section_type': 'LAB'
+            'section_type': 'lab'
         })
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['check'], "Section was not created when it should have been.")
@@ -46,3 +47,64 @@ class AcceptanceTestSection(TestCase):
         }, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['check'], "Section was not created when it should have been.")
+
+    def test_sectionDisplay(self):
+        response = self.client.post('/Home/createSection/', {
+            'course_parent': self.course.id,  # Use the course ID
+            'section_id': 27747,
+            'meeting_time': '2023-01-01T14:00:00Z',
+            'section_type': 'LAB'
+        })
+        sec = Section.objects.get(section_id=27747)
+        reslist = response.context["sections"]
+        self.assertTrue(sec in reslist,"value was not displayed")
+
+    def test_sectionMultipleDisplay(self):
+        response = self.client.post('/Home/createSection/', {
+            'course_parent': self.course.id,  # Use the course ID
+            'section_id': 27747,
+            'meeting_time': '2023-01-01T14:00:00Z',
+            'section_type': 'LAB'
+        })
+
+        sec = Section.objects.get(section_id=27747)
+        response = self.client.post('/Home/createSection/', {
+            'course_parent': self.course.id,  # Use the course ID
+            'section_id': 2525,
+            'meeting_time': '2023-01-01T14:00:00Z',
+            'section_type': 'LAB'
+        })
+
+        sec2 = Section.objects.get(section_id=2525)
+        
+        reslist = response.context['sections']
+        cbool = False
+
+        if sec in reslist and sec2 in reslist:
+            cbool = True
+
+        self.assertTrue(cbool,"values were not displayed")
+
+    def test_invalidSectionDisplay(self):
+
+        size_before = Section.objects.all().count()
+        print(size_before)
+        response = self.client.post('/Home/createSection/', {
+            'course_parent': 'ee',
+            'section_id': 123,
+            'meeting_time': '2023-01-01T15:00:00Z',
+            'section_type': 'Lecture'
+        }, follow=True)
+        clist = response.context['sections']
+        size = len(clist)
+        print(size)
+        self.assertTrue(size == size_before,"invalid section was displayed")
+
+
+
+
+
+
+
+
+

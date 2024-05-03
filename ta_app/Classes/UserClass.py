@@ -15,11 +15,7 @@ from django.core.validators import validate_email
 class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
-                 assigned_sections=None):
-
-
-
-
+                 assigned_sections=None, skills=""):
         if (username == "" or password == "" or name == "" or role == "" or email == ""
                 or username is None or password is None or name is None or role is None or email is None):
             raise ValueError("Must include username, password, name, role, and email.")
@@ -35,7 +31,6 @@ class UserClass(ABC):
             raise ValueError("Password cannot contain spaces")
 
         if not (role == "Teacher-Assistant" or role == "Instructor" or role == "Admin"):
-
             raise ValueError("Invalid role")
         if not isinstance(phone_number, str):
             raise ValueError("Invalid phone number")
@@ -43,13 +38,12 @@ class UserClass(ABC):
             raise ValueError("Invalid phone number")
         if not isinstance(assigned, bool):
             raise ValueError("Assigned must be a boolean")
-
-
+        if not isinstance(skills, str):
+            raise ValueError("Skills must be a string")
         try:
             validate_email(email)
         except ValidationError:
             raise ValueError("Email is not valid")
-
 
         self.username = username
         self.password = password
@@ -62,9 +56,7 @@ class UserClass(ABC):
         self.assigned_sections = []
         if assigned_sections is not None:
             self.assigned_sections = assigned_sections
-
-
-
+        self.skills = skills
 
     def __str__(self):
         return f'{self.name} : {self.role}'
@@ -92,11 +84,9 @@ class UserClass(ABC):
             raise ValueError("New Username must not be None")
 
     def set_email(self, new_email):
-
         try:
             validate_email(new_email)
         except ValidationError:
-
             raise ValueError("Email is not valid")
         self.email = new_email
 
@@ -142,7 +132,13 @@ class UserClass(ABC):
             else:
                 if self.assigned_sections.count(new_section) > 0:
                     raise ValueError("User is already assigned to this section")
+                if self.assigned:
+                    # checks for conflicts if user already assigned. if it finds one, this will throw an error
+                    self.check_conflicts(new_section.meeting_day, new_section.start_time, new_section.end_time)
                 self.assigned_sections.append(new_section)
+            if ((self.role == "Teacher-Assistant" and new_section.type == "LAB") or
+                    (self.role == "Instructor" and new_section.type == "LEC")):
+                self.set_assigned(True)
         else:
             raise ValueError("Invalid section entry")
 
@@ -157,6 +153,12 @@ class UserClass(ABC):
                     raise ValueError("Section not in user's assigned sections")
         else:
             raise ValueError("Invalid section entry")
+
+    def set_skills(self, new_skills):
+        if isinstance(new_skills, str):
+            self.skills = new_skills
+        else:
+            raise ValueError("Skills must be a string")
 
     def get_username(self):
         return self.username
@@ -185,6 +187,8 @@ class UserClass(ABC):
     def get_assigned_sections(self):
         return self.assigned_sections
 
+    def get_skills(self):
+        return self.skills
 
     def view_contact_info(self, username):
         if not isinstance(username, str):
@@ -198,12 +202,13 @@ class UserClass(ABC):
         else:
             return contact.email
 
-    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None):
+    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None, skills=None):
         old_username = self.username
 
         if username is not None:
             try: 
                 User.objects.get(username=username)
+                raise ValueError("Username already in use. Please choose a unique username.")
             except User.DoesNotExist:
                 self.set_username(username)
         if password is not None:
@@ -215,6 +220,7 @@ class UserClass(ABC):
         if email is not None:
             try: 
                 User.objects.get(email=email)
+                raise ValueError("Email already in use. Please use a unique email.")
             except User.DoesNotExist:
                 self.set_email(email)
         if phone is not None:
@@ -223,35 +229,47 @@ class UserClass(ABC):
             except User.DoesNotExist:
                 self.set_phone_number(phone)
         if address is not None:
-
             self.set_address(address)
+        if skills is not None:
+            self.set_skills(skills)
         User.objects.filter(username=old_username).update(username=self.username, password=self.password,
                                                           name=self.name,
                                                           role=self.role, email=self.email,
                                                           phone_number=self.phone_number,
-                                                          address=self.address)
+                                                          address=self.address, skills=self.skills)
 
     def create_user(self):
         try:
             User.objects.get(username=self.username)
             raise ValueError("Username is already taken")
         except User.DoesNotExist:
-
             user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
                         role=self.get_role(), email=self.get_email(), phone_number=self.get_phone_number(),
-                        address=self.get_address(),assigned=self.get_assigned())
+                        address=self.get_address(),assigned=self.get_assigned(), skills=self.get_skills())
             for i in self.assigned_sections:
                 user.assigned_section.add(i)
             user.save()
-            print("Created user")
 
     def delete_user(self):
         try:
             val_to_del = User.objects.get(username=self.get_username())
-        except User.DoesNotExist:
-            val_to_del = False
-        if val_to_del != False:
             val_to_del.delete()
-        else:
-            return False
+            return True
+        except User.DoesNotExist:
+            raise ValueError("This user does not exist can not be deleted")
+    
+    def check_conflicts(self, meeting_day, start_time, end_time):
+        possible_conflict = False
+        for section in self.assigned_sections:
+            for day1 in section.meeting_day:
+                for day2 in meeting_day:
+                    if day1 == day2:
+                        possible_conflict = True
+                if possible_conflict:
+                    if start_time >= section.start_time and end_time <= end_time:
+                        raise ValueError("The section being assigned conflicts with another section assignment :"
+                                         + section.__str__())
+                possible_conflict = False
+
+
 
