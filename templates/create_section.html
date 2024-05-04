@@ -22,7 +22,7 @@
         table, th, td {
             border:1px solid black;
         }
-        
+
     </style>
     <title>Create Section</title>
 </head>
@@ -43,6 +43,19 @@
                 <label for="section_id">Section ID:</label>
                 <input type="text" name="section_id" id="section_id" required>
             </div>
+            <div>
+            <fieldset>
+                <legend>Days:</legend>
+                <label><input type="checkbox" name="days" value="Monday"> Monday</label>
+                <label><input type="checkbox" name="days" value="Tuesday"> Tuesday</label>
+                <label><input type="checkbox" name="days" value="Wednesday"> Wednesday</label>
+                <label><input type="checkbox" name="days" value="Thursday"> Thursday</label>
+                <label><input type="checkbox" name="days" value="Friday"> Friday</label>
+            </fieldset>
+
+            </div>
+
+
             <div>
                 <label for="meeting_time">Meeting Time:</label>
                 <input type="datetime-local" name="meeting_time" id="meeting_time" required>
