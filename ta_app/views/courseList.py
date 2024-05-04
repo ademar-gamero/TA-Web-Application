@@ -17,19 +17,18 @@ class courseList(View):
         courses = []
         if id != '' and name == '' and semester == '':
             courses = Course.objects.filter(course_id = int(id))
-            return render(request,"courseList.html",{"courselist":courses,'is_admin':is_admin}) 
         if id == '' and name != '' and semester == '':
             courses = Course.objects.filter(course_name = name)
-            return render(request,"courseList.html",{"courselist":courses,'is_admin':is_admin }) 
         if id == '' and name == '' and semester != '':
             courses = Course.objects.filter(semester = semester)
-            return render(request,"courseList.html",{"courselist":courses,'is_admin':is_admin}) 
         if id != '' and name != '' and semester == '':
-            courses = Course.objects.filter(course_id=id,course_name = name)
-            return render(request,"courseList.html",{"courselist":courses,'is_admin':is_admin}) 
+            courses = Course.objects.filter(course_id = int(id),course_name = name)
         if id != '' and name == '' and semester != '':
-            courses = Course.objects.filter(course_id=id,semester = semester)
-            return render(request,"courseList.html",{"courselist":courses,'is_admin':is_admin}) 
+            courses = Course.objects.filter(course_id= int(id),semester = semester)
+        if id == '' and name != '' and semester != '':
+            courses = Course.objects.filter(course_name=name,semester = semester)
         if id != '' and name != '' and semester != '':
-            courses = Course.objects.filter(course_id=id,semester = semester,course_name = name)
-            return render(request,"courseList.html",{"courselist":courses,'is_admin':is_admin}) 
+            courses = Course.objects.filter(course_id=int(id),semester = semester,course_name = name)
+        if id == '' and name == '' and semester == '':
+            courses = Course.objects.all()
+        return render(request, "courseList.html", {"courselist": courses, 'is_admin': is_admin})

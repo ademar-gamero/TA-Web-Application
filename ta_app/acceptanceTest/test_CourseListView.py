@@ -106,7 +106,7 @@ class courseList(TestCase):
         search_courseid = 351
         search_course = "compsci"
         search_semester = "Summer"
-        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course,"semester":search_semester},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course,"semesters":search_semester},follow=True)
         for j in resp.context["courselist"]:
             self.assertEqual(j.course_name,search_course,"search did not work")
         clist = resp.context['courselist']
@@ -116,13 +116,13 @@ class courseList(TestCase):
         search_courseid = ""
         search_course = ""
         search_semester = ""
-        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course,"semester":search_semester},follow=True)
+        resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course,"semesters":search_semester},follow=True)
         clist = resp.context['courselist']
         self.assertTrue(len(clist) == 3)
 
     def test_searchSemester(self):
         search_semester = "Summer"
-        resp = self.green.post("/Home/courseList/",{"semester":search_semester},follow=True)
+        resp = self.green.post("/Home/courseList/",{"semesters":search_semester},follow=True)
         for j in resp.context["courselist"]:
             self.assertEqual(j.semester,search_semester,"search did not work")
         clist = resp.context['courselist']
@@ -130,7 +130,7 @@ class courseList(TestCase):
 
     def test_searchSemesterInvalid(self):
         search_semester = "Spring"
-        resp = self.green.post("/Home/courseList/",{"semester":search_semester},follow=True)
+        resp = self.green.post("/Home/courseList/",{"semesters":search_semester},follow=True)
         clist = resp.context['courselist']
         self.assertTrue(len(clist) == 0)
 
