@@ -7,10 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .center {
-            margin: auto;
-            width: 25%;
-            border: 3px solid black;
-            padding: 25px;
+            text-align:center;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+            
         }
         .center2 {
             margin-left: auto;
@@ -21,7 +22,8 @@
             margin: auto;
             width: 100%;
         }
-        table, th, td {
+        table, th,td{
+            margin-top: 20px;
             border:1px solid black;
         }
 
@@ -33,15 +35,36 @@
 
     <form action="/Home/courseList/" method="post">
       {% csrf_token %}
-      <p>Course ID</p>
-      <input type="number" min="0" max="9999" name="course_id" placeholder = "course id ">
-      <p>Course Name</p>
-      <input type="text" name="course_name" placeholder = "course name"></br>
-      <input type="submit" value="Submit">
+        <table>
+
+
+        <tr>
+            <td><p>Course ID</p></td>
+      <td><input type="number" min="0" max="9999" name="course_id" placeholder = "course id ">
+      </td>
+            <td><p>Course Name</p></td>
+      <td><input type="text" name="course_name" placeholder = "course name"></td>
+        <td><label for="semesters">Semester: </label>
+		    <select name="semesters" id="semesters">
+				<option value="">None</option>
+				<option value="Fall">Fall</option>
+				<option value="Winter">Winter</option>
+				<option value = "Spring">Spring</option>
+                <option value = "Summer">Summer</option>
+
+			</select></td>
+        </tr>
+
+        </table>
+        <br>
+        <input type="submit" value="Submit">
+        </br>
+        <br>
+        <a href = "/Home/"> Go Home </a>
     </form>
 
-  <div class="center">
-    <h2 class = "center3"> Course Catalog </h2>
+  <div class="center">  
+    <h2 class="center"> Course Catalog </h2>
     {%if not courselist %}
       <p> no courses found </p>
     {% endif %}
@@ -49,28 +72,34 @@
       <tr>
         <th>Course Subject</th>
         <th>Course ID</th>
-        <th>Course Title</th>
         <th>Semester</th>
+          {%if is_admin%}
         <th>Edit Course Info</th>
-        <th>Edit Course Sections</th>
+          {%endif%}
+
+        <th>Course Sections</th>
+
+          {%if is_admin%}
         <th>Delete Course</th>
+          {%endif%}
 
       </tr>
-    {%for course in courseList %}
+    {%for course in courselist %}
       <tr>
-        <td>{{ course.course_subject}}</td>
+        <td>{{ course.course_name}}</td>
         <td>{{ course.course_id }}</td>
-        <td>{{ course.course_title }}</td>
         <td>{{ course.semester }}</td>
-        <td>{{ account.phone_number }}</td>
+          {%if is_admin%}
         <td>Edit Course Info</td>
-        <td>Edit Course Sections</td>
+          {%endif%}
+        <td>Course Sections</td>
+          {%if is_admin%}
         <td><a href="{% url 'deleteCourse' course.id %}">Delete</a></td>
+          {%endif%}
       </tr>
       {% endfor %}
-      <br>
-      <a href = "/Home/"> Go Home </a>
     </table>
   </div>
+
 </body>
 </html>

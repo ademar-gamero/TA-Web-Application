@@ -3,18 +3,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+      <style>
+        .center {
+            text-align:center;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+
+        }
+        .center2 {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        .center3 {
+            margin: auto;
+            width: 100%;
+        }
+        table, th,td{
+            margin-top: 20px;
+            border:1px solid black;
+        }
+    </style>
     <title>Account Assignments</title>
 </head>
 <body>
-    <h1 align = "center">{{user.name}} {{user.role}} Assignments</h1>
-    <div align = "center">
-        <table>
-          <tr>
-            <td>Assigned: {{user.assigned}}</td>
-          </tr>
-          <tr>
-            <td><label for="role">Assigned Sections:</label></td>
-          </tr>
+    <h1 class = "center" >{{user.name}} {{user.role}} Assignments</h1>
+    <div class = "center2" align="center">
+            <br>
+            Assigned: {{user.assigned}}
+            <br>
+            <br>
+            <label for="role">Assigned Sections:</label>
+
+            <table>
             <tr>
               <th>Course</th>
               <th>Section ID</th>
@@ -32,10 +54,12 @@
         </table>
         <form action="/Home/accountList/accountAssignment/{{user.pk}}/" method="post"> 
         {% csrf_token %}
+            <br>
+            <br>
             Add Section:
             <td><select name="section" id="section-selection">
               {% for newsection in allSections %}
-                <option value="{{ newsection }}">{{newsection.course_parent newsection.course_id newsection.course_type }}</option>  
+                <option value="{{ newsection }}">{{newsection.course_parent}} {{newsection.course_id}} {{newsection.course_type }}</option>
               {% endfor %}
           </select></td>
           <input type="submit" value="Submit">
