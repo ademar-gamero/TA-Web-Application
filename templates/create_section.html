@@ -6,8 +6,7 @@
     <style>
         .center {
             margin: auto;
-            width: 25%;
-            border: 3px solid black;
+            width: 60%;
             padding: 25px;
         }
         .center2 {
@@ -57,8 +56,10 @@
 
 
             <div>
-                <label for="meeting_time">Meeting Time:</label>
-                <input type="datetime-local" name="meeting_time" id="meeting_time" required>
+                <label for="start_time">Start Time:</label>
+                <input type="time" name="start_time" id="start_time" required
+                <label for="end_time">End Time:</label>
+                <input type="time" name="end_time" id=end_time" required>
             </div>
             <div>
                 <label for="section_type">Section Type:</label>
@@ -78,7 +79,7 @@
             <h3> Section was Created </h3>
         {% endif %}
         <div class="center">
-          <h2 class = "center3"> Saved Sections </h2>
+          <h2 class = "center3"> Created Sections </h2>
           <table class="center2">
             <tr>
               <th>Course</th>
