@@ -20,9 +20,10 @@
             margin: auto;
             width: 100%;
         }
-        table, th,td{
-            margin-top: 20px;
-            border:1px solid black;
+         table,th,td{
+            border: 1px solid black;
+            padding: 5px;
+            border-collapse: collapse;
         }
     </style>
     <title>Account Assignments</title>
@@ -31,17 +32,18 @@
     <h1 class = "center" >{{user.name}} {{user.role}} Assignments</h1>
     <div class = "center2" align="center">
             <br>
-            Assigned: {{user.assigned}}
+        Assigned: <b>{{user.assigned}}</b>
             <br>
             <br>
-            <label for="role">Assigned Sections:</label>
-
+            Assigned Sections:
+            <br>
             <table>
+            <br>
             <tr>
               <th>Course</th>
               <th>Section ID</th>
               <th>Type</th>
-                {% if curr_user == "Admin" or curr_user == "Instructor" %}
+                {% if usr_role == "Admin" or usr_role == "Instructor" %}
               <th> Remove Assignment </th>
                 {% endif %}
             </tr>

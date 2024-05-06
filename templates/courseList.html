@@ -22,9 +22,10 @@
             margin: auto;
             width: 100%;
         }
-        table, th,td{
-            margin-top: 20px;
-            border:1px solid black;
+        th,td{
+            border: 1px solid black;
+            padding: 5px;
+            border-collapse: collapse;
         }
 
     </style>
@@ -39,11 +40,11 @@
 
 
         <tr>
-            <td><p>Course ID</p></td>
-      <td><input type="number" min="0" max="9999" name="course_id" placeholder = "course id ">
+            <td><p>Course ID: </p></td>
+      <td><input type="number" min="0" max="9999" name="course_id" placeholder = "101">
       </td>
-            <td><p>Course Name</p></td>
-      <td><input type="text" name="course_name" placeholder = "course name"></td>
+            <td><p>Course Name: </p></td>
+      <td><input type="text" name="course_name" placeholder = "Name"></td>
         <td><label for="semesters">Semester: </label>
 		    <select name="semesters" id="semesters">
 				<option value="">None</option>
@@ -57,18 +58,19 @@
 
         </table>
         <br>
-        <input type="submit" value="Submit">
-        </br>
+			  <input type="submit" name="input_btn" value="Submit">
+			  <input type="submit" name="input_btn" value="Clear Filter">
+        <br>
+    </form>
         <br>
         <a href = "/Home/"> Go Home </a>
-    </form>
 
   <div class="center">  
     <h2 class="center"> Course Catalog </h2>
     {%if not courselist %}
       <p> no courses found </p>
     {% endif %}
-    <table class="center2">
+    <table class="center2" style ="border-collapse: collapse;">
       <tr>
         <th>Course Subject</th>
         <th>Course ID</th>
