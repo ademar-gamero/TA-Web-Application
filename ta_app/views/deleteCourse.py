@@ -5,6 +5,9 @@ from django.contrib import messages
 
 class deleteCourse(View):
     def get(self, request, course_id):
+        role = request.session['role'];
+        if role != "Admin":
+            return redirect('courseList')
         course = Course.objects.filter(pk=course_id).first()
         if course:
             return render(request, 'delete_course.html', {'course': course})
