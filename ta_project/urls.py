@@ -29,6 +29,7 @@ from ta_app.views.loginView import login_view
 from django.views.generic.base import RedirectView
 from ta_app.views.SectionView import SectionView
 from ta_app.views.accountAssignment import accountAssignment
+from ta_app.views.courseSections import courseSections
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -43,6 +44,7 @@ urlpatterns = [
     path('Home/accountCreation/',accountCreation.as_view(), name='accountCreation'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
     path('Home/courseList/deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
+    path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections')
     #path('logout/', logout_view.as_view(), name='logout'),
 ]
 

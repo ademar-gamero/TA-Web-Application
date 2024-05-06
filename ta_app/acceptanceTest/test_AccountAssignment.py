@@ -207,6 +207,6 @@ class accountAssignment(TestCase):
         resp = self.green.post(self.detail_url_ins,{"section":self.lecture2})
         self.assertTrue(resp.context['message'], "Section was not added a time conflict exists")
         new = User.objects.get(pk=self.instructor.pk)
-        self.assertIn(self.lecture2,new.assigned_section, "sections was not added")
-        self.assertNotIn(self.lecture3,new.assigned_section, "sections was added when it shouldnt have been")
+        self.assertIn(self.lecture1,new.assigned_section, "sections was not added")
+        self.assertNotIn(self.lecture2,new.assigned_section, "sections was added when it shouldnt have been")
 
