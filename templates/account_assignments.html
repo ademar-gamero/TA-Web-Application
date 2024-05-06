@@ -41,17 +41,22 @@
               <th>Course</th>
               <th>Section ID</th>
               <th>Type</th>
-              <th>Delete</th>
+                {% if curr_user == "Admin" or curr_user == "Instructor" %}
+              <th> Remove Assignment </th>
+                {% endif %}
             </tr>
           {%for section in sections %}
             <tr>
               <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
+                {% if usr_role == "Admin" or usr_user == "Instructor" %}
               <td> delete link </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>
+        {% if usr_role == "Admin" or usr_role == "Instructor" %}
         <form action="/Home/accountList/accountAssignment/{{user.pk}}/" method="post"> 
         {% csrf_token %}
             <br>
@@ -66,6 +71,7 @@
         </form>
         <br>
       <h3>{{ message }}</h3>
+        {% endif %}
       <br>
       <a href = "/Home/accountList/"> Go Back </a></br>
       <br>
