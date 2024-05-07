@@ -119,7 +119,8 @@ class set_skills(Common):
 
     def test_setSkillsCorrect(self):
         self.assigned_user.set_skills("CS 361")
-        self.assertEqual("CS 361",self.assigned_user.skills)
+        self.assertEqual("CS 361", self.assigned_user.skills)
+
 
 class TestUserClass(Common):
 
@@ -547,7 +548,8 @@ class SectionAssignmentTests(TestCase):
         self.wednesday = Day.objects.create(day="WE")
         self.thursday = Day.objects.create(day="TH")
         self.friday = Day.objects.create(day="FR")
-        self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="Teacher-Assistant", email="ta@uwm.edu")
+        self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="Teacher-Assistant",
+                            email="ta@uwm.edu")
         self.ta.create_user()
         self.instructor = UserClass(username="test_in", password="pass", name="Instructo", role="Instructor",
                                     email="in@uwm.edu")
@@ -682,19 +684,78 @@ class RemoveSectionTests(TestCase):
                                     email="in@uwm.edu")
         self.instructor.create_user()
         self.course1 = Course.objects.create(course_id=101, course_name="Math", description="blah", semester="Fall")
+        self.course2 = Course.objects.create(course_id=401, course_name="Super Math", description="blah",
+                                             semester="Fall")
         self.lecture1 = Section.objects.create(course_parent=self.course1, section_id=100, type="LEC",
                                                start_time="12:00 pm", end_time="1:30 pm", location="who cares")
         self.lecture1.meeting_days.add(self.monday, self.wednesday)
-        self.lecture2 = Section.objects.create(course_parent=self.course1, section_id=101, type="LEC",
+        self.lecture2 = Section.objects.create(course_parent=self.course2, section_id=101, type="LEC",
                                                start_time="12:00 pm", end_time="1:30 pm")
         self.lecture2.meeting_days.add(self.tuesday, self.thursday)
+        self.lecture3 = Section.objects.create(course_parent=self.course1, section_id=102, type="LEC",
+                                               start_time="11:00 am", end_time="12:30 pm")
+        self.lecture3.meeting_days.add(self.monday, self.wednesday)
         self.lab1 = Section.objects.create(course_parent=self.course1, section_id=300, type="LAB",
                                            start_time="12:00 pm", end_time="1:30 pm")
         self.lab1.meeting_days.add(self.monday, self.wednesday)
         self.lab2 = Section.objects.create(course_parent=self.course1, section_id=400, type="LAB",
                                            start_time="9:00 am", end_time="10:30 am")
         self.lab2.meeting_days.add(self.tuesday, self.thursday)
+        self.lab3 = Section.objects.create(course_parent=self.course2, section_id=500, type="LAB",
+                                           start_time="4:00 pm", end_time="5:30 pm")
+        self.lab3.meeting_days.add(self.tuesday, self.thursday)
         self.instructor.add_section(self.lecture1)
         self.instructor.add_section(self.lecture2)
         self.ta.add_section(self.lecture1)
         self.ta.add_section(self.lab1)
+        self.ta.add_section(self.lab2)
+
+    def test_removeTALab(self):
+        self.ta.remove_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab2, "Lab 1 wasn't removed successfully")
+        self.assertTrue(self.ta.assigned, "TA should still be assigned")
+
+    def test_removeTAAllLabs(self):
+        self.ta.remove_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab2, "Lab 1 wasn't removed successfully")
+        self.assertTrue(self.ta.assigned, "TA should still be assigned")
+        self.ta.remove_section(self.lab2)
+        self.assertEqual(len(self.ta.assigned_sections), 1, "Lab 2 wasn't removed successfully")
+        self.assertFalse(self.ta.assigned, "TA should not be assigned")
+
+    def test_removeTALec(self):
+        self.ta.remove_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections, [], "Lecture and all associated labs should be removed")
+        self.assertTrue(self.ta.assigned, "TA should not be assigned")
+
+    def test_removeTAInvalid(self):
+        with self.assertRaises(ValueError, msg="Invalid section not caught"):
+            self.ta.remove_section(self.lab3)
+
+    def test_removeTAWithMultipleCourses(self):
+        self.ta.add_section(self.lecture2)
+        self.ta.add_section(self.lab3)
+        self.ta.remove_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture2, "Lecture 1 and its labs should be removed")
+        self.assertEqual(self.ta.assigned_sections[1], self.lab3, "Lecture 1 and its labs should be removed")
+        self.assertTrue(self.ta.assigned, "TA should still be assigned")
+
+    def test_removeInstructor(self):
+        self.instructor.remove_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture2, "Lecture 1 should be removed")
+        self.assertTrue(self.ta.assigned, "Instructor should still be assigned")
+        self.assertEqual(self.ta.assigned_sections[1], None, "Instructor's removal from lecture should take"
+                                                             "TA out of associated labs")
+        self.assertFalse(self.ta.assigned, "Instructor's removal should unassign TA if not assigned elsewhere")
+
+    def test_removeInstructorFromAll(self):
+        self.instructor.remove_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture2, "Lecture 1 should be removed")
+        self.assertTrue(self.ta.assigned, "Instructor should still be assigned")
+        self.instructor.remove_section(self.lecture2)
+        self.assertEqual(self.ta.assigned_sections[0], None, "Lecture 2 should be removed")
+        self.assertFalse(self.ta.assigned, "Instructor should not be assigned")
+
+    def test_removeInstructorInvalid(self):
+        with self.assertRaises(ValueError, msg="Invalid section not caught"):
+            self.instructor.remove_section(self.lecture3)
