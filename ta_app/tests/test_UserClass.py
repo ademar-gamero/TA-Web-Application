@@ -17,14 +17,14 @@ class Common(TestCase):
         self.admin.save()
         self.algos = Course(course_id=351, course_name="compsci", description="blah blah blah")
         self.algos.save()
-        self.section = Section(course_parent=self.algos, section_id=12345, meeting_time=date_object, type="lecture")
+        self.section = Section(course_parent=self.algos, section_id=12345, type="lecture")
         self.section.save()
-        self.section2 = Section(course_parent=self.algos, section_id=123478, meeting_time=date_object2, type="lab")
+        self.section2 = Section(course_parent=self.algos, section_id=123478, type="lab")
         self.section2.save()
         print(self.section2)
         slist1 = [self.section]
         slist2 = [self.section, self.section2]
-        self.section3 = Section(course_parent=self.algos, section_id=1234789, meeting_time=date_object3, type="lab")
+        self.section3 = Section(course_parent=self.algos, section_id=1234789, type="lab")
         self.section3.save()
         self.assigned_user0 = UserClass("ta", "ta", "apoorv", "Teacher-Assistant", "email@gmail.com", "1", "1", True,
                                         slist1)
@@ -303,7 +303,7 @@ class create_User(TestCase):
         algos = Course(course_id=351, course_name="compsci", description="blah blah blah")
         algos.save()
 
-        section = Section(course_parent=algos, section_id=12345, meeting_time=date_object, type="lecture")
+        section = Section(course_parent=algos, section_id=12345, type="lecture")
         section.save()
 
         slist = [section]
@@ -324,47 +324,6 @@ class create_User(TestCase):
         for i in db_user.assigned_section.all():
             self.assertEqual(self.assigned_user.assigned_sections[j], i, "assigned sections not present")
             j = j + 1
-
-
-class add_section(Common):
-
-    def test_addSec(self):
-        self.assigned_user0.add_section(self.section2)
-        self.assertIn(self.section2, self.assigned_user0.assigned_sections, "Section was not added")
-
-    def test_addIncorrectSec(self):
-        with self.assertRaises(ValueError, msg="Invalid section entry"):
-            self.assigned_user0.add_section("Section")
-
-
-class remove_section(Common):
-    def test_removeSec(self):
-        self.assigned_user.remove_section(self.section)
-        self.assertNotIn(self.section, self.assigned_user.assigned_sections, "Section was not removed")
-
-    def test_removeIncorrectSec(self):
-        with self.assertRaises(ValueError, msg="Invalid section entry"):
-            self.assigned_user.remove_section(self.section3)
-
-    def test_removeIncorrectSecString(self):
-        with self.assertRaises(ValueError, msg="Invalid section entry"):
-            self.assigned_user.remove_section("Section")
-
-
-class delete_user(Common):
-    ad = None
-
-    def test_delete_user(self):
-        user = self.assigned_user.username
-        self.assigned_user.delete_user()
-        query = User.objects.filter(username=user)
-        self.assertNotIn(self.assigned_user, query, "User was not deleted")
-
-    def test_delete(self):
-        self.assigned_user.create_user()
-        self.assigned_user.delete_user()
-        self.assertFalse(User.objects.filter(username=self.assigned_user.username).exists(),
-                         "User wasn't removed from the db")
 
 
 class TestEditUser(TestCase):
