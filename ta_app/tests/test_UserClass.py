@@ -742,19 +742,19 @@ class RemoveSectionTests(TestCase):
 
     def test_removeInstructor(self):
         self.instructor.remove_section(self.lecture1)
-        self.assertEqual(self.ta.assigned_sections[0], self.lecture2, "Lecture 1 should be removed")
-        self.assertTrue(self.ta.assigned, "Instructor should still be assigned")
-        self.assertEqual(self.ta.assigned_sections[1], None, "Instructor's removal from lecture should take"
-                                                             "TA out of associated labs")
+        self.assertEqual(self.instructor.assigned_sections[0], self.lecture2, "Lecture 1 should be removed")
+        self.assertTrue(self.instructor.assigned, "Instructor should still be assigned")
+        self.assertEqual(len(self.ta.assigned_sections), 1, "Instructor's removal from lecture should take"
+                                                            "TA out of associated labs")
         self.assertFalse(self.ta.assigned, "Instructor's removal should unassign TA if not assigned elsewhere")
 
     def test_removeInstructorFromAll(self):
         self.instructor.remove_section(self.lecture1)
-        self.assertEqual(self.ta.assigned_sections[0], self.lecture2, "Lecture 1 should be removed")
-        self.assertTrue(self.ta.assigned, "Instructor should still be assigned")
+        self.assertEqual(self.instructor.assigned_sections[0], self.lecture2, "Lecture 1 should be removed")
+        self.assertTrue(self.instructor.assigned, "Instructor should still be assigned")
         self.instructor.remove_section(self.lecture2)
-        self.assertEqual(self.ta.assigned_sections[0], None, "Lecture 2 should be removed")
-        self.assertFalse(self.ta.assigned, "Instructor should not be assigned")
+        self.assertEqual(self.instructor.assigned_sections, [], "Lecture 2 should be removed")
+        self.assertFalse(self.instructor.assigned, "Instructor should not be assigned")
 
     def test_removeInstructorInvalid(self):
         with self.assertRaises(ValueError, msg="Invalid section not caught"):
