@@ -27,3 +27,7 @@ class accountAssignment(View):
             return render(request,"account_assignments.html",{'user':account,'allSections':sections,'message': error.__str__()})
 
         return render(request,"account_assignments.html",{'user':newacc,'allSections':sections,'message': 'Section was added successfully!'})
+
+
+
+
