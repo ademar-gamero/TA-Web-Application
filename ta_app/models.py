@@ -7,7 +7,7 @@ class Roles(models.TextChoices):
     IN = "Instructor"
 
 
-class Semesters(models.TextChoices):
+class Semester(models.TextChoices):
     FALL = "Fall"
     WINT = "Winter"
     SPRI = "Spring"

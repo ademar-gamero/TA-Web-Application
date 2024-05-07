@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import View
 from ta_app.Classes.CourseClass import CourseClass
-from ta_app.models import Semesters
+from ta_app.models import Semester
 
 
 
