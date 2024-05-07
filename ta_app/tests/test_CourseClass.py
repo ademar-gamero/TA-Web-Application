@@ -439,11 +439,8 @@ class CourseEdit(CommonCourses):
                                                                "should not have been")
         self.assertEqual("Winter", temp.semester, "Course semester did not update properly")
 
-    # Note: move the input validation tests in the setters that both ensure good data is entered and also removes
-    # whitespace to here. It is likely necessary to check here as well.
-
     # Note: none of the input=None tests are relevant to test in this method... That's like explicitly stating
-    # that the user did not provide input and is a redundant check.
+    # that the user did not provide input and is a redundant statement.
 
     # Extra ID validation tests:
     def test_editIdNegative(self):
