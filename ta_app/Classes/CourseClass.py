@@ -103,3 +103,6 @@ class CourseClass(object):
         # otherwise, create new entry and return True
         Course.objects.create(course_id=courseid, course_name=name, description=descr, semester=sem)
         return True
+
+    def edit_course(self, course_id=None, course_name=None, description=None, semester=None):
+        pass
