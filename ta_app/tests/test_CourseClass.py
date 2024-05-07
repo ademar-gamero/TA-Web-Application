@@ -442,6 +442,148 @@ class CourseEdit(CommonCourses):
     # Note: move the input validation tests in the setters that both ensure good data is entered and also removes
     # whitespace to here. It is likely necessary to check here as well.
 
+    # Note: none of the input=None tests are relevant to test in this method... That's like explicitly stating
+    # that the user did not provide input and is a redundant check.
+
+    # Extra ID validation tests:
+    def test_editIdNegative(self):
+        # will passing negative data for course_id to edit_course throw an exception
+        # Rule: course_id will not accept negative values. (ID must be >= 0)
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(ValueError, msg="Negative ID data fails to raise ValueError"):
+            temp.edit_course(course_id=-1)
+
+    def test_editIdFloat(self):
+        # will floating-point data passed to edit_course for course_id throw an exception?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(TypeError, msg="Float ID data fails to raise TypeError"):
+            temp.edit_course(course_id=3.61)
+
+    def test_editIdString(self):
+        # will string data passed to edit_course for course_id throw an exception?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(TypeError, msg="String ID data fails to raise TypeError"):
+            temp.edit_course(course_id="test")
+
+    # Extra name validation tests:
+    def test_editNameNonString(self):
+        # will passing non-string data for course_name to edit_course throw an exception?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(TypeError, msg="Non-string name data fails to raise TypeError"):
+            temp.edit_course(course_name=1)
+
+    def test_editNameStringDigit(self):
+        # will edit_course prevent a string of only digits for course_name from being set?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(ValueError, msg="Course name as numeric value fails to raise ValueError"):
+            temp.edit_course(course_name="123")
+
+    def test_editNameWhiteSpaceOnly(self):
+        # will edit_course prevent input of only whitespace for course_name from being set?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(ValueError, msg="Empty course name data fails to raise ValueError"):
+            temp.edit_course(course_name="   ")
+
+    def test_editNameWhiteSpaceGood(self):
+        # will edit_course properly trim any leading or trailing whitespace from the course_name input?
+        temp = self.default
+        temp.create_course()
+        self.assertTrue(temp.edit_course(course_name="  CompSci  "), "Course name was mistakenly not set")
+        self.assertEqual("CompSci", temp.course_name, "Course name is incorrect value")
+
+    # Extra description validation tests:
+    def test_editDescriptionNonString(self):
+        # will passing non-string data to edit_course for description cause an exception to be thrown?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(TypeError, msg="Non-string description data fails to raise TypeError"):
+            temp.edit_course(description=1)
+
+    def test_editDescriptionWhiteSpaceOnly(self):
+        # will edit_course prevent input of only whitespace from being set as the description?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(ValueError, msg="Empty description data fails to raise ValueError"):
+            temp.edit_course(description="   ")
+
+    def test_editDescriptionWhiteSpaceGood(self):
+        # will edit_course properly trim any leading or trailing whitespace from the input?
+        temp = self.default
+        temp.create_course()
+        self.assertTrue(temp.edit_course(description="  A computer science course  "), "Course description was"
+                                                                                       " not allowed to be set")
+        self.assertEqual("A computer science course", temp.description, "Course description is incorrect value")
+
+    def test_editDescriptionIsDigit(self):
+        # will edit_course allow input of only digits to be set as the description of a CourseClass object?
+        temp = self.default
+        temp.create_course()
+        self.assertTrue(temp.edit_course(description="  123  "), "Course description was not allowed to be set")
+        self.assertEqual("123", temp.description, "Course description is incorrect value")
+
+    # Extra semester validation tests:
+    def test_editSemesterNonString(self):
+        # will edit_course allow non-string data to be set as the semester of a CourseClass object?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(ValueError, msg="Int input for course semester fails to raise ValueError"):
+            temp.edit_course(semester=1)
+
+    def test_editSemesterBad(self):
+        # will edit_course allow string data that is not one of four acceptable choices to be set as the
+        # semester of a CourseClass object?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(ValueError, msg="Input that is not one of acceptable choices fails to raise ValueError"):
+            temp.edit_course(semester="Bad")
+
+    def test_editSemesterAllCaps(self):
+        # will edit_course allow string data with incorrect capitalization to be set as the semester of a
+        # CourseClass object?
+        # Note: we plan to control the choice options available to the user, so this helps ensure that the data coming
+        # in is what we want and, thus, consistently comparable.
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(ValueError, msg="Input that is not one of acceptable choices fails to raise ValueError"):
+            temp.edit_course(semester="FALL")
+
+    def test_editSemesterEmptyString(self):
+        # will edit_course allow string data that is not one of four acceptable choices to be set as the
+        # semester of a CourseClass object?
+        temp = self.default
+        temp.create_course()
+        with self.assertRaises(ValueError, msg="Input that is not one of acceptable choices fails to raise ValueError"):
+            temp.edit_course(semester="")
+
+    # ensure that we are capable of setting each of the four possibilities
+    # Note: already did Winter in test_editOnlySemester
+    def test_editSemesterFall(self):
+        # will edit_course successfully set the semester of a CourseClass object for Fall?
+        temp = self.cs361
+        temp.create_course()
+        self.assertTrue(temp.edit_course(semester="Fall"), "Course description was not allowed to be updated")
+        self.assertEqual("Fall", temp.semester, "Fall semester was not set properly")
+
+    def test_editSemesterSpring(self):
+        # will edit_course successfully set the semester of a CourseClass object for Spring?
+        temp = self.default
+        temp.create_course()
+        self.assertTrue(temp.edit_course(semester="Spring"), "Course description was not allowed to be updated")
+        self.assertEqual("Spring", temp.semester, "Spring semester was not set properly")
+
+    def test_setSemesterSummer(self):
+        # will edit_course successfully set the semester of a CourseClass object for Summer?
+        temp = self.default
+        temp.create_course()
+        self.assertTrue(temp.edit_course(semester="Summer"), "Course description was not allowed to be updated")
+        self.assertEqual("Summer", temp.semester, "Summer semester was not set properly")
+
     def test_editCreateConflictSemester(self):
         # will edit_course allow a duplicate course to be created when only the semester is changed?
         temp1 = CourseClass(100, "Anthro", "This is an anthropology course", "Fall")
@@ -473,8 +615,8 @@ class CourseEdit(CommonCourses):
         # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
         self.assertEqual("CompSci", temp2.course_name, "Course's name was incorrectly changed")
 
-    # Note: there is no reason to test editing the description in this situation since the setup would be
-    # impossible and violate rules we have implemented
+    # Note: no need to test editing the description in this situation since the setup would be impossible
+    # and violate rules we have implemented
 
     def test_editCreateConflictNameWhiteSpace(self):
         # will edit_course allow a duplicate course to be created when the name has whitespace?
