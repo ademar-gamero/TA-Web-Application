@@ -6,7 +6,6 @@ class Roles(models.TextChoices):
     TA = "Teacher-Assistant"
     IN = "Instructor"
 
-
 class Semesters(models.TextChoices):
     FALL = "Fall"
     WINT = "Winter"
@@ -23,7 +22,7 @@ class Course(models.Model):
     course_id = models.IntegerField(null=True)
     course_name = models.CharField(max_length=50)
     description = models.TextField(null=True,blank=True)
-    semester = models.CharField(max_length=6, choices=Semester.choices, default=Semester.FALL)
+    semester = models.CharField(max_length=6, choices=Semesters.choices, default=Semesters.FALL)
     
     def __str__(self):
         return f"{self.course_id} {self.course_name} - {self.semester}"
