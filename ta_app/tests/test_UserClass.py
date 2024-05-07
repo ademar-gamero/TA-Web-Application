@@ -583,6 +583,13 @@ class SectionAssignmentTests(TestCase):
         self.assertEqual(self.instructor.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
         self.assertTrue(self.instructor.assigned, "Assigned flag not set for instructor")
 
+    def test_assignInstructorLab(self):
+        self.instructor.add_section(self.lecture1)
+        self.assertEqual(self.instructor.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
+        self.assertTrue(self.instructor.assigned, "Assigned flag not set for instructor")
+        with self.assertRaises(ValueError, msg="Lab shouldn't be assignable to instructor"):
+            self.instructor.add_section(self.lab1)
+
     def test_assignInstructorNoConflictDifferentDays(self):
         self.instructor.add_section(self.lecture1)
         self.instructor.add_section(self.lecture2)
