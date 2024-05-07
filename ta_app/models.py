@@ -37,10 +37,11 @@ class Course(models.Model):
     course_id = models.IntegerField(null=True)
     course_name = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
-    semester = models.CharField(max_length=6, choices=Semester.choices, default=Semester.FALL)
-
+    # semester = models.CharField(max_length=6, choices=Semester.choices, default=Semester.FALL)
+    semester = models.CharField(max_length=6, choices=Semesters.choices, default=Semesters.FALL)
     def __str__(self):
         return f"{self.course_id} {self.course_name} - {self.semester}"
+
 
 
 class Section(models.Model):
@@ -51,9 +52,16 @@ class Section(models.Model):
     start_time = models.TimeField(null=True)
     end_time = models.TimeField(null=True)
     location = models.CharField(max_length=500, null=True)
+    is_online = models.BooleanField(default=False, help_text="Check if the class is online ")
 
     def __str__(self):
-        return f"{self.course_parent.course_name} {self.type} {self.section_id}"
+        if self.is_online:
+            return f"{self.course_parent.course_name} {self.type} {self.section_id} - Online"
+        else:
+            days = ', '.join(day.day for day in self.meeting_days.all())
+            return (f"{self.course_parent.course_name} {self.type} {self.section_id} - Days: {days}, "
+                    f"Time: {self.start_time.strftime('%H:%M')} to {self.end_time.strftime('%H:%M')}, "
+                    f"Location: {self.location}")
 
 
 class User(models.Model):
