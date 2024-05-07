@@ -15,20 +15,23 @@ class courseList(View):
         name = request.POST.get('course_name','')
         semester = request.POST.get('semesters','')
         courses = []
-        if id != '' and name == '' and semester == '':
-            courses = Course.objects.filter(course_id = int(id))
-        if id == '' and name != '' and semester == '':
-            courses = Course.objects.filter(course_name = name)
-        if id == '' and name == '' and semester != '':
-            courses = Course.objects.filter(semester = semester)
-        if id != '' and name != '' and semester == '':
-            courses = Course.objects.filter(course_id = int(id),course_name = name)
-        if id != '' and name == '' and semester != '':
-            courses = Course.objects.filter(course_id= int(id),semester = semester)
-        if id == '' and name != '' and semester != '':
-            courses = Course.objects.filter(course_name=name,semester = semester)
-        if id != '' and name != '' and semester != '':
-            courses = Course.objects.filter(course_id=int(id),semester = semester,course_name = name)
-        if id == '' and name == '' and semester == '':
+        if request.POST.get('input_btn') == "Submit":
+            if id != '' and name == '' and semester == '':
+                courses = Course.objects.filter(course_id = int(id))
+            if id == '' and name != '' and semester == '':
+                courses = Course.objects.filter(course_name = name)
+            if id == '' and name == '' and semester != '':
+                courses = Course.objects.filter(semester = semester)
+            if id != '' and name != '' and semester == '':
+                courses = Course.objects.filter(course_id = int(id),course_name = name)
+            if id != '' and name == '' and semester != '':
+                courses = Course.objects.filter(course_id= int(id),semester = semester)
+            if id == '' and name != '' and semester != '':
+                courses = Course.objects.filter(course_name=name,semester = semester)
+            if id != '' and name != '' and semester != '':
+                courses = Course.objects.filter(course_id=int(id),semester = semester,course_name = name)
+            if id == '' and name == '' and semester == '':
+                courses = Course.objects.all()
+        else:
             courses = Course.objects.all()
         return render(request, "courseList.html", {"courselist": courses, 'is_admin': is_admin})
