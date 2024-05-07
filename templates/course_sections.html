@@ -29,61 +29,72 @@
     <title>Course Section Assignments</title>
   </head>
 <body>
-  <h1 class = "center"> {{course}} Sections </h1>
+<h1 class = "center"> Course {{course.course_id}} {{course.course_name}} Sections </h1>
   <div class = "center2" align="center">
+  {%for section in sections %}
       <table>
       <br>
       <tr>
         <th>Course</th>
         <th>Section ID</th>
         <th>Type</th>
-        {% if usr_role == "Admin" or usr_role == "Instructor" %}
-        <th> Remove Assignment </th>
+        {% if usr_role == "Admin"%}
+        <th> Edit Section Info </th>
+        <th>Delete Section</th>
             {% endif %}
         </tr>
-        {%for section in sections %}
-          <tr>
-            <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
-            <td>{{ section.section_id }}</td>
-            <td>{{ section.type }}</td>
-              {% if usr_role == "Admin"%}
-            <td> edit section info link </td>
-            <td> delete link </td>
-              {% endif %}
-          </tr>
-          Assigned Users:
-            {% for user in section.assigned_users %}
             <tr>
-              <td> {{user.name}} </td>
-              <td> {{user.username}} </td>
-              <td> {{user.role}} </td>
-              <td> {{user.email}} </td>
-              {% if usr_role == "Admin" or usr_role == "Instructor" %}
-            <td> edit section info link </td>
-            <td> Remove Assignment </td>
-              {% endif %}
+              <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
+              <td>{{ section.section_id }}</td>
+              <td>{{ section.type }}</td>
+                {% if usr_role == "Admin"%}
+              <td> edit section info link </td>
+              <td> delete link </td>
+                {% endif %}
             </tr>
-            {% endfor %}
-            <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
-                <br>
-                Add Users:
-                </br>
-                <select id = "{{section}}" name="{{section}}">
-                    {% if usr_role == "Instructor"%}
-                    {%for ta in ta_pool%}
-                        <option value="{{ta}}">{{ta}}</option>
-                    {% endfor %}
-                    {% endif %}
-            
-                {%if usr_role == "Admin"%}
-                    {%for usr in usr_pool%}
-                    <option value="{{usr}}">{{usr}}</option>
-                    {% endfor %}
-                    {% endif %}
-                
-        {% endfor %}
-
-      <input type="submit" value="Submit">
+            </table>
+            <br>
+            <table>
+            {{section}}'s Assigned Users:
+            <tr>  
+              <th>Name</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Email</th>
+              <th>Remove Assignment</th>
+            </tr>
+              {% for user in section.assigned_users.all %}
+              <tr>
+                <td> {{user.name}} </td>
+                <td> {{user.username}} </td>
+                <td> {{user.role}} </td>
+                <td> {{user.email}} </td>
+                {% if usr_role == "Admin" or usr_role == "Instructor" %}
+              <td> Remove Assignment </td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </table>
+              <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
+                  <br>
+              Add Users to {{section}}:
+                  </br>
+                  <select id = "{{section}}" name="{{section}}">
+                        <option value="None">None</option>
+                      {% if usr_role == "Instructor"%}
+                      {%for ta in ta_pool%}
+                          <option value="{{ta}}">{{ta}}</option>
+                      {% endfor %}
+                      {% endif %}
+              
+                  {%if usr_role == "Admin"%}
+                      {%for usr in usr_pool%}
+                      <option value="{{usr}}">{{usr}}</option>
+                      {% endfor %}
+                      {% endif %}
+                  </select>
+        <input type="submit" value="Submit">
         </form>
-        </table>
+        <br>
+      {% endfor %}
      

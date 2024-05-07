@@ -68,17 +68,18 @@ class accountAssignment(TestCase):
         self.sec.save()
         self.accountList = [self.admin,self.instructor]
 
-        self.lecture1 = Section.objects.create(parent=self.algos, section_id=101, type="LEC",
+        self.lecture1 = Section.objects.create(course_parent=self.algos, section_id=101, type="LEC",
                                                start_time=time(12, 0), end_time=time(1, 30),
-                                               meeting_day=["TU", "TH"],location="class25b")
+                                               meeting_days=["TU", "TH"],location="class25b")
+        self.lecture1.meeting_days
 
-        self.lecture2 = Section.objects.create(parent=self.algos, section_id=205, type="LEC",
+        self.lecture2 = Section.objects.create(course_parent=self.algos, section_id=205, type="LEC",
                                                start_time=time(12, 0), end_time=time(1, 30),
-                                               meeting_day=["TH"],location="class25b")
+                                               meeting_days=["TH"],location="class25b")
 
-        self.lab1 = Section.objects.create(parent=self.algos, section_id=102, type="LAB",
+        self.lab1 = Section.objects.create(course_parent=self.algos, section_id=102, type="LAB",
                                                start_time=time(11, 0), end_time=time(12, 30),
-                                               meeting_day=["MO", "WE"],location="class30B")
+                                               meeting_days=["MO", "WE"],location="class30B")
 
         self.detail_url_course = reverse('courseSections',args=[self.lecture1.pk])
 
