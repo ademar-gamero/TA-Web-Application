@@ -281,7 +281,16 @@ class UserClass(ABC):
                     if day1 == day2:
                         possible_conflict = True
                 if possible_conflict:
-                    if new_section.start_time >= section.start_time and new_section.end_time <= section.end_time:
+                    # if new_section.start_time >= section.start_time and new_section.end_time <= section.end_time:
+                    conflict = True
+                    if new_section.start_time < section.start_time:
+                        if new_section.end_time < section.start_time:
+                            conflict = False
+                        else:
+                            pass
+                    if new_section.start_time > section.end_time:
+                        conflict = False
+                    if conflict:
                         raise ValueError("The section being assigned conflicts with another section assignment :"
                                          + section.__str__())
                 possible_conflict = False
