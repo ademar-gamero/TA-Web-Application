@@ -379,7 +379,8 @@ class TestEditUser(TestCase):
         self.user2.create_user()
 
     def test_edit_user_duplicate_username(self):
-        self.user.edit_user("user2", None, None, None, None, None, None)
+        with self.assertRaises(ValueError, msg="Username already exists"):
+            self.user.edit_user("user2", None, None, None, None, None, None)
         self.assertEqual("user", self.user.username, msg="Username was updated when it shouldnt have been")
         count = User.objects.filter(username=self.user.username).count()
         print(count)
