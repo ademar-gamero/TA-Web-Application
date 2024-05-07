@@ -356,7 +356,7 @@ class CourseCreateCourse(CommonCourses):
         self.assertEqual(True, temp2.create_course(),
                          "Adding a course with same ID but different name and semester did not return True")
 
-    def test_addSameIDandNameDifferentSemester(self):
+    def test_addSameIDAndNameDifferentSemester(self):
         # will create_course allow two courses with the same ID and name but different semester be added?
         temp1 = self.cs361
         temp2 = CourseClass(361, "CompSci", "A computer science course", "Fall")
@@ -370,3 +370,119 @@ class CourseCreateCourse(CommonCourses):
         temp2 = CourseClass(361, " CompSci ", " A computer science course ", "Spring")
         temp1.create_course()
         self.assertEqual(False, temp2.create_course(), "Course objects should have been duplicates")
+
+
+class CourseEdit(CommonCourses):
+    def test_editNotAddedCourse(self):
+        # will edit_course allow editing to occur if it has not been added to the database?
+        temp = self.default
+        with self.assertRaises(ValueError, msg="Editing a course that does not exist in the database fails to"
+                                               "raise ValueError"):
+            temp.edit_course(course_id="101")
+
+    def test_editAllFields(self):
+        # will edit_course correctly update each field?
+        # Note: check that each field remains correct.
+        temp = self.default
+        temp.create_course()
+        self.assertEqual(True, temp.edit_course(100, "Math", "fake course", "Summer"),
+                         "Course did not update properly")
+        self.assertEqual(100, temp.course_id, "Course ID did not update properly")
+        self.assertEqual("Math", temp.course_name, "Course name did not update properly")
+        self.assertEqual("fake course", temp.description, "Course description did not update properly")
+        self.assertEqual("Summer", temp.semester, "Course semester did not update properly")
+
+    def test_editOnlyID(self):
+        # will edit_course correctly update just the ID field?
+        # Note: check that each field remains correct.
+        temp = self.default
+        temp.create_course()
+        self.assertEqual(True, temp.edit_course(course_id=100), "Course did not update properly")
+        self.assertEqual(100, temp.course_id, "Course ID did not update properly")
+        self.assertEqual("test name", temp.course_name, "Course name was updated when it should not have been")
+        self.assertEqual("test description", temp.description, "Course description was updated when it"
+                                                               "should not have been")
+        self.assertEqual("Fall", temp.semester, "Course semester was updated when it should not have been")
+
+    def test_editOnlyName(self):
+        # will edit_course correctly update just the name field?
+        # Note: check that each field remains correct.
+        temp = self.default
+        temp.create_course()
+        self.assertEqual(True, temp.edit_course(course_name="Math"), "Course did not update properly")
+        self.assertEqual(0, temp.course_id, "Course ID was updated when it should not have been")
+        self.assertEqual("Math", temp.course_name, "Course name did not update properly")
+        self.assertEqual("test description", temp.description, "Course description was updated when it"
+                                                               "should not have been")
+        self.assertEqual("Fall", temp.semester, "Course semester was updated when it should not have been")
+
+    def test_editOnlyDescription(self):
+        # will edit_course correctly update just the description field?
+        # Note: check that each field remains correct.
+        temp = self.default
+        temp.create_course()
+        self.assertEqual(True, temp.edit_course(description="A math course"), "Course did not update properly")
+        self.assertEqual(0, temp.course_id, "Course ID was updated when it should not have been")
+        self.assertEqual("test name", temp.course_name, "Course name was updated when it should not have been")
+        self.assertEqual("A math course", temp.description, "Course description did not update properly")
+        self.assertEqual("Fall", temp.semester, "Course semester was updated when it should not have been")
+
+    def test_editOnlySemester(self):
+        # will edit_course correctly update just the semester field?
+        # Note: check that each field remains correct.
+        temp = self.default
+        temp.create_course()
+        self.assertEqual(True, temp.edit_course(semester="Winter"), "Course did not update properly")
+        self.assertEqual(0, temp.course_id, "Course ID was updated when it should not have been")
+        self.assertEqual("test name", temp.course_name, "Course name was updated when it should not have been")
+        self.assertEqual("test description", temp.description, "Course description was updated when it"
+                                                               "should not have been")
+        self.assertEqual("Winter", temp.semester, "Course semester did not update properly")
+
+    # Note: move the input validation tests in the setters that both ensure good data is entered and also removes
+    # whitespace to here. It is likely necessary to check here as well.
+
+    def test_editCreateConflictSemester(self):
+        # will edit_course allow a duplicate course to be created when only the semester is changed?
+        temp1 = CourseClass(100, "Anthro", "This is an anthropology course", "Fall")
+        temp2 = CourseClass(100, "Anthro", "This is an anthropology course", "Spring")
+        temp1.create_course()
+        temp2.create_course()
+        self.assertFalse(temp2.edit_course(semester="Fall"), "Course was allowed to make a duplicate")
+        # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
+        self.assertEqual("Spring", temp2.semester, "Course's semester was incorrectly changed")
+
+    def test_editCreateConflictId(self):
+        # will edit_course allow a duplicate course to be created when only the ID is changed?
+        temp1 = CourseClass(100, "Anthro", "This is an anthropology course", "Fall")
+        temp2 = CourseClass(101, "Anthro", "This is an anthropology course", "Fall")
+        temp1.create_course()
+        temp2.create_course()
+        self.assertFalse(temp2.edit_course(course_id=100), "Course was allowed to make a duplicate")
+        # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
+        self.assertEqual(101, temp2.course_id, "Course's ID was incorrectly changed")
+
+    def test_editCreateConflictName(self):
+        # will edit_course allow a duplicate course to be created when only the name is changed?
+        temp1 = CourseClass(100, "Anthro", "This is an anthropology course", "Fall")
+        temp2 = CourseClass(100, "CompSci", "This is a computer science course", "Fall")
+        # Note that the different descriptions do not have an affect
+        temp1.create_course()
+        temp2.create_course()
+        self.assertFalse(temp2.edit_course(course_name="Anthro"), "Course was allowed to make a duplicate")
+        # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
+        self.assertEqual("CompSci", temp2.course_name, "Course's name was incorrectly changed")
+
+    # Note: there is no reason to test editing the description in this situation since the setup would be
+    # impossible and violate rules we have implemented
+
+    def test_editCreateConflictNameWhiteSpace(self):
+        # will edit_course allow a duplicate course to be created when the name has whitespace?
+        temp1 = CourseClass(100, "Anthro", "This is an anthropology course", "Fall")
+        temp2 = CourseClass(100, "CompSci", "This is a computer science course", "Fall")
+        # Note that the different descriptions do not have an affect
+        temp1.create_course()
+        temp2.create_course()
+        self.assertFalse(temp2.edit_course(course_name="  Anthro "), "Course was allowed to make a duplicate")
+        # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
+        self.assertEqual("CompSci", temp2.course_name, "Course's name was incorrectly changed")
