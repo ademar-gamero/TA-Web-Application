@@ -134,11 +134,14 @@ class UserClass(ABC):
                     raise ValueError("User is already assigned to this section")
                 if self.assigned:
                     # checks for conflicts if user already assigned. if it finds one, this will throw an error
-                    self.check_conflicts(new_section.meeting_day, new_section.start_time, new_section.end_time)
+                    self.check_conflicts(new_section)
                 self.assigned_sections.append(new_section)
             if ((self.role == "Teacher-Assistant" and new_section.type == "LAB") or
                     (self.role == "Instructor" and new_section.type == "LEC")):
                 self.set_assigned(True)
+                print("Assigned")
+            else:
+                print(new_section.type)
         else:
             raise ValueError("Invalid section entry")
 
@@ -258,15 +261,15 @@ class UserClass(ABC):
         except User.DoesNotExist:
             raise ValueError("This user does not exist can not be deleted")
     
-    def check_conflicts(self, meeting_day, start_time, end_time):
+    def check_conflicts(self, new_section):
         possible_conflict = False
         for section in self.assigned_sections:
-            for day1 in section.meeting_day:
-                for day2 in meeting_day:
+            for day1 in section.meeting_days:
+                for day2 in new_section.meeting_days:
                     if day1 == day2:
                         possible_conflict = True
                 if possible_conflict:
-                    if start_time >= section.start_time and end_time <= end_time:
+                    if new_section.start_time >= section.start_time and new_section.end_time <= section.end_time:
                         raise ValueError("The section being assigned conflicts with another section assignment :"
                                          + section.__str__())
                 possible_conflict = False

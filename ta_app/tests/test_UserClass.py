@@ -1,7 +1,7 @@
 from django.test import TestCase
 from ta_app.Classes.UserClass import UserClass
-from ta_app.models import Course, Section, User
-from datetime import datetime, time
+from ta_app.models import Course, Section, User, Day
+from datetime import datetime
 
 
 class Common(TestCase):
@@ -542,36 +542,41 @@ class TestEditUser(TestCase):
 class SectionAssignmentTests(TestCase):
 
     def setUp(self):
-        self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="TA", email="ta@uwm.edu")
+        self.monday = Day.objects.create(day="MO")
+        self.tuesday = Day.objects.create(day="TU")
+        self.wednesday = Day.objects.create(day="WE")
+        self.thursday = Day.objects.create(day="TH")
+        self.friday = Day.objects.create(day="FR")
+        self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="Teacher-Assistant", email="ta@uwm.edu")
         self.ta.create_user()
-        self.instructor = UserClass(username="test_in", password="pass", name="Instructo", role="IN",
+        self.instructor = UserClass(username="test_in", password="pass", name="Instructo", role="Instructor",
                                     email="in@uwm.edu")
         self.instructor.create_user()
-        self.course1 = Course.objects.create(101, "Math", "blah")
-        self.lecture1 = Section.objects.create(parent=self.course1, section_id=100, type="LEC",
-                                               start_time=time(12, 0), end_time=time(1, 30),
-                                               meeting_day=["MO", "WE"])
-        self.lecture2 = Section.objects.create(parent=self.course1, section_id=101, type="LEC",
-                                               start_time=time(12, 0), end_time=time(1, 30),
-                                               meeting_day=["TU", "TH"])
-        self.lecture3 = Section.objects.create(parent=self.course1, section_id=102, type="LEC",
-                                               start_time=time(11, 0), end_time=time(12, 30),
-                                               meeting_day=["MO", "WE"])
-        self.lecture4 = Section.objects.create(parent=self.course1, section_id=103, type="LEC",
-                                               start_time=time(9, 0), end_time=time(10, 30),
-                                               meeting_day=["TU", "TH"])
-        self.lab1 = Section.objects.create(parent=self.course1, section_id=300, type="LAB",
-                                           start_time=time(12, 0), end_time=time(1, 30),
-                                           meeting_day=["MO", "WE"])
-        self.lab2 = Section.objects.create(parent=self.course1, section_id=400, type="LAB",
-                                           start_time=time(9, 0), end_time=time(10, 30),
-                                           meeting_day=["MO", "WE"])
-        self.lab3 = Section.objects.create(parent=self.course1, section_id=500, type="LAB",
-                                           start_time=time(9, 0), end_time=time(10, 30),
-                                           meeting_day=["TU", "TH"])
-        self.lab4 = Section.objects.create(parent=self.course1, section_id=600, type="LAB",
-                                           start_time=time(10, 0), end_time=time(11, 30),
-                                           meeting_day=["MO", "FR"])
+        self.course1 = Course.objects.create(course_id=101, course_name="Math", description="blah", semester="Fall")
+        self.lecture1 = Section.objects.create(course_parent=self.course1, section_id=100, type="LEC",
+                                               start_time="12:00 pm", end_time="1:30 pm", location="who cares")
+        self.lecture1.meeting_days.add(self.monday, self.wednesday)
+        self.lecture2 = Section.objects.create(course_parent=self.course1, section_id=101, type="LEC",
+                                               start_time="12:00 pm", end_time="1:30 pm")
+        self.lecture2.meeting_days.add(self.tuesday, self.thursday)
+        self.lecture3 = Section.objects.create(course_parent=self.course1, section_id=102, type="LEC",
+                                               start_time="11:00 am", end_time="12:30 pm")
+        self.lecture3.meeting_days.add(self.monday, self.wednesday)
+        self.lecture4 = Section.objects.create(course_parent=self.course1, section_id=103, type="LEC",
+                                               start_time="9:00 am", end_time="10:30 am")
+        self.lecture4.meeting_days.add(self.tuesday, self.thursday)
+        self.lab1 = Section.objects.create(course_parent=self.course1, section_id=300, type="LAB",
+                                           start_time="12:00 pm", end_time="1:30 pm")
+        self.lab1.meeting_days.add(self.monday, self.wednesday)
+        self.lab2 = Section.objects.create(course_parent=self.course1, section_id=400, type="LAB",
+                                           start_time="9:00 am", end_time="10:30 am")
+        self.lab2.meeting_days.add(self.monday, self.wednesday)
+        self.lab3 = Section.objects.create(course_parent=self.course1, section_id=500, type="LAB",
+                                           start_time="9:00 am", end_time="10:30 am")
+        self.lab3.meeting_days.add(self.tuesday, self.thursday)
+        self.lab4 = Section.objects.create(course_parent=self.course1, section_id=600, type="LAB",
+                                           start_time="10:00 am", end_time="11:30 am")
+        self.lab4.meeting_days.add(self.monday, self.friday)
 
     def test_assignInstructorSingle(self):
         self.instructor.add_section(self.lecture1)
@@ -612,7 +617,7 @@ class SectionAssignmentTests(TestCase):
         self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
         self.ta.add_section(self.lab1)
         self.assertEqual(self.ta.assigned_sections[1], self.lab1, "Lab 1 wasn't added successfully")
-        self.assertFalse(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
 
     def test_assignTaToLabsNoConflictDifferentDays(self):
         self.ta.add_section(self.lecture1)
