@@ -455,14 +455,14 @@ class CourseEdit(CommonCourses):
         # will floating-point data passed to edit_course for course_id throw an exception?
         temp = self.default
         temp.create_course()
-        with self.assertRaises(TypeError, msg="Float ID data fails to raise TypeError"):
+        with self.assertRaises(ValueError, msg="Float ID data fails to raise TypeError"):
             temp.edit_course(course_id=3.61)
 
     def test_editIdString(self):
         # will string data passed to edit_course for course_id throw an exception?
         temp = self.default
         temp.create_course()
-        with self.assertRaises(TypeError, msg="String ID data fails to raise TypeError"):
+        with self.assertRaises(ValueError, msg="String ID data fails to raise TypeError"):
             temp.edit_course(course_id="test")
 
     # Extra name validation tests:
@@ -470,7 +470,7 @@ class CourseEdit(CommonCourses):
         # will passing non-string data for course_name to edit_course throw an exception?
         temp = self.default
         temp.create_course()
-        with self.assertRaises(TypeError, msg="Non-string name data fails to raise TypeError"):
+        with self.assertRaises(ValueError, msg="Non-string name data fails to raise TypeError"):
             temp.edit_course(course_name=1)
 
     def test_editNameStringDigit(self):
@@ -499,7 +499,7 @@ class CourseEdit(CommonCourses):
         # will passing non-string data to edit_course for description cause an exception to be thrown?
         temp = self.default
         temp.create_course()
-        with self.assertRaises(TypeError, msg="Non-string description data fails to raise TypeError"):
+        with self.assertRaises(ValueError, msg="Non-string description data fails to raise TypeError"):
             temp.edit_course(description=1)
 
     def test_editDescriptionWhiteSpaceOnly(self):
@@ -587,7 +587,8 @@ class CourseEdit(CommonCourses):
         temp2 = CourseClass(100, "Anthro", "This is an anthropology course", "Spring")
         temp1.create_course()
         temp2.create_course()
-        self.assertFalse(temp2.edit_course(semester="Fall"), "Course was allowed to make a duplicate")
+        with self.assertRaises(ValueError, msg="Course was allowed to make a duplicate"):
+            temp2.edit_course(semester="Fall")
         # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
         self.assertEqual("Spring", temp2.semester, "Course's semester was incorrectly changed")
 
@@ -597,7 +598,8 @@ class CourseEdit(CommonCourses):
         temp2 = CourseClass(101, "Anthro", "This is an anthropology course", "Fall")
         temp1.create_course()
         temp2.create_course()
-        self.assertFalse(temp2.edit_course(course_id=100), "Course was allowed to make a duplicate")
+        with self.assertRaises(ValueError, msg="Course was allowed to make a duplicate"):
+            temp2.edit_course(course_id=100)
         # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
         self.assertEqual(101, temp2.course_id, "Course's ID was incorrectly changed")
 
@@ -608,7 +610,8 @@ class CourseEdit(CommonCourses):
         # Note that the different descriptions do not have an affect
         temp1.create_course()
         temp2.create_course()
-        self.assertFalse(temp2.edit_course(course_name="Anthro"), "Course was allowed to make a duplicate")
+        with self.assertRaises(ValueError, msg="Course was allowed to make a duplicate"):
+            temp2.edit_course(course_name="Anthro")
         # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
         self.assertEqual("CompSci", temp2.course_name, "Course's name was incorrectly changed")
 
@@ -622,6 +625,7 @@ class CourseEdit(CommonCourses):
         # Note that the different descriptions do not have an affect
         temp1.create_course()
         temp2.create_course()
-        self.assertFalse(temp2.edit_course(course_name="  Anthro "), "Course was allowed to make a duplicate")
+        with self.assertRaises(ValueError, msg="Course was allowed to make a duplicate"):
+            temp2.edit_course(course_name="  Anthro ")
         # Note: should "abort" and leave course as it originally was. Check that it goes back to the original value.
         self.assertEqual("CompSci", temp2.course_name, "Course's name was incorrectly changed")

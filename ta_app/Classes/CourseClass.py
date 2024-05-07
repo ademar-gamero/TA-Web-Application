@@ -109,7 +109,7 @@ class CourseClass(object):
         # not want to edit).
         old_id = self.get_course_id()
         old_name = self.get_course_name()
-        old_description = self.get_course_description()  # might as well
+        old_description = self.get_course_description()
         old_semester = self.get_course_semester()
 
         # Get the calling course that we want to edit (there should only be one option ever returned... or none)
@@ -121,6 +121,41 @@ class CourseClass(object):
         except Course.DoesNotExist:
             raise ValueError("Course not found!")
 
+        try:
+            check = False
+            if course_id is not None:
+                check = True
+                self.set_id(course_id)
+            if course_name is not None:
+                check = True
+                self.set_name(course_name)
+            if description is not None:
+                self.set_description(description)
+            if semester is not None:
+                check = True
+                self.set_semester(semester)
+            if check:
+                try:
+                    Course.objects.get(course_id=self.course_id, course_name=self.course_name, semester=self.semester)
+                    # If it fails, reset all values back to original
+                    self.course_id = old_id
+                    self.course_name = old_name
+                    self.description = old_description
+                    self.semester = old_semester
+                    raise ValueError("Exact course already exists!")
+                except Course.DoesNotExist:
+                    pass
+            Course.objects.filter(pk=course.pk).update(course_id=self.course_id, course_name=self.course_name,
+                                                       description=self.description, semester=self.semester)
+            return True
+        except TypeError or ValueError as e:
+            # If it fails, reset all values back to original
+            self.course_id = old_id
+            self.course_name = old_name
+            self.description = old_description
+            self.semester = old_semester
+            raise ValueError(e.__str__())
+'''
         # Edge-case - if only the description is to be edited:
         # Do this before the "default" values substitutions because it's far easier to detect and handle now.
         if course_id is None and course_name is None and semester is None and description is not None:
@@ -194,3 +229,4 @@ class CourseClass(object):
             semester=semester
         )
         return True
+    '''
