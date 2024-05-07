@@ -30,6 +30,7 @@ from django.views.generic.base import RedirectView
 from ta_app.views.SectionView import SectionView
 from ta_app.views.deleteAccount import deleteAccount
 from ta_app.views.accountAssignment import accountAssignment
+from ta_app.views.deleteSection import deleteSection
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,6 +46,7 @@ urlpatterns = [
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
     path('deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
     path('deleteAccount/<int:pk>/', deleteAccount.as_view(), name='deleteAccount'),
+    path('deleteSection/<int:pk>/', deleteSection.as_view(), name='deleteSection')
 
 
 ]
