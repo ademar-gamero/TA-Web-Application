@@ -28,4 +28,3 @@ class accountAssignment(View):
 
         return render(request,"account_assignments.html",{'user':newacc,'allSections':sections,'message': 'Section was added successfully!'})
 
-
