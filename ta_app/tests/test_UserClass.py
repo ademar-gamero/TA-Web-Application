@@ -646,6 +646,26 @@ class SectionAssignmentTests(TestCase):
         self.ta.add_section(self.lab1)
         self.assertEqual(self.ta.assigned_sections[2], self.lab1, "Lab 1 wasn't added successfully")
 
+    def test_assignTAMeultipleLecturesNoActualConflict(self):
+        self.ta.add_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
+        self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+        self.ta.add_section(self.lab2)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab2, "Lab 2 wasn't added successfully")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.ta.add_section(self.lecture3)
+        self.assertEqual(self.ta.assigned_sections[2], self.lecture3, "Lecture 3 wasn't added successfully")
+
+    def test_assignTAMultipleLabLectureNoActualConflict(self):
+        self.ta.add_section(self.lecture3)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture3, "Lecture 3 should be assigned")
+        self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+        self.ta.add_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab1, "Lab 1 wasn't added successfully")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.ta.add_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[2], self.lecture1, "Lecture 1 wasn't added successfully")
+
 
 class RemoveSectionTests(TestCase):
 

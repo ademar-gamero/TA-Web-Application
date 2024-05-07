@@ -281,7 +281,8 @@ class UserClass(ABC):
                     if day1 == day2:
                         possible_conflict = True
                 if possible_conflict:
-                    # if new_section.start_time >= section.start_time and new_section.end_time <= section.end_time:
+                    if self.role == "Teacher-Assistant" and section.type == "LEC":
+                        continue
                     conflict = True
                     if new_section.start_time < section.start_time:
                         if new_section.end_time < section.start_time:
