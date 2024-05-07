@@ -625,7 +625,7 @@ class SectionAssignmentTests(TestCase):
         self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
         self.ta.add_section(self.lab1)
         self.assertEqual(self.ta.assigned_sections[1], self.lab1, "Lab 1 wasn't added successfully")
-        self.assertFalse(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
         self.ta.add_section(self.lab3)
         self.assertEqual(self.ta.assigned_sections[2], self.lab3, "Lab wasn't added successfully")
         
