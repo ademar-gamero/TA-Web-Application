@@ -163,6 +163,20 @@ class UserClass(ABC):
             else:
                 try:
                     self.assigned_sections.remove(section_to_remove)
+                    unassigned = True
+                    if self.role == "Instructor":
+                        # sec = Section.objects.filter(pk=section_to_remove.pk)
+                        if self.assigned_sections:
+                            unassigned = False
+                    elif self.role == "Teacher-Assistant":
+                        if section_to_remove.type == "LEC":
+                            User.objects.get(username=self.username).assigned_section.remove()
+                        for section in self.assigned_sections:
+                            if section.type == "LAB":
+                                unassigned = False
+                                break
+                    if unassigned:
+                        self.set_assigned(False)
                 except ValueError:
                     raise ValueError("Section not in user's assigned sections")
         else:
@@ -275,7 +289,6 @@ class UserClass(ABC):
     def check_conflicts(self, new_section):
         possible_conflict = False
         for section in self.assigned_sections:
-            sec = Section.objects.filter(course_parent=section.course_parent, section_id=section.section_id)
             for day1 in section.meeting_days.values_list():
                 for day2 in new_section.meeting_days.values_list():
                     if day1 == day2:
