@@ -8,14 +8,15 @@ from ta_app.Classes.UserClass import UserClass
 class accountAssignment(View):
 
     def get(self,request,pk):
+        usr_role = request.session["role"]
+        account = User.objects.get(pk=pk)
+        sections = Section.objects.all()
+        return render(request, "account_assignments.html",{'user':account, 'allSections':sections,'usr_role':usr_role})
+
+    def post(self,request,pk):
         curr_acc = request.session["role"]
         if curr_acc != "Admin" and curr_acc != "Instructor":
             return redirect("/Home/")
-        account = User.objects.get(pk=pk)
-        sections = Section.objects.all()
-        return render(request, "account_assignments.html",{'user':account, 'allSections':sections})
-
-    def post(self,request,pk):
         section = request.POST.get('section')
         account = User.objects.get(pk=pk)
         newacc = UserClass(account.username, account.password, account.name, account.role, account.email,

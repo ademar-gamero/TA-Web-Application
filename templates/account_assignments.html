@@ -20,9 +20,10 @@
             margin: auto;
             width: 100%;
         }
-        table, th,td{
-            margin-top: 20px;
-            border:1px solid black;
+         table,th,td{
+            border: 1px solid black;
+            padding: 5px;
+            border-collapse: collapse;
         }
     </style>
     <title>Account Assignments</title>
@@ -31,27 +32,33 @@
     <h1 class = "center" >{{user.name}} {{user.role}} Assignments</h1>
     <div class = "center2" align="center">
             <br>
-            Assigned: {{user.assigned}}
+        Assigned: <b>{{user.assigned}}</b>
             <br>
             <br>
-            <label for="role">Assigned Sections:</label>
-
+            Assigned Sections:
+            <br>
             <table>
+            <br>
             <tr>
               <th>Course</th>
               <th>Section ID</th>
               <th>Type</th>
-              <th>Delete</th>
+                {% if usr_role == "Admin" or usr_role == "Instructor" %}
+              <th> Remove Assignment </th>
+                {% endif %}
             </tr>
           {%for section in sections %}
             <tr>
               <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
+                {% if usr_role == "Admin" or usr_user == "Instructor" %}
               <td> delete link </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>
+        {% if usr_role == "Admin" or usr_role == "Instructor" %}
         <form action="/Home/accountList/accountAssignment/{{user.pk}}/" method="post"> 
         {% csrf_token %}
             <br>
@@ -66,6 +73,7 @@
         </form>
         <br>
       <h3>{{ message }}</h3>
+        {% endif %}
       <br>
       <a href = "/Home/accountList/"> Go Back </a></br>
       <br>
