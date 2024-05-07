@@ -126,7 +126,20 @@ class UserClass(ABC):
             raise ValueError("Assignment must be a boolean")
 
     def add_section(self, new_section):
+        should_assign = False
         if isinstance(new_section, Section):
+            if self.role == "Teacher-Assistant" and new_section.type == "LAB":
+                lecture = (User.objects.get(username=self.username).assigned_section.filter
+                           (course_parent=new_section.course_parent, type="LEC"))
+                if lecture:
+                    should_assign = True
+                else:
+                    raise ValueError("User is not assigned to a corresponding lecture section in this course")
+            elif self.role == "Instructor":
+                if new_section.type == "LEC":
+                    should_assign = True
+                else:
+                    raise ValueError("Instructors cannot be assigned to lab sections")
             if self.assigned_sections is None:
                 self.assigned_sections = [new_section]
             else:
@@ -135,19 +148,10 @@ class UserClass(ABC):
                 if self.assigned:
                     # checks for conflicts if user already assigned. if it finds one, this will throw an error
                     self.check_conflicts(new_section)
+                else:
+                    if should_assign:
+                        self.set_assigned(True)
                 self.assigned_sections.append(new_section)
-            if self.role == "Teacher-Assistant" and new_section.type == "LAB":
-                lecture = (User.objects.get(username=self.username).assigned_section.filter
-                           (course_parent=new_section.course_parent, type="LEC"))
-                if lecture:
-                    self.set_assigned(True)
-                else:
-                    raise ValueError("User is not assigned to a corresponding lecture section in this course")
-            elif self.role == "Instructor":
-                if new_section.type == "LEC":
-                    self.set_assigned(True)
-                else:
-                    raise ValueError("Instructors cannot be assigned to lab sections")
             User.objects.get(username=self.username).assigned_section.add(new_section)
         else:
             raise ValueError("Invalid section entry")
@@ -271,8 +275,9 @@ class UserClass(ABC):
     def check_conflicts(self, new_section):
         possible_conflict = False
         for section in self.assigned_sections:
-            for day1 in section.meeting_days:
-                for day2 in new_section.meeting_days:
+            sec = Section.objects.filter(course_parent=section.course_parent, section_id=section.section_id)
+            for day1 in section.meeting_days.values_list():
+                for day2 in new_section.meeting_days.values_list():
                     if day1 == day2:
                         possible_conflict = True
                 if possible_conflict:
