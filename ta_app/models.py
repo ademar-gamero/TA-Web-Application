@@ -36,7 +36,7 @@ class Types(models.TextChoices):
 class Course(models.Model):
     course_id = models.IntegerField(null=True)
     course_name = models.CharField(max_length=50)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True,blank=True)
     semester = models.CharField(max_length=6, choices=Semesters.choices, default=Semesters.FALL)
 
     def __str__(self):
