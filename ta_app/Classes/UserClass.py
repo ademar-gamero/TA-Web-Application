@@ -279,7 +279,7 @@ class UserClass(ABC):
             try:
                 User.objects.get(username=username)
                 raise ValueError("Username already in use. Please choose a unique username.")
-            except User.DoesNotExist:
+            except User.DoesNotExist or ValueError as e:
                 self.set_username(username)
         if password is not None:
             self.set_password(password)

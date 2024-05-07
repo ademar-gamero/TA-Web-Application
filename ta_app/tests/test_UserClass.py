@@ -1,7 +1,7 @@
 from django.test import TestCase
 from ta_app.Classes.UserClass import UserClass
 from ta_app.models import Course, Section, User, Day
-from datetime import datetime
+from datetime import datetime, time
 
 
 class Common(TestCase):
@@ -557,28 +557,28 @@ class SectionAssignmentTests(TestCase):
         self.instructor.create_user()
         self.course1 = Course.objects.create(course_id=101, course_name="Math", description="blah", semester="Fall")
         self.lecture1 = Section.objects.create(course_parent=self.course1, section_id=100, type="LEC",
-                                               start_time="12:00 pm", end_time="1:30 pm", location="who cares")
+                                               start_time=time(12, 0), end_time=time(13, 30), location="who cares")
         self.lecture1.meeting_days.add(self.monday, self.wednesday)
         self.lecture2 = Section.objects.create(course_parent=self.course1, section_id=101, type="LEC",
-                                               start_time="12:00 pm", end_time="1:30 pm")
+                                               start_time=time(12, 0), end_time=time(13, 30))
         self.lecture2.meeting_days.add(self.tuesday, self.thursday)
         self.lecture3 = Section.objects.create(course_parent=self.course1, section_id=102, type="LEC",
-                                               start_time="11:00 am", end_time="12:30 pm")
+                                               start_time=time(11, 0), end_time=time(12, 30))
         self.lecture3.meeting_days.add(self.monday, self.wednesday)
         self.lecture4 = Section.objects.create(course_parent=self.course1, section_id=103, type="LEC",
-                                               start_time="9:00 am", end_time="10:30 am")
+                                               start_time=time(9, 0), end_time=time(10, 30))
         self.lecture4.meeting_days.add(self.tuesday, self.thursday)
         self.lab1 = Section.objects.create(course_parent=self.course1, section_id=300, type="LAB",
-                                           start_time="12:00 pm", end_time="1:30 pm")
+                                           start_time=time(12, 0), end_time=time(13, 30))
         self.lab1.meeting_days.add(self.monday, self.wednesday)
         self.lab2 = Section.objects.create(course_parent=self.course1, section_id=400, type="LAB",
-                                           start_time="9:00 am", end_time="10:30 am")
+                                           start_time=time(9, 0), end_time=time(10, 30))
         self.lab2.meeting_days.add(self.monday, self.wednesday)
         self.lab3 = Section.objects.create(course_parent=self.course1, section_id=500, type="LAB",
-                                           start_time="9:00 am", end_time="10:30 am")
+                                           start_time=time(9, 0), end_time=time(10, 30))
         self.lab3.meeting_days.add(self.tuesday, self.thursday)
         self.lab4 = Section.objects.create(course_parent=self.course1, section_id=600, type="LAB",
-                                           start_time="10:00 am", end_time="11:30 am")
+                                           start_time=time(10, 00), end_time=time(11, 30))
         self.lab4.meeting_days.add(self.monday, self.friday)
 
     def test_assignInstructorSingle(self):
@@ -688,22 +688,22 @@ class RemoveSectionTests(TestCase):
         self.course2 = Course.objects.create(course_id=401, course_name="Super Math", description="blah",
                                              semester="Fall")
         self.lecture1 = Section.objects.create(course_parent=self.course1, section_id=100, type="LEC",
-                                               start_time="12:00 pm", end_time="1:30 pm", location="who cares")
+                                               start_time=time(12, 0), end_time=time(13, 30), location="who cares")
         self.lecture1.meeting_days.add(self.monday, self.wednesday)
         self.lecture2 = Section.objects.create(course_parent=self.course2, section_id=101, type="LEC",
-                                               start_time="12:00 pm", end_time="1:30 pm")
+                                               start_time=time(12, 0), end_time=time(13, 30))
         self.lecture2.meeting_days.add(self.tuesday, self.thursday)
         self.lecture3 = Section.objects.create(course_parent=self.course1, section_id=102, type="LEC",
-                                               start_time="11:00 am", end_time="12:30 pm")
+                                               start_time=time(11, 0), end_time=time(12, 30))
         self.lecture3.meeting_days.add(self.monday, self.wednesday)
         self.lab1 = Section.objects.create(course_parent=self.course1, section_id=300, type="LAB",
-                                           start_time="12:00 pm", end_time="1:30 pm")
+                                           start_time=time(12, 0), end_time=time(13, 30))
         self.lab1.meeting_days.add(self.monday, self.wednesday)
         self.lab2 = Section.objects.create(course_parent=self.course1, section_id=400, type="LAB",
-                                           start_time="9:00 am", end_time="10:30 am")
+                                           start_time=time(9, 0), end_time=time(10, 30))
         self.lab2.meeting_days.add(self.tuesday, self.thursday)
         self.lab3 = Section.objects.create(course_parent=self.course2, section_id=500, type="LAB",
-                                           start_time="4:00 pm", end_time="5:30 pm")
+                                           start_time=time(16, 0), end_time=time(17, 30))
         self.lab3.meeting_days.add(self.tuesday, self.thursday)
         self.instructor.add_section(self.lecture1)
         self.instructor.add_section(self.lecture2)
