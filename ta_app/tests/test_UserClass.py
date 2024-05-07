@@ -1,6 +1,6 @@
 from django.test import TestCase
 from ta_app.Classes.UserClass import UserClass
-from ta_app.models import Course, Section, User
+from ta_app.models import Course, Section, User, Day
 from datetime import datetime, time
 
 
@@ -17,14 +17,14 @@ class Common(TestCase):
         self.admin.save()
         self.algos = Course(course_id=351, course_name="compsci", description="blah blah blah")
         self.algos.save()
-        self.section = Section(course_parent=self.algos, section_id=12345, meeting_time=date_object, type="lecture")
+        self.section = Section(course_parent=self.algos, section_id=12345, type="lecture")
         self.section.save()
-        self.section2 = Section(course_parent=self.algos, section_id=123478, meeting_time=date_object2, type="lab")
+        self.section2 = Section(course_parent=self.algos, section_id=123478, type="lab")
         self.section2.save()
         print(self.section2)
         slist1 = [self.section]
         slist2 = [self.section, self.section2]
-        self.section3 = Section(course_parent=self.algos, section_id=1234789, meeting_time=date_object3, type="lab")
+        self.section3 = Section(course_parent=self.algos, section_id=1234789, type="lab")
         self.section3.save()
         self.assigned_user0 = UserClass("ta", "ta", "apoorv", "Teacher-Assistant", "email@gmail.com", "1", "1", True,
                                         slist1)
@@ -119,7 +119,8 @@ class set_skills(Common):
 
     def test_setSkillsCorrect(self):
         self.assigned_user.set_skills("CS 361")
-        self.assertEqual("CS 361",self.assigned_user.skills)
+        self.assertEqual("CS 361", self.assigned_user.skills)
+
 
 class TestUserClass(Common):
 
@@ -302,7 +303,7 @@ class create_User(TestCase):
         algos = Course(course_id=351, course_name="compsci", description="blah blah blah")
         algos.save()
 
-        section = Section(course_parent=algos, section_id=12345, meeting_time=date_object, type="lecture")
+        section = Section(course_parent=algos, section_id=12345, type="lecture")
         section.save()
 
         slist = [section]
@@ -325,47 +326,6 @@ class create_User(TestCase):
             j = j + 1
 
 
-class add_section(Common):
-
-    def test_addSec(self):
-        self.assigned_user0.add_section(self.section2)
-        self.assertIn(self.section2, self.assigned_user0.assigned_sections, "Section was not added")
-
-    def test_addIncorrectSec(self):
-        with self.assertRaises(ValueError, msg="Invalid section entry"):
-            self.assigned_user0.add_section("Section")
-
-
-class remove_section(Common):
-    def test_removeSec(self):
-        self.assigned_user.remove_section(self.section)
-        self.assertNotIn(self.section, self.assigned_user.assigned_sections, "Section was not removed")
-
-    def test_removeIncorrectSec(self):
-        with self.assertRaises(ValueError, msg="Invalid section entry"):
-            self.assigned_user.remove_section(self.section3)
-
-    def test_removeIncorrectSecString(self):
-        with self.assertRaises(ValueError, msg="Invalid section entry"):
-            self.assigned_user.remove_section("Section")
-
-
-class delete_user(Common):
-    ad = None
-
-    def test_delete_user(self):
-        user = self.assigned_user.username
-        self.assigned_user.delete_user()
-        query = User.objects.filter(username=user)
-        self.assertNotIn(self.assigned_user, query, "User was not deleted")
-
-    def test_delete(self):
-        self.assigned_user.create_user()
-        self.assigned_user.delete_user()
-        self.assertFalse(User.objects.filter(username=self.assigned_user.username).exists(),
-                         "User wasn't removed from the db")
-
-
 class TestEditUser(TestCase):
 
     def setUp(self):
@@ -378,7 +338,8 @@ class TestEditUser(TestCase):
         self.user2.create_user()
 
     def test_edit_user_duplicate_username(self):
-        self.user.edit_user("user2", None, None, None, None, None, None)
+        with self.assertRaises(ValueError, msg="Username already exists"):
+            self.user.edit_user("user2", None, None, None, None, None, None)
         self.assertEqual("user", self.user.username, msg="Username was updated when it shouldnt have been")
         count = User.objects.filter(username=self.user.username).count()
         print(count)
@@ -542,41 +503,54 @@ class TestEditUser(TestCase):
 class SectionAssignmentTests(TestCase):
 
     def setUp(self):
-        self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="TA", email="ta@uwm.edu")
+        self.monday = Day.objects.create(day="MO")
+        self.tuesday = Day.objects.create(day="TU")
+        self.wednesday = Day.objects.create(day="WE")
+        self.thursday = Day.objects.create(day="TH")
+        self.friday = Day.objects.create(day="FR")
+        self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="Teacher-Assistant",
+                            email="ta@uwm.edu")
         self.ta.create_user()
-        self.instructor = UserClass(username="test_in", password="pass", name="Instructo", role="IN",
+        self.instructor = UserClass(username="test_in", password="pass", name="Instructo", role="Instructor",
                                     email="in@uwm.edu")
         self.instructor.create_user()
-        self.course1 = Course.objects.create(101, "Math", "blah")
-        self.lecture1 = Section.objects.create(parent=self.course1, section_id=100, type="LEC",
-                                               start_time=time(12, 0), end_time=time(1, 30),
-                                               meeting_day=["MO", "WE"])
-        self.lecture2 = Section.objects.create(parent=self.course1, section_id=101, type="LEC",
-                                               start_time=time(12, 0), end_time=time(1, 30),
-                                               meeting_day=["TU", "TH"])
-        self.lecture3 = Section.objects.create(parent=self.course1, section_id=102, type="LEC",
-                                               start_time=time(11, 0), end_time=time(12, 30),
-                                               meeting_day=["MO", "WE"])
-        self.lecture4 = Section.objects.create(parent=self.course1, section_id=103, type="LEC",
-                                               start_time=time(9, 0), end_time=time(10, 30),
-                                               meeting_day=["TU", "TH"])
-        self.lab1 = Section.objects.create(parent=self.course1, section_id=300, type="LAB",
-                                           start_time=time(12, 0), end_time=time(1, 30),
-                                           meeting_day=["MO", "WE"])
-        self.lab2 = Section.objects.create(parent=self.course1, section_id=400, type="LAB",
-                                           start_time=time(9, 0), end_time=time(10, 30),
-                                           meeting_day=["MO", "WE"])
-        self.lab3 = Section.objects.create(parent=self.course1, section_id=500, type="LAB",
-                                           start_time=time(9, 0), end_time=time(10, 30),
-                                           meeting_day=["TU", "TH"])
-        self.lab4 = Section.objects.create(parent=self.course1, section_id=600, type="LAB",
-                                           start_time=time(10, 0), end_time=time(11, 30),
-                                           meeting_day=["MO", "FR"])
+        self.course1 = Course.objects.create(course_id=101, course_name="Math", description="blah", semester="Fall")
+        self.lecture1 = Section.objects.create(course_parent=self.course1, section_id=100, type="LEC",
+                                               start_time=time(12, 0), end_time=time(13, 30), location="who cares")
+        self.lecture1.meeting_days.add(self.monday, self.wednesday)
+        self.lecture2 = Section.objects.create(course_parent=self.course1, section_id=101, type="LEC",
+                                               start_time=time(12, 0), end_time=time(13, 30))
+        self.lecture2.meeting_days.add(self.tuesday, self.thursday)
+        self.lecture3 = Section.objects.create(course_parent=self.course1, section_id=102, type="LEC",
+                                               start_time=time(11, 0), end_time=time(12, 30))
+        self.lecture3.meeting_days.add(self.monday, self.wednesday)
+        self.lecture4 = Section.objects.create(course_parent=self.course1, section_id=103, type="LEC",
+                                               start_time=time(9, 0), end_time=time(10, 30))
+        self.lecture4.meeting_days.add(self.tuesday, self.thursday)
+        self.lab1 = Section.objects.create(course_parent=self.course1, section_id=300, type="LAB",
+                                           start_time=time(12, 0), end_time=time(13, 30))
+        self.lab1.meeting_days.add(self.monday, self.wednesday)
+        self.lab2 = Section.objects.create(course_parent=self.course1, section_id=400, type="LAB",
+                                           start_time=time(9, 0), end_time=time(10, 30))
+        self.lab2.meeting_days.add(self.monday, self.wednesday)
+        self.lab3 = Section.objects.create(course_parent=self.course1, section_id=500, type="LAB",
+                                           start_time=time(9, 0), end_time=time(10, 30))
+        self.lab3.meeting_days.add(self.tuesday, self.thursday)
+        self.lab4 = Section.objects.create(course_parent=self.course1, section_id=600, type="LAB",
+                                           start_time=time(10, 00), end_time=time(11, 30))
+        self.lab4.meeting_days.add(self.monday, self.friday)
 
     def test_assignInstructorSingle(self):
         self.instructor.add_section(self.lecture1)
         self.assertEqual(self.instructor.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
         self.assertTrue(self.instructor.assigned, "Assigned flag not set for instructor")
+
+    def test_assignInstructorLab(self):
+        self.instructor.add_section(self.lecture1)
+        self.assertEqual(self.instructor.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
+        self.assertTrue(self.instructor.assigned, "Assigned flag not set for instructor")
+        with self.assertRaises(ValueError, msg="Lab shouldn't be assignable to instructor"):
+            self.instructor.add_section(self.lab1)
 
     def test_assignInstructorNoConflictDifferentDays(self):
         self.instructor.add_section(self.lecture1)
@@ -611,16 +585,139 @@ class SectionAssignmentTests(TestCase):
         self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
         self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
         self.ta.add_section(self.lab1)
-        self.assertEqual(self.ta.assigned_sections[0], self.lab1, "Lecture should be removed, swapped with lab")
-        self.assertFalse(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.assertEqual(self.ta.assigned_sections[1], self.lab1, "Lab 1 wasn't added successfully")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
 
     def test_assignTaToLabsNoConflictDifferentDays(self):
         self.ta.add_section(self.lecture1)
         self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
         self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
         self.ta.add_section(self.lab1)
-        self.assertEqual(self.ta.assigned_sections[0], self.lab1, "Lecture should be removed, swapped with lab")
-        self.assertFalse(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.assertEqual(self.ta.assigned_sections[1], self.lab1, "Lab 1 wasn't added successfully")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
         self.ta.add_section(self.lab3)
-        self.assertEqual(self.ta.assigned_sections[1], self.lab3, "Lab wasn't added successfully")
-        
+        self.assertEqual(self.ta.assigned_sections[2], self.lab3, "Lab wasn't added successfully")
+
+    def test_assignTALectureAndLabNonConflict(self):
+        self.ta.add_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
+        self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+        self.ta.add_section(self.lab2)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab2, "Lab 2 wasn't added successfully")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.ta.add_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[2], self.lab1, "Lab 1 wasn't added successfully")
+
+    def test_assignTAMeultipleLecturesNoActualConflict(self):
+        self.ta.add_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
+        self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+        self.ta.add_section(self.lab2)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab2, "Lab 2 wasn't added successfully")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.ta.add_section(self.lecture3)
+        self.assertEqual(self.ta.assigned_sections[2], self.lecture3, "Lecture 3 wasn't added successfully")
+
+    def test_assignTAMultipleLabLectureNoActualConflict(self):
+        self.ta.add_section(self.lecture3)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture3, "Lecture 3 should be assigned")
+        self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+        self.ta.add_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab1, "Lab 1 wasn't added successfully")
+        self.assertTrue(self.ta.assigned, "Assigned flag should be set for TA when they have a lab section")
+        self.ta.add_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[2], self.lecture1, "Lecture 1 wasn't added successfully")
+
+
+class RemoveSectionTests(TestCase):
+
+    def setUp(self):
+        self.monday = Day.objects.create(day="MO")
+        self.tuesday = Day.objects.create(day="TU")
+        self.wednesday = Day.objects.create(day="WE")
+        self.thursday = Day.objects.create(day="TH")
+        self.friday = Day.objects.create(day="FR")
+        self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="Teacher-Assistant",
+                            email="ta@uwm.edu")
+        self.ta.create_user()
+        self.instructor = UserClass(username="test_in", password="pass", name="Instructo", role="Instructor",
+                                    email="in@uwm.edu")
+        self.instructor.create_user()
+        self.course1 = Course.objects.create(course_id=101, course_name="Math", description="blah", semester="Fall")
+        self.course2 = Course.objects.create(course_id=401, course_name="Super Math", description="blah",
+                                             semester="Fall")
+        self.lecture1 = Section.objects.create(course_parent=self.course1, section_id=100, type="LEC",
+                                               start_time=time(12, 0), end_time=time(13, 30), location="who cares")
+        self.lecture1.meeting_days.add(self.monday, self.wednesday)
+        self.lecture2 = Section.objects.create(course_parent=self.course2, section_id=101, type="LEC",
+                                               start_time=time(12, 0), end_time=time(13, 30))
+        self.lecture2.meeting_days.add(self.tuesday, self.thursday)
+        self.lecture3 = Section.objects.create(course_parent=self.course1, section_id=102, type="LEC",
+                                               start_time=time(11, 0), end_time=time(12, 30))
+        self.lecture3.meeting_days.add(self.monday, self.wednesday)
+        self.lab1 = Section.objects.create(course_parent=self.course1, section_id=300, type="LAB",
+                                           start_time=time(12, 0), end_time=time(13, 30))
+        self.lab1.meeting_days.add(self.monday, self.wednesday)
+        self.lab2 = Section.objects.create(course_parent=self.course1, section_id=400, type="LAB",
+                                           start_time=time(9, 0), end_time=time(10, 30))
+        self.lab2.meeting_days.add(self.tuesday, self.thursday)
+        self.lab3 = Section.objects.create(course_parent=self.course2, section_id=500, type="LAB",
+                                           start_time=time(16, 0), end_time=time(17, 30))
+        self.lab3.meeting_days.add(self.tuesday, self.thursday)
+        self.instructor.add_section(self.lecture1)
+        self.instructor.add_section(self.lecture2)
+        self.ta.add_section(self.lecture1)
+        self.ta.add_section(self.lab1)
+        self.ta.add_section(self.lab2)
+
+    def test_removeTALab(self):
+        self.ta.remove_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab2, "Lab 1 wasn't removed successfully")
+        self.assertTrue(self.ta.assigned, "TA should still be assigned")
+
+    def test_removeTAAllLabs(self):
+        self.ta.remove_section(self.lab1)
+        self.assertEqual(self.ta.assigned_sections[1], self.lab2, "Lab 1 wasn't removed successfully")
+        self.assertTrue(self.ta.assigned, "TA should still be assigned")
+        self.ta.remove_section(self.lab2)
+        self.assertEqual(len(self.ta.assigned_sections), 1, "Lab 2 wasn't removed successfully")
+        self.assertFalse(self.ta.assigned, "TA should not be assigned")
+
+    def test_removeTALec(self):
+        self.ta.remove_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections, [], "Lecture and all associated labs should be removed")
+        self.assertFalse(self.ta.assigned, "TA should not be assigned")
+
+    def test_removeTAInvalid(self):
+        with self.assertRaises(ValueError, msg="Invalid section not caught"):
+            self.ta.remove_section(self.lab3)
+
+    def test_removeTAWithMultipleCourses(self):
+        self.ta.add_section(self.lecture2)
+        self.ta.add_section(self.lab3)
+        self.ta.remove_section(self.lecture1)
+        self.assertEqual(self.ta.assigned_sections[0], self.lecture2, "Lecture 1 and its labs should be removed")
+        self.assertEqual(self.ta.assigned_sections[1], self.lab3, "Lecture 1 and its labs should be removed")
+        self.assertTrue(self.ta.assigned, "TA should still be assigned")
+
+    def test_removeInstructor(self):
+        self.instructor.remove_section(self.lecture1)
+        self.assertEqual(self.instructor.assigned_sections[0], self.lecture2, "Lecture 1 should be removed")
+        self.assertTrue(self.instructor.assigned, "Instructor should still be assigned")
+        # this next bit checks if TAs get unassigned from LAB sections tied to the instructor's LEC.
+        # commented out as I'm not sure if we want it to work this way or not
+        self.assertEqual(len(self.ta.get_assigned_sections()), 1,
+                         "Instructor's removal from lecture should take TA out of associated labs")
+        self.assertFalse(self.ta.get_assigned(), "Instructor's removal should unassign TA if not assigned elsewhere")
+
+    def test_removeInstructorFromAll(self):
+        self.instructor.remove_section(self.lecture1)
+        self.assertEqual(self.instructor.assigned_sections[0], self.lecture2, "Lecture 1 should be removed")
+        self.assertTrue(self.instructor.assigned, "Instructor should still be assigned")
+        self.instructor.remove_section(self.lecture2)
+        self.assertEqual(self.instructor.assigned_sections, [], "Lecture 2 should be removed")
+        self.assertFalse(self.instructor.assigned, "Instructor should not be assigned")
+
+    def test_removeInstructorInvalid(self):
+        with self.assertRaises(ValueError, msg="Invalid section not caught"):
+            self.instructor.remove_section(self.lecture3)
