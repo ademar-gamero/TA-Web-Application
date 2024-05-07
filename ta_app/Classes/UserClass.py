@@ -5,7 +5,6 @@ from ta_app.models import User, Roles, Section
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
-
 from abc import ABC
 
 from ta_app.models import User, Roles, Section
@@ -113,7 +112,6 @@ class UserClass(ABC):
     def set_role(self, new_role):
         if isinstance(new_role, str):
             if not (new_role == "Teacher-Assistant" or new_role == "Instructor" or new_role == "Admin"):
-
                 raise ValueError("Invalid role")
             self.role = new_role
         else:
@@ -122,6 +120,7 @@ class UserClass(ABC):
     def set_assigned(self, new_assigned):
         if isinstance(new_assigned, bool):
             self.assigned = new_assigned
+            User.objects.filter(username=self.username).update(assigned=self.assigned)
         else:
             raise ValueError("Assignment must be a boolean")
 
@@ -166,19 +165,14 @@ class UserClass(ABC):
                     User.objects.get(username=self.username).assigned_section.remove(section_to_remove)
                     unassigned = True
                     if self.role == "Instructor":
-                        tas = []
-                        for user in User.objects.filter(role="Teacher-Assistant",
-                                                        assigned_section=section_to_remove.pk).all():
-                            print(user)
+                        for user in section_to_remove.assigned_users.filter(role="Teacher-Assistant", assigned=True):
                             ta = UserClass(username=user.username, password=user.password, name=user.name,
                                            role=user.role, email=user.email, phone_number=user.phone_number,
                                            address=user.address, skills=user.skills,
-                                           assigned_sections=user.assigned_section.all(), assigned=user.assigned)
-                            tas.append(ta)
-                        for ta in tas:
-                            for section in Section.objects.filter(course_parent=section_to_remove.course_parent,
-                                                                  type="LAB").all():
-                                print(section)
+                                           assigned_sections=list(user.assigned_section.all()), assigned=user.assigned)
+                            sections = Section.objects.filter(course_parent=section_to_remove.course_parent,
+                                                              assigned_users=user, type="LAB")
+                            for section in sections:
                                 ta.remove_section(section)
                         if self.assigned_sections:
                             unassigned = False
@@ -206,34 +200,64 @@ class UserClass(ABC):
             raise ValueError("Skills must be a string")
 
     def get_username(self):
-        return self.username
+        try:
+            return User.objects.get(username=self.username).username
+        except User.DoesNotExist:
+            return self.username
 
     def get_password(self):
-        return self.password
+        try:
+            return User.objects.get(username=self.username).password
+        except User.DoesNotExist:
+            return self.password
 
     def get_name(self):
-        return self.name
+        try:
+            return User.objects.get(username=self.username).name
+        except User.DoesNotExist:
+            return self.name
 
     def get_role(self):
-        return self.role
+        try:
+            return User.objects.get(username=self.username).role
+        except User.DoesNotExist:
+            return self.role
 
     def get_email(self):
-        return self.email
+        try:
+            return User.objects.get(username=self.username).email
+        except User.DoesNotExist:
+            return self.email
 
     def get_phone_number(self):
-        return self.phone_number
+        try:
+            return User.objects.get(username=self.username).phone_number
+        except User.DoesNotExist:
+            return self.phone_number
 
     def get_address(self):
-        return self.address
+        try:
+            return User.objects.get(username=self.username).address
+        except User.DoesNotExist:
+            return self.address
 
     def get_assigned(self):
-        return self.assigned
+        try:
+            return User.objects.get(username=self.username).assigned
+        except User.DoesNotExist:
+            return self.assigned
 
     def get_assigned_sections(self):
-        return self.assigned_sections
+        try:
+            return list(User.objects.get(username=self.username).assigned_section.all())
+        except User.DoesNotExist:
+            return self.assigned_sections
 
     def get_skills(self):
-        return self.skills
+        try:
+            return User.objects.get(username=self.username).skills
+        except User.DoesNotExist:
+            return self.skills
 
     def view_contact_info(self, username):
         if not isinstance(username, str):
@@ -247,7 +271,8 @@ class UserClass(ABC):
         else:
             return contact.email
 
-    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None, skills=None):
+    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None,
+                  skills=None):
         old_username = self.username
 
         if username is not None:
@@ -289,8 +314,10 @@ class UserClass(ABC):
             raise ValueError("Username is already taken")
         except User.DoesNotExist:
             user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
-                        role=self.get_role(), email=self.get_email(), phone_number=self.get_phone_number(),
-                        address=self.get_address(),assigned=self.get_assigned(), skills=self.get_skills())
+                                       role=self.get_role(), email=self.get_email(),
+                                       phone_number=self.get_phone_number(),
+                                       address=self.get_address(), assigned=self.get_assigned(),
+                                       skills=self.get_skills())
             for i in self.assigned_sections:
                 user.assigned_section.add(i)
             user.save()
@@ -325,6 +352,3 @@ class UserClass(ABC):
                         raise ValueError("The section being assigned conflicts with another section assignment :"
                                          + section.__str__())
                 possible_conflict = False
-
-
-
