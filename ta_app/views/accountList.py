@@ -1,5 +1,4 @@
-from django.contrib import messages
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.views import View
 from ta_app.models import Course, User
 from django.http import Http404
@@ -7,17 +6,14 @@ from django.http import Http404
 
 class accountList(View):
 
-    def get(self,request):
-        if 'role' not in request.session or 'name' not in request.session:
-            messages.error(request, "You are not logged in.")
-            return redirect('login')
+    def get(self, request):
         isAdmin = False
         accounts = User.objects.all()
         if request.session["role"] == "Admin":
             isAdmin = True
-        return render(request,"account_list.html", {"account_list": accounts, "isAdmin": isAdmin})
+        return render(request, "account_list.html", {"account_list": accounts, "isAdmin": isAdmin})
 
-    def post(self,request):
+    def post(self, request):
         isAdmin = False
         name = request.POST.get('name', '')
         username = request.POST.get('username', '')
@@ -42,11 +38,7 @@ class accountList(View):
                 accounts = User.objects.filter(name=name)
         else:
             accounts = User.objects.all()
-        return render(request,"account_list.html", {"account_list": accounts, "isAdmin": isAdmin})
-    
-
-
-
+        return render(request, "account_list.html", {"account_list": accounts, "isAdmin": isAdmin})
 
 
 
