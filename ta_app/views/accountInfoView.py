@@ -13,14 +13,17 @@ class accountInfoView(View):
 
     def get(self, request, pk):
         curr_acc = request.session["role"]
-        if curr_acc != "Admin" or request.session["pk"] == pk:
+        is_admin = False
+        if curr_acc == "Admin":
+            is_admin = True
+        elif request.session["pk"] != pk:
             return redirect("/Home/")
 
         account = User.objects.get(pk=pk)
         self.acc_edit = UserClass(account.username, account.password, account.name, account.role,
                                   account.email, account.phone_number, account.address, account.assigned,
                                   account.assigned_section, account.skills)
-        return render(request, "accountInfo.html", {'user': account})
+        return render(request, "accountInfo.html", {'user': account, 'is_admin': is_admin})
 
     def post(self, request, pk):
         name = request.POST.get('name')
