@@ -163,6 +163,7 @@ class UserClass(ABC):
             else:
                 try:
                     self.assigned_sections.remove(section_to_remove)
+                    User.objects.get(username=self.username).assigned_section.remove(section_to_remove)
                     unassigned = True
                     if self.role == "Instructor":
                         # sec = Section.objects.filter(pk=section_to_remove.pk)
@@ -170,7 +171,10 @@ class UserClass(ABC):
                             unassigned = False
                     elif self.role == "Teacher-Assistant":
                         if section_to_remove.type == "LEC":
-                            User.objects.get(username=self.username).assigned_section.remove()
+                            to_remove = (User.objects.get(username=self.username).assigned_section.filter
+                                         (course_parent=section_to_remove.course_parent))
+                            for section in to_remove:
+                                self.remove_section(section)
                         for section in self.assigned_sections:
                             if section.type == "LAB":
                                 unassigned = False
