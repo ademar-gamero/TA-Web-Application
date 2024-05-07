@@ -54,11 +54,21 @@
             </fieldset>
 
             </div>
-
-
             <div>
-                <label for="meeting_time">Meeting Time:</label>
-                <input type="datetime-local" name="meeting_time" id="meeting_time" required>
+                <label for="is_online">Is Online:</label>
+                <input type="checkbox" name="is_online" id="is_online">
+            </div>
+            <div>
+                <label for="start_time">Start Time:</label>
+                <input type="time" name="start_time" id="start_time">
+            </div>
+            <div>
+                <label for="end_time">End Time:</label>
+                <input type="time" name="end_time" id="end_time">
+            </div>
+            <div>
+                <label for="location">Location:</label>
+                <input type="text" name="location" id="location" >
             </div>
             <div>
                 <label for="section_type">Section Type:</label>
@@ -84,12 +94,18 @@
               <th>Course</th>
               <th>Section ID</th>
               <th>Type</th>
+              <th>Location</th>
+              <th>Day</th>
+              <th>Time</th>
             </tr>
-          {%for section in sections %}
+            {% for section in sections %}
             <tr>
               <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
+              <td>{{ section.location }}</td>
+                <td>{{ section.meeting_days }}</td>
+              <td>{{ section.start_time }} - {{ section.end_time }}</td>
             </tr>
             {% endfor %}
           </table>
