@@ -746,9 +746,9 @@ class RemoveSectionTests(TestCase):
         self.assertTrue(self.instructor.assigned, "Instructor should still be assigned")
         # this next bit checks if TAs get unassigned from LAB sections tied to the instructor's LEC.
         # commented out as I'm not sure if we want it to work this way or not
-        # self.assertEqual(len(self.ta.assigned_sections), 1,
-        #                  "Instructor's removal from lecture should take TA out of associated labs")
-        # self.assertFalse(self.ta.assigned, "Instructor's removal should unassign TA if not assigned elsewhere")
+        self.assertEqual(len(self.ta.assigned_sections), 1,
+                         "Instructor's removal from lecture should take TA out of associated labs")
+        self.assertFalse(self.ta.assigned, "Instructor's removal should unassign TA if not assigned elsewhere")
 
     def test_removeInstructorFromAll(self):
         self.instructor.remove_section(self.lecture1)

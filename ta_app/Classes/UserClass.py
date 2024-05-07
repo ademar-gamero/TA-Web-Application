@@ -166,7 +166,20 @@ class UserClass(ABC):
                     User.objects.get(username=self.username).assigned_section.remove(section_to_remove)
                     unassigned = True
                     if self.role == "Instructor":
-                        # sec = Section.objects.filter(pk=section_to_remove.pk)
+                        tas = []
+                        for user in User.objects.filter(role="Teacher-Assistant",
+                                                        assigned_section=section_to_remove.pk).all():
+                            print(user)
+                            ta = UserClass(username=user.username, password=user.password, name=user.name,
+                                           role=user.role, email=user.email, phone_number=user.phone_number,
+                                           address=user.address, skills=user.skills,
+                                           assigned_sections=user.assigned_section.all(), assigned=user.assigned)
+                            tas.append(ta)
+                        for ta in tas:
+                            for section in Section.objects.filter(course_parent=section_to_remove.course_parent,
+                                                                  type="LAB").all():
+                                print(section)
+                                ta.remove_section(section)
                         if self.assigned_sections:
                             unassigned = False
                     elif self.role == "Teacher-Assistant":
@@ -238,7 +251,7 @@ class UserClass(ABC):
         old_username = self.username
 
         if username is not None:
-            try: 
+            try:
                 User.objects.get(username=username)
                 raise ValueError("Username already in use. Please choose a unique username.")
             except User.DoesNotExist:
@@ -250,7 +263,7 @@ class UserClass(ABC):
         if role is not None:
             self.set_role(role)
         if email is not None:
-            try: 
+            try:
                 User.objects.get(email=email)
                 raise ValueError("Email already in use. Please use a unique email.")
             except User.DoesNotExist:
@@ -289,7 +302,7 @@ class UserClass(ABC):
             return True
         except User.DoesNotExist:
             raise ValueError("This user does not exist can not be deleted")
-    
+
     def check_conflicts(self, new_section):
         possible_conflict = False
         for section in self.assigned_sections:
