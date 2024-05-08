@@ -2,7 +2,7 @@ from django.views import View
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from ta_app.models import Course, Section,Day
+from ta_app.models import Course, Section #,Day
 from django.contrib import messages
 
 from ta_app.Classes.SectionClass import SectionClass
