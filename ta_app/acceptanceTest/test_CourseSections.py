@@ -8,9 +8,6 @@ from datetime import time
 class accountAssignment(TestCase):
     def setUp(self):
         self.green = Client()
-        self.courselist = {351: ["compsci", "this course covers algos and data structs"],
-                      361: ["compsci", "this course covers software engineering"],
-                      102: ["psych", "this course covers psychology"]}
         self.admin = User.objects.create(
                 name="ad",
                 username="admin",
