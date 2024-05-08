@@ -1,8 +1,8 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<!DOCTYPE html> 
+  <html lang="en"> 
+  <head> 
+      <meta charset="UTF-8">
     <title>Account List</title>
 </head>
 <style>
@@ -35,6 +35,8 @@ th, td {
 			<input type="submit" name="input_button" value="Submit">
 			<input type="submit" name="input_button" value="Clear Filter">
         </form>
+      <br>
+      <a href = "/Home/"> Go Home </a>
 	<br>
 	<div align="center">
 		<table style="width:75%; border-collapse: collapse;">
@@ -62,7 +64,7 @@ th, td {
 						<td>{{account.phone_number}}</td>
 						<td>{{account.address}}</td>
 						<td><a href = "{% url 'accountInfo' pk=account.pk %}">edit {{account.username}}</a></td>
-                        <td><a href = "{% url 'deleteAccount' pk=account.pk %}">delete {{account.username}}</a></td>
+                        <td>delete account</td>
 					{% endif %}
 				</tr>
 			{% endfor %}
@@ -70,8 +72,6 @@ th, td {
         {% if not account_list %}
             <h3>No accounts found</h3>
         {% endif %}
-        <br>
-      <a href = "/Home/"> Go Home </a>
     </div>
 </body>
 </html>
