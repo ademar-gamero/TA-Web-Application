@@ -29,7 +29,6 @@ from ta_app.views.loginView import login_view
 from django.views.generic.base import RedirectView
 from ta_app.views.SectionView import SectionView
 from ta_app.views.deleteAccount import deleteAccount
-from ta_app.views.accountAssignment import accountAssignment
 from ta_app.views.deleteSection import deleteSection
 from ta_app.views.accountAssignment import accountAssignment
 from ta_app.views.courseSections import courseSections
