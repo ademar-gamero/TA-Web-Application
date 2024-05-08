@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .center {
-            margin: auto;
-            width: 25%;
-            border: 3px solid black;
-            padding: 25px;
+            text-align:center;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
         }
         .center2 {
             margin-left: auto;
@@ -19,43 +19,75 @@
             margin: auto;
             width: 100%;
         }
-        table, th, td {
+        table, th {
             border:1px solid black;
         }
-        
+
     </style>
     <title>Create Section</title>
 </head>
 <body>
     <div class="container">
         <h2>Create Section</h2>
+        <table>
         <form method="post" action="{% url 'createSection' %}">
             {% csrf_token %}
-            <div>
-                <label for="course_parent">Course:</label>
-                <select name="course_parent" id="course_parent" required>
+            <tr>
+            <td><label for="course_parent">Course:</label>
+            <select name="course_parent" id="course_parent" required>
                     {% for course in courses %}
                     <option value="{{ course.id }}">{{ course}}</option>
                     {% endfor %}
                 </select>
-            </div>
-            <div>
-                <label for="section_id">Section ID:</label>
+            </td>
+            </tr>
+            <tr>
+            <td><label for="section_id">Section ID:</label>
                 <input type="text" name="section_id" id="section_id" required>
-            </div>
-            <div>
-                <label for="meeting_time">Meeting Time:</label>
-                <input type="datetime-local" name="meeting_time" id="meeting_time" required>
-            </div>
-            <div>
+            </td>
+            </tr>
+            <tr>
+              <td>
+            <fieldset>
+                <legend>Days:</legend>
+                <label><input type="checkbox" name="days" value="Monday"> Monday</label>
+                <label><input type="checkbox" name="days" value="Tuesday"> Tuesday</label>
+                <label><input type="checkbox" name="days" value="Wednesday"> Wednesday</label>
+                <label><input type="checkbox" name="days" value="Thursday"> Thursday</label>
+                <label><input type="checkbox" name="days" value="Friday"> Friday</label>
+            </fieldset>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <label for="start_time">Start Time:</label>
+          <input type="time" name="start_time" id="start_time">
+            </td>
+          </tr>
+          <tr>
+            <td>
+                <label for="end_time">End Time:</label>
+                <input type="time" name="end_time" id="end_time">
+            </td>
+            </tr>
+            <tr>
+              <td>
                 <label for="section_type">Section Type:</label>
                 <select name="section_type" id="section_type" required>
                     <option value="LEC">Lecture</option>
                     <option value="LAB">Lab</option>
                 </select>
-            </div>
-            <div>
-                <button type="submit">Create Section</button>
+            </td>
+            </tr>
+            <tr>
+            <td><button type="submit">Create Section</button>
+            </td>
+            <tr>
+            </table>
+              <br>
+              <a href = "/Home/"> Go Home </a>
             </div>
         </form>
         {% if check == False %}
@@ -65,8 +97,8 @@
             <h3> Section was Created </h3>
         {% endif %}
         <div class="center">
-          <h2 class = "center3"> Saved Sections </h2>
-          <table class="center2">
+          <h2 class = "center"> Created Sections </h2>
+          <table class="center">
             <tr>
               <th>Course</th>
               <th>Section ID</th>

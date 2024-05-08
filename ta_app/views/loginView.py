@@ -36,6 +36,7 @@ class login_view(View):
             # User is found:
             request.session["role"] = user.role
             request.session["name"] = user.name
+            request.session["pk"] = user.pk
             return redirect('Home')  # Ensure this matches the URL name defined in urls.py
         except User.DoesNotExist:
             messages.error(request, 'Invalid username or password.')

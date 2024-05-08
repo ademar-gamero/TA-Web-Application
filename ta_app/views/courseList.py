@@ -13,13 +13,28 @@ class courseList(View):
         return render(request, "courseList.html", {"courselist": courses, "is_admin": is_admin})
 
     def post(self, request):
-        # Handle deletion confirmation for admins
-        if 'delete_id' in request.POST and request.session.get('role') == 'Admin':
-            course_id = request.POST.get('delete_id')
-            try:
-                course = Course.objects.get(id=course_id)
-                course.delete()
-                messages.success(request, 'Course successfully deleted.')
-            except Course.DoesNotExist:
-                messages.error(request, 'Course not found.')
-        return redirect('courseList')
+        is_admin = request.session.get('role') == 'Admin'  # Check if user is an admin
+        id = request.POST.get('course_id','')
+        name = request.POST.get('course_name','')
+        semester = request.POST.get('semesters','')
+        courses = []
+        if request.POST.get('input_btn') == "Submit":
+            if id != '' and name == '' and semester == '':
+                courses = Course.objects.filter(course_id = int(id))
+            if id == '' and name != '' and semester == '':
+                courses = Course.objects.filter(course_name = name)
+            if id == '' and name == '' and semester != '':
+                courses = Course.objects.filter(semester = semester)
+            if id != '' and name != '' and semester == '':
+                courses = Course.objects.filter(course_id = int(id),course_name = name)
+            if id != '' and name == '' and semester != '':
+                courses = Course.objects.filter(course_id= int(id),semester = semester)
+            if id == '' and name != '' and semester != '':
+                courses = Course.objects.filter(course_name=name,semester = semester)
+            if id != '' and name != '' and semester != '':
+                courses = Course.objects.filter(course_id=int(id),semester = semester,course_name = name)
+            if id == '' and name == '' and semester == '':
+                courses = Course.objects.all()
+        else:
+            courses = Course.objects.all()
+        return render(request, "courseList.html", {"courselist": courses, 'is_admin': is_admin})

@@ -1,11 +1,13 @@
 from django.views import View
 from django.shortcuts import render, redirect
-from ta_app.models import Course, User
+from ta_app.models import Course
 from django.contrib import messages
-
 
 class deleteCourse(View):
     def get(self, request, course_id):
+        role = request.session['role'];
+        if role != "Admin":
+            return redirect('courseList')
         if 'role' not in request.session or request.session['role'] != 'Admin':
             messages.error(request, "You are not authorized to view this page.")
             return redirect('courseList')
