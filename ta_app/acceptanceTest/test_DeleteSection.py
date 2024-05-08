@@ -1,17 +1,17 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from ta_app.models import Course, User
+from ta_app.models import Course, User, Section
 from django.contrib.messages import get_messages
 
-class DeleteCourseAcceptanceTests(TestCase):
-    def setUp(self):
+class DeleteSectionTests(TestCase):
+    def setup(self):
         self.client = Client()
         self.admin = User.objects.create(username='admin', password='adminpass', role='Admin')
         self.course = Course.objects.create(course_id=100, course_name="Sample Course")
+        self.section = Section.objects.create(section_name="Sample Section", section_id=200, course_id=self.course)
         self.course.save()
-        self.delete_url = reverse('deleteCourse', kwargs={'course_id': self.course.pk})
+        self.delete_url = reverse('deleteSection', kwargs={'section_id': self.section.pk})
         self.login_url = reverse('login')
-
     def simulate_login(self, username, password):
         return self.client.post(self.login_url, {'username': username, 'password': password})
 
@@ -19,7 +19,7 @@ class DeleteCourseAcceptanceTests(TestCase):
         self.simulate_login('admin', 'adminpass')
         response = self.client.get(self.delete_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'delete_course.html')
+        self.assertTemplateUsed(response, 'delete_section.html')
 
     def test_confirm_deletion_by_admin(self):
         self.simulate_login('admin', 'adminpass')

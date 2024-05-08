@@ -9,6 +9,9 @@ from ta_app.Classes.UserClass import UserClass
 class accountCreation(View):
 
     def get(self, request):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         current = request.session["role"]
         if current == "Admin":
             return render(request, "create_account.html")

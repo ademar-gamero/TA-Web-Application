@@ -5,7 +5,6 @@ from ta_app.models import User, Roles, Section
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
-
 from abc import ABC
 
 from ta_app.models import User, Roles, Section
@@ -113,7 +112,6 @@ class UserClass(ABC):
     def set_role(self, new_role):
         if isinstance(new_role, str):
             if not (new_role == "Teacher-Assistant" or new_role == "Instructor" or new_role == "Admin"):
-
                 raise ValueError("Invalid role")
             self.role = new_role
         else:
@@ -122,11 +120,25 @@ class UserClass(ABC):
     def set_assigned(self, new_assigned):
         if isinstance(new_assigned, bool):
             self.assigned = new_assigned
+            User.objects.filter(username=self.username).update(assigned=self.assigned)
         else:
             raise ValueError("Assignment must be a boolean")
 
     def add_section(self, new_section):
+        should_assign = False
         if isinstance(new_section, Section):
+            if self.role == "Teacher-Assistant" and new_section.type == "LAB":
+                lecture = (User.objects.get(username=self.username).assigned_section.filter
+                           (course_parent=new_section.course_parent, type="LEC"))
+                if lecture:
+                    should_assign = True
+                else:
+                    raise ValueError("User is not assigned to a corresponding lecture section in this course")
+            elif self.role == "Instructor":
+                if new_section.type == "LEC":
+                    should_assign = True
+                else:
+                    raise ValueError("Instructors cannot be assigned to lab sections")
             if self.assigned_sections is None:
                 self.assigned_sections = [new_section]
             else:
@@ -134,11 +146,12 @@ class UserClass(ABC):
                     raise ValueError("User is already assigned to this section")
                 if self.assigned:
                     # checks for conflicts if user already assigned. if it finds one, this will throw an error
-                    self.check_conflicts(new_section.meeting_day, new_section.start_time, new_section.end_time)
+                    self.check_conflicts(new_section)
+                else:
+                    if should_assign:
+                        self.set_assigned(True)
                 self.assigned_sections.append(new_section)
-            if ((self.role == "Teacher-Assistant" and new_section.type == "LAB") or
-                    (self.role == "Instructor" and new_section.type == "LEC")):
-                self.set_assigned(True)
+            User.objects.get(username=self.username).assigned_section.add(new_section)
         else:
             raise ValueError("Invalid section entry")
 
@@ -149,6 +162,32 @@ class UserClass(ABC):
             else:
                 try:
                     self.assigned_sections.remove(section_to_remove)
+                    User.objects.get(username=self.username).assigned_section.remove(section_to_remove)
+                    unassigned = True
+                    if self.role == "Instructor":
+                        for user in section_to_remove.assigned_users.filter(role="Teacher-Assistant", assigned=True):
+                            ta = UserClass(username=user.username, password=user.password, name=user.name,
+                                           role=user.role, email=user.email, phone_number=user.phone_number,
+                                           address=user.address, skills=user.skills,
+                                           assigned_sections=list(user.assigned_section.all()), assigned=user.assigned)
+                            sections = Section.objects.filter(course_parent=section_to_remove.course_parent,
+                                                              assigned_users=user, type="LAB")
+                            for section in sections:
+                                ta.remove_section(section)
+                        if self.assigned_sections:
+                            unassigned = False
+                    elif self.role == "Teacher-Assistant":
+                        if section_to_remove.type == "LEC":
+                            to_remove = (User.objects.get(username=self.username).assigned_section.filter
+                                         (course_parent=section_to_remove.course_parent))
+                            for section in to_remove:
+                                self.remove_section(section)
+                        for section in self.assigned_sections:
+                            if section.type == "LAB":
+                                unassigned = False
+                                break
+                    if unassigned:
+                        self.set_assigned(False)
                 except ValueError:
                     raise ValueError("Section not in user's assigned sections")
         else:
@@ -161,34 +200,64 @@ class UserClass(ABC):
             raise ValueError("Skills must be a string")
 
     def get_username(self):
-        return self.username
+        try:
+            return User.objects.get(username=self.username).username
+        except User.DoesNotExist:
+            return self.username
 
     def get_password(self):
-        return self.password
+        try:
+            return User.objects.get(username=self.username).password
+        except User.DoesNotExist:
+            return self.password
 
     def get_name(self):
-        return self.name
+        try:
+            return User.objects.get(username=self.username).name
+        except User.DoesNotExist:
+            return self.name
 
     def get_role(self):
-        return self.role
+        try:
+            return User.objects.get(username=self.username).role
+        except User.DoesNotExist:
+            return self.role
 
     def get_email(self):
-        return self.email
+        try:
+            return User.objects.get(username=self.username).email
+        except User.DoesNotExist:
+            return self.email
 
     def get_phone_number(self):
-        return self.phone_number
+        try:
+            return User.objects.get(username=self.username).phone_number
+        except User.DoesNotExist:
+            return self.phone_number
 
     def get_address(self):
-        return self.address
+        try:
+            return User.objects.get(username=self.username).address
+        except User.DoesNotExist:
+            return self.address
 
     def get_assigned(self):
-        return self.assigned
+        try:
+            return User.objects.get(username=self.username).assigned
+        except User.DoesNotExist:
+            return self.assigned
 
     def get_assigned_sections(self):
-        return self.assigned_sections
+        try:
+            return list(User.objects.get(username=self.username).assigned_section.all())
+        except User.DoesNotExist:
+            return self.assigned_sections
 
     def get_skills(self):
-        return self.skills
+        try:
+            return User.objects.get(username=self.username).skills
+        except User.DoesNotExist:
+            return self.skills
 
     def view_contact_info(self, username):
         if not isinstance(username, str):
@@ -202,14 +271,15 @@ class UserClass(ABC):
         else:
             return contact.email
 
-    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None, skills=None):
+    def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None,
+                  skills=None):
         old_username = self.username
 
         if username is not None:
-            try: 
+            try:
                 User.objects.get(username=username)
                 raise ValueError("Username already in use. Please choose a unique username.")
-            except User.DoesNotExist:
+            except User.DoesNotExist or ValueError as e:
                 self.set_username(username)
         if password is not None:
             self.set_password(password)
@@ -218,7 +288,7 @@ class UserClass(ABC):
         if role is not None:
             self.set_role(role)
         if email is not None:
-            try: 
+            try:
                 User.objects.get(email=email)
                 raise ValueError("Email already in use. Please use a unique email.")
             except User.DoesNotExist:
@@ -244,8 +314,10 @@ class UserClass(ABC):
             raise ValueError("Username is already taken")
         except User.DoesNotExist:
             user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
-                        role=self.get_role(), email=self.get_email(), phone_number=self.get_phone_number(),
-                        address=self.get_address(),assigned=self.get_assigned(), skills=self.get_skills())
+                                       role=self.get_role(), email=self.get_email(),
+                                       phone_number=self.get_phone_number(),
+                                       address=self.get_address(), assigned=self.get_assigned(),
+                                       skills=self.get_skills())
             for i in self.assigned_sections:
                 user.assigned_section.add(i)
             user.save()
@@ -257,19 +329,26 @@ class UserClass(ABC):
             return True
         except User.DoesNotExist:
             raise ValueError("This user does not exist can not be deleted")
-    
-    def check_conflicts(self, meeting_day, start_time, end_time):
+
+    def check_conflicts(self, new_section):
         possible_conflict = False
         for section in self.assigned_sections:
-            for day1 in section.meeting_day:
-                for day2 in meeting_day:
+            for day1 in section.meeting_days.values_list():
+                for day2 in new_section.meeting_days.values_list():
                     if day1 == day2:
                         possible_conflict = True
                 if possible_conflict:
-                    if start_time >= section.start_time and end_time <= end_time:
+                    if self.role == "Teacher-Assistant" and (section.type == "LEC" or new_section.type == "LEC"):
+                        continue
+                    conflict = True
+                    if new_section.start_time < section.start_time:
+                        if new_section.end_time < section.start_time:
+                            conflict = False
+                        else:
+                            pass
+                    if new_section.start_time > section.end_time:
+                        conflict = False
+                    if conflict:
                         raise ValueError("The section being assigned conflicts with another section assignment :"
                                          + section.__str__())
                 possible_conflict = False
-
-
-

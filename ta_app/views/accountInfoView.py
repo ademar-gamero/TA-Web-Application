@@ -1,9 +1,10 @@
+from django.contrib import messages
 from django.views.generic.detail import DetailView
 from django.shortcuts import render
 from django.views import View
 from ta_app.models import User
 from ta_app.Classes.UserClass import UserClass
-from django.shortcuts import redirect
+from django.shortcuts    import redirect
 
 class accountInfoView(View):
     acc_edit = None
@@ -11,6 +12,9 @@ class accountInfoView(View):
     val = None
 
     def get(self,request,pk):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         curr_acc = request.session["role"]
         if curr_acc != "Admin":
             return redirect("/Home/")
@@ -18,7 +22,7 @@ class accountInfoView(View):
         account = User.objects.get(pk=pk) 
         self.acc_edit = UserClass(account.username,account.password,account.name,account.role,
         account.email,account.phone_number,account.address,account.assigned,account.assigned_section)
-        return render(request, "accountInfo.html", {'user': account})
+        return render(request, "accountInfo.html", {'user': account, "check":self.val})
 
     def post(self,request,pk):
         name = request.POST.get('name')    

@@ -26,6 +26,8 @@ class Course(models.Model):
     course_name = models.CharField(max_length=50)
     description = models.TextField(null=True,blank=True)
     semester = models.CharField(max_length=6, choices=Semesters.choices, default=Semesters.FALL)
+    
+    semester = models.CharField(max_length=6, choices=Semesters.choices, default=Semesters.FALL)
 
     def __str__(self):
         return f"{self.course_id} {self.course_name} - {self.semester}"
@@ -65,7 +67,7 @@ class User(models.Model):
     phone_number = models.CharField(max_length=100)
     address = models.CharField(max_length=256)
     assigned = models.BooleanField(null=True)
-    assigned_section = models.ManyToManyField(Section,blank=True, editable=True,related_name="assigned_users")
+    assigned_section = models.ManyToManyField(Section,related_name="assigned_users", blank=True)
     skills = models.CharField(max_length=500, null=True)
 
     def __str__(self):
