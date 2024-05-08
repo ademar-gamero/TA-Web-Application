@@ -46,7 +46,7 @@ urlpatterns = [
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
     path('Home/courseList/deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
     path('Home/accountList/deleteAccount/<int:pk>/', deleteAccount.as_view(), name='deleteAccount'),
-    path('Home/courseList/editCourse/deleteSection/<int:pk>/', deleteSection.as_view(), name='deleteSection')
+    path('Home/courseList/courseSections/deleteSection/int:pk/', deleteSection.as_view(), name='deleteSection')
 
 ]
 
