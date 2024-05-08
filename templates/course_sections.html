@@ -76,25 +76,28 @@
               {% endfor %}
             </table>
               <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
+                {% csrf_token %}
                   <br>
-              Add Users to {{section}}:
+                Add Users to {{section}}:
                   </br>
-                  <select id = "{{section}}" name="{{section}}">
+                  <select id = "{{section.pk}}" name="{{section.pk}}">
                         <option value="None">None</option>
                       {% if usr_role == "Instructor"%}
                       {%for ta in ta_pool%}
-                          <option value="{{ta}}">{{ta}}</option>
+                          <option value="{{ta.pk}}">{{ta}}</option>
                       {% endfor %}
+                      {{message}}
                       {% endif %}
               
                   {%if usr_role == "Admin"%}
                       {%for usr in usr_pool%}
-                      <option value="{{usr}}">{{usr}}</option>
+                      <option value="{{usr.pk}}">{{usr}}</option>
                       {% endfor %}
+                      {{message}}
                       {% endif %}
                   </select>
-        <input type="submit" value="Submit">
-        </form>
+              <input type="submit" value="Submit">
+              </form>
         <br>
       {% endfor %}
      

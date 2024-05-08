@@ -71,7 +71,6 @@ class accountAssignment(TestCase):
         self.lecture1 = Section.objects.create(course_parent=self.algos, section_id=101, type="LEC",
                                                start_time=time(12, 0), end_time=time(1, 30),
                                                meeting_days=["TU", "TH"],location="class25b")
-        self.lecture1.meeting_days
 
         self.lecture2 = Section.objects.create(course_parent=self.algos, section_id=205, type="LEC",
                                                start_time=time(12, 0), end_time=time(1, 30),
@@ -81,7 +80,7 @@ class accountAssignment(TestCase):
                                                start_time=time(11, 0), end_time=time(12, 30),
                                                meeting_days=["MO", "WE"],location="class30B")
 
-        self.detail_url_course = reverse('courseSections',args=[self.lecture1.pk])
+        self.detail_url_course = reverse('courseSections',args=[self.algos.pk])
 
         self.instructor2.assigned_section.add(self.lecture1)
         self.instructor2.save()
@@ -134,3 +133,32 @@ class accountAssignment(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
         self.assertNotContains(resp,"Remove Assignment",msg_prefix="Ta shouldnt be able to add users")
 
+    def test_adminAssignUser(self):
+        resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
+        resp = self.green.get("/Home/courseList/")
+        self.assertEqual(200,resp.status_code,"role error")
+        self.green.get(self.detail_url_course)
+        self.assertEqual(200,resp.status_code,"page was not displayed")
+        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant.id},follow=True)
+        updated_section = Section.objects.get(pk=self.lab1.pk)
+        self.assertIn(updated_section.assigned_users,self.teacherassistant,"user was not assigned to the section")
+
+    def test_instructorAssignUser(self):
+        resp = self.green.post("/login/",{"username":self.instructor2.username,"password":self.instructor2.password},follow=True)
+        resp = self.green.get("/Home/courseList/")
+        self.assertEqual(200,resp.status_code,"role error")
+        self.green.get(self.detail_url_course)
+        self.assertEqual(200,resp.status_code,"page was not displayed")
+        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant2.id},follow=True)
+        updated_section = Section.objects.get(pk=self.lab1.pk)
+        self.assertIn(updated_section.assigned_users,self.teacherassistant2,"user was not assigned to the section")
+
+    def test_instructorInvalidAssignUser(self):
+        resp = self.green.post("/login/",{"username":self.instructor2.username,"password":self.instructor2.password},follow=True)
+        resp = self.green.get("/Home/courseList/")
+        self.assertEqual(200,resp.status_code,"role error")
+        self.green.get(self.detail_url_course)
+        self.assertEqual(200,resp.status_code,"page was not displayed")
+        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant.id},follow=True)
+        updated_section = Section.objects.get(pk=self.lab1.pk)
+        self.assertNotIn(updated_section.assigned_users,self.teacherassistant,"user shouldn't have been assigned")
