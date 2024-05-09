@@ -337,10 +337,13 @@ class UserClass(ABC):
     def delete_user(self):
         try:
             val_to_del = User.objects.get(username=self.get_username())
+            if self.role == "Instructor":
+                for section in self.assigned_sections:
+                    self.remove_section(section)
             val_to_del.delete()
             return True
         except User.DoesNotExist:
-            raise ValueError("This user does not exist can not be deleted")
+            raise ValueError("This user does not exist and can not be deleted")
 
     def check_conflicts(self, new_section):
         possible_conflict = False
