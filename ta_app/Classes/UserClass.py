@@ -144,7 +144,11 @@ class UserClass(ABC):
                     raise ValueError("User is not assigned to a corresponding lecture section in this course")
             elif self.role == "Instructor":
                 if new_section.type == "LEC":
-                    should_assign = True
+                    try:
+                        new_section.assigned_users.get(role="Instructor")
+                        raise ValueError("There is already an instructor assigned to this lecture")
+                    except User.DoesNotExist:
+                        should_assign = True
                 else:
                     raise ValueError("Instructors cannot be assigned to lab sections")
             if self.assigned_sections is None:

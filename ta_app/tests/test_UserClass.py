@@ -628,6 +628,13 @@ class SectionAssignmentTests(TestCase):
         self.ta.add_section(self.lecture1)
         self.assertEqual(self.ta.assigned_sections[2], self.lecture1, "Lecture 1 wasn't added successfully")
 
+    def test_assignTwoInstructors(self):
+        self.instructor2 = UserClass(username="test_in2", password="pass", name="Instructor Two", role="Instructor",
+                                    email="in2@uwm.edu")
+        self.instructor2.create_user()
+        self.instructor.add_section(self.lecture1)
+        with self.assertRaises(ValueError, msg="Failed to stop second instructor from being assigned to same section"):
+            self.instructor2.add_section(self.lecture1)
 
 class RemoveSectionTests(TestCase):
 
