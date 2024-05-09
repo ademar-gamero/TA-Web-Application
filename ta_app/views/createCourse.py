@@ -1,12 +1,17 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import View
 from ta_app.Classes.CourseClass import CourseClass
 from ta_app.models import Semesters
 
 
+
 # Create your views here.
 class createCourse(View):
     def get(self, request):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         semesters = Semesters.choices  # get the semester choice options
 
         # make sure that the user is of appropriate role status

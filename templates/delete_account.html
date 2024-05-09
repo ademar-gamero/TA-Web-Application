@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Account Confirmation</title>
+</head>
+<body>
+    <h1>Confirm Deletion</h1>
+    <p>Are you sure you want to delete the account for {{ user.name }}?</p>
+    <form method="post" action="{% url 'deleteAccount' pk=user.pk %}">
+        {% csrf_token %}
+        <button type="submit" name="confirm" value="yes">Confirm Delete</button>
+        <button type="{% url 'accountList' %}" class="cancel-button">Cancel</button>
+    </form>
+</body>
+</html>
