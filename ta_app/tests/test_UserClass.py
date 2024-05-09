@@ -636,6 +636,7 @@ class SectionAssignmentTests(TestCase):
         with self.assertRaises(ValueError, msg="Failed to stop second instructor from being assigned to same section"):
             self.instructor2.add_section(self.lecture1)
 
+
 class RemoveSectionTests(TestCase):
 
     def setUp(self):
