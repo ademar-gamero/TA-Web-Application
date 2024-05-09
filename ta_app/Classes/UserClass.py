@@ -54,7 +54,15 @@ class UserClass(ABC):
         self.assigned = assigned
         self.assigned_sections = []
         if assigned_sections is not None:
-            self.assigned_sections = assigned_sections
+            if isinstance(assigned_sections, Section):
+                self.assigned_sections.append(assigned_sections)
+            elif isinstance(assigned_sections, list):
+                for section in assigned_sections:
+                    if not isinstance(section, Section):
+                        raise ValueError("Invalid Section type")
+                    self.assigned_sections.append(section)
+            else:
+                raise ValueError("Invalid Section type")
         self.skills = skills
 
     def __str__(self):
