@@ -79,14 +79,13 @@
                 {% csrf_token %}
                   <br>
                 {%if usr_role == "Instructor"%}
-                Add Teacher Assistants to {{section}}:
+                Add Teacher Assistants:
                   </br>
                   <select id = "{{section.pk}}" name="{{section.pk}}">
                         <option value="None">None</option>
                       {%for ta in ta_pool%}
                           <option value="{{ta.pk}}">{{ta}}</option>
                       {% endfor %}
-                      {{message}}
                   </select>
                   {% endif %}
                 {%if usr_role == "Admin"%}
@@ -105,10 +104,10 @@
                       {%for tas in ta_all %}
                       <option value="{{tas.pk}}">{{tas}}</option>
                       {% endfor %}
-                      {{message}}
                   </select>
                 {% endif %}
               <br>
+                  {{message}}
               <br>
               <input type="submit" value="Submit">
               </form>
