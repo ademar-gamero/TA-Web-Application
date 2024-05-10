@@ -4,6 +4,7 @@ from ta_app.models import User, Roles, Section
 
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.db.models.query import QuerySet
 
 from abc import ABC
 
@@ -54,9 +55,11 @@ class UserClass(ABC):
         self.assigned = assigned
         self.assigned_sections = []
         if assigned_sections is not None:
+            if len(assigned_sections) == 0:
+                self.assigned_sections = []
             if isinstance(assigned_sections, Section):
                 self.assigned_sections.append(assigned_sections)
-            elif isinstance(assigned_sections, list):
+            elif isinstance(assigned_sections, QuerySet):
                 for section in assigned_sections:
                     if not isinstance(section, Section):
                         raise ValueError("Invalid Section type")
