@@ -35,7 +35,13 @@
         Assigned: <b>{{user.assigned}}</b>
             <br>
             <br>
-            Assigned Sections:
+            Assigned Course(s): 
+            {% for course in courses %}
+                {{ course }}
+            {% endfor %}
+            <br>
+            <br>
+            Assigned Section(s):
             <br>
             <table>
             <br>
@@ -53,7 +59,7 @@
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
                 {% if usr_role == "Admin" or usr_user == "Instructor" %}
-              <td> delete link </td>
+              <td> Remove Assignment </td>
                 {% endif %}
             </tr>
             {% endfor %}
@@ -64,11 +70,13 @@
             <br>
             <br>
             Add Section:
-            <td><select name="section" id="section-selection">
+            <td><select name="section" id="section">
               {% for newsection in allSections %}
-                <option value="{{ newsection }}">{{newsection.course_parent}} {{newsection.course_id}} {{newsection.course_type }}</option>
+                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} Section ID: {{newsection.section_id}} Section Type: {{newsection.type }}</option>
               {% endfor %}
           </select></td>
+            <br>
+            <br>
           <input type="submit" value="Submit">
         </form>
         <br>
