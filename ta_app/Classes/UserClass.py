@@ -54,7 +54,15 @@ class UserClass(ABC):
         self.assigned = assigned
         self.assigned_sections = []
         if assigned_sections is not None:
-            self.assigned_sections = assigned_sections
+            if isinstance(assigned_sections, Section):
+                self.assigned_sections.append(assigned_sections)
+            elif isinstance(assigned_sections, list):
+                for section in assigned_sections:
+                    if not isinstance(section, Section):
+                        raise ValueError("Invalid Section type")
+                    self.assigned_sections.append(section)
+            else:
+                raise ValueError("Invalid Section type")
         self.skills = skills
 
     def __str__(self):
@@ -136,7 +144,11 @@ class UserClass(ABC):
                     raise ValueError("User is not assigned to a corresponding lecture section in this course")
             elif self.role == "Instructor":
                 if new_section.type == "LEC":
-                    should_assign = True
+                    try:
+                        new_section.assigned_users.get(role="Instructor")
+                        raise ValueError("There is already an instructor assigned to this lecture")
+                    except User.DoesNotExist:
+                        should_assign = True
                 else:
                     raise ValueError("Instructors cannot be assigned to lab sections")
             if self.assigned_sections is None:
@@ -325,10 +337,13 @@ class UserClass(ABC):
     def delete_user(self):
         try:
             val_to_del = User.objects.get(username=self.get_username())
+            if self.role == "Instructor":
+                for section in self.assigned_sections:
+                    self.remove_section(section)
             val_to_del.delete()
             return True
         except User.DoesNotExist:
-            raise ValueError("This user does not exist can not be deleted")
+            raise ValueError("This user does not exist and can not be deleted")
 
     def check_conflicts(self, new_section):
         possible_conflict = False

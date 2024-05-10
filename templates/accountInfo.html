@@ -9,50 +9,64 @@
     <h1 align = "center">Edit Account Info</h1>
     <div align = "center">
     <form action="/Home/accountList/accountInfo/{{user.pk}}/" method="post"> 
-      {% csrf_token %}
+        {% csrf_token %}
         <table>
-          <tr>
-            <td><label for="name">Name: </label></td> 
-            <td><input type="text" name="name" value = {{user.name}}></td>
-          </tr>
-          <tr>
-            <td><label for="username">Username: </label></td>
-            <td><input type="text" name="username" value = {{user.username}}></td>
-          </tr>
-          <tr>
-            <td><label for="email">Email:</label></td>
-            <td><input type="text" name="email" value = {{user.email}}></td>
-          </tr>
-          <tr>
-            <td><label for="password">Password:</label></td>
-            <td><input type="text" name="password" value = {{user.password}}></td>
-          </tr>
-          <tr>
-            <td><label for="phone_number">Phone Number: </label></td>
-            <td><input type="text" name="phone_number" value = {{user.phone_number}}></td>
-          </tr>
-          <tr>
-            <td><label for="address">Address: </label></td>
-            <td><input type="text" name="address" value = {{user.address}}></td>
-          </tr>
-          <tr>
-            <td><label for="role">Role:</label></td>
-            <td><select name="role" id="role-selection">
-              <option value="{{ user.role }}">Current Role: {{ user.role }}</option>  
-              <option value="Admin">Admin</option>
-              <option value="Instructor">Instructor</option>
-              <option value="Teacher-Assistant">Teacher Assistant</option>
-          </select></td>
-          </tr>
+            <tr>
+                <td><label for="name">Name: </label></td>
+                <td><input type="text" id="name" name="name" value = {{user.name}}></td>
+            </tr>
+            <tr>
+                <td><label for="username">Username: </label></td>
+                <td><input type="text" id="username" name="username" value = {{user.username}}></td>
+            </tr>
+            <tr>
+                <td><label for="email">Email:</label></td>
+                <td><input type="text" id="email" name="email" value = {{user.email}}></td>
+            </tr>
+            <tr>
+                <td><label for="password">Password:</label></td>
+                <td><input type="password" id="password" name="password" value = {{user.password}}></td>
+            </tr>
+            <tr>
+                <td><label for="phone_number">Phone Number: </label></td>
+                <td><input type="text" id="phone_number" name="phone_number" value = {{user.phone_number}}></td>
+            </tr>
+            <tr>
+                <td><label for="address">Address: </label></td>
+                <td><input type="text" id="address" name="address" value = {{user.address}}></td>
+            </tr>
+            { % if is_admin % }
+                <tr>
+                    <td><label for="role-selection">Role: </label></td>
+                    <td><select name="role" id="role-selection">
+                        <option value="{{ user.role }}">Current Role: {{ user.role }}</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Instructor">Instructor</option>
+                        <option value="Teacher-Assistant">Teacher Assistant</option>
+                    </select></td>
+                </tr>
+            { % endif % }
+            { % if not is_admin % }
+                <tr>
+                    <td>Role: </td>
+                    <td>{{ user.role }}</td>
+                </tr>
+            { % endif % }
+            { % if user.role == "Teacher-Assistant" % }
+                <tr>
+                    <td><label for="skills">Skills: </label></td>
+                    <td><textarea name="skills" id="skills" rows="3" cols="30">{{ user.skills }}</textarea></td>
+                </tr>
+            { % endif % }
         </table>
         <br>
-          <input type="submit" value="Submit">
+        <input type="submit" value="Submit">
     </form>
-      <h3>{{ message }}</h3>
-      <br>
-      <a href = "/Home/accountList/"> Go Back </a></br>
-      <br>
-      <a href = "/Home/"> Go Home </a> </br>
+        <h3>{{ message }}</h3>
+        <br>
+        <a href = "/Home/accountList/"> Go Back </a></br>
+        <br>
+        <a href = "/Home/"> Go Home </a> </br>
     </div>
 </body>
 </html>
