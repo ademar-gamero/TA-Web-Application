@@ -1,5 +1,6 @@
 from abc import ABC
 
+import ta_app
 from ta_app.models import User, Roles, Section
 
 from django.core.exceptions import ValidationError
@@ -55,11 +56,18 @@ class UserClass(ABC):
         self.assigned = assigned
         self.assigned_sections = []
         if assigned_sections is not None:
-            if len(assigned_sections) == 0:
-                self.assigned_sections = []
             if isinstance(assigned_sections, Section):
                 self.assigned_sections.append(assigned_sections)
             elif isinstance(assigned_sections, QuerySet):
+                if assigned_sections.count() == 0:
+                    self.assigned_sections = []
+                for section in assigned_sections:
+                    if not isinstance(section, Section):
+                        raise ValueError("Invalid Section type")
+                    self.assigned_sections.append(section)
+            elif isinstance(assigned_sections, list):
+                if len(assigned_sections) == 0:
+                    self.assigned_sections = []
                 for section in assigned_sections:
                     if not isinstance(section, Section):
                         raise ValueError("Invalid Section type")
@@ -135,19 +143,22 @@ class UserClass(ABC):
         else:
             raise ValueError("Assignment must be a boolean")
 
-    def add_section(self, new_section):
+    def add_section(self, new_section, role):
         should_assign = False
         if isinstance(new_section, Section):
             if self.role == "Teacher-Assistant" and new_section.type == "LAB":
                 lecture = (User.objects.get(username=self.username).assigned_section.filter
                            (course_parent=new_section.course_parent, type="LEC"))
-                if lecture:
+                if lecture or role == "Admin":
                     should_assign = True
                 else:
                     raise ValueError("User is not assigned to a corresponding lecture section in this course")
             elif self.role == "Instructor":
+                print(1)
                 if new_section.type == "LEC":
+                    print(2)
                     try:
+                        print(3)
                         new_section.assigned_users.get(role="Instructor")
                         raise ValueError("There is already an instructor assigned to this lecture")
                     except User.DoesNotExist:
@@ -166,7 +177,9 @@ class UserClass(ABC):
                     if should_assign:
                         self.set_assigned(True)
                 self.assigned_sections.append(new_section)
-            User.objects.get(username=self.username).assigned_section.add(new_section)
+            usr = User.objects.get(username=self.username)
+            usr.assigned_section.add(new_section)
+            usr.save()
         else:
             raise ValueError("Invalid section entry")
 
