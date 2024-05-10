@@ -14,14 +14,23 @@ class accountAssignment(View):
         sections = Section.objects.all()
         assigned_courses = []
         for sec in usr_sections:
-            if sec.type == "lecture":
+            if sec.type == "lecture" or sec.type == "lab":
                 assigned_courses.append(sec.course_parent)
         return render(request, "account_assignments.html",{'user':account, 'allSections':sections,
                                             'usr_role':usr_role,'sections':usr_sections,"courses":assigned_courses})
 
     def post(self,request,pk):
-        curr_acc = request.session["role"]
-        if curr_acc != "Admin" and curr_acc != "Instructor":
+
+        usr_role = request.session["role"]
+        account = User.objects.get(pk=pk)
+        usr_sections = account.assigned_section.all()
+        sections = Section.objects.all()
+        assigned_courses = []
+        for sec in usr_sections:
+            if sec.type == "lecture" or sec.type == "lab":
+                assigned_courses.append(sec.course_parent)
+
+        if usr_role != "Admin" and usr_role != "Instructor":
             return redirect("/Home/")
         sec_pk = request.POST.get('section')
         account = User.objects.get(pk=pk)
@@ -30,11 +39,17 @@ class accountAssignment(View):
         sections = Section.objects.all()
         try:
             section = Section.objects.get(pk=sec_pk)
-            newacc.add_section(section,curr_acc)
+            newacc.add_section(section,usr_role)
         except ValueError as error:
-            return render(request,"account_assignments.html",{'user':account,'allSections':sections,'message': error.__str__()})
+            return render(request,"account_assignments.html",{'user':account,'allSections':sections,'usr_role':usr_role,"courses":assigned_courses,'message': error.__str__()})
 
-        return render(request,"account_assignments.html",{'user':newacc,'allSections':sections,'message': 'Section was added successfully!'})
+        usr_sections = account.assigned_section.all()
+        assigned_courses = []
+        for sec in usr_sections:
+            if sec.type == "lecture" or sec.type == "lab":
+                assigned_courses.append(sec.course_parent)
+
+        return render(request,"account_assignments.html",{'user':newacc,'sections':usr_sections,'allSections':sections,'usr_role':usr_role,"courses":assigned_courses,'message': 'Section was added successfully!'})
 
 
                             

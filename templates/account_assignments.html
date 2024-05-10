@@ -58,7 +58,7 @@
               <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
-                {% if usr_role == "Admin" or usr_user == "Instructor" %}
+                {% if usr_role == "Admin" or usr_role == "Instructor" %}
               <td> Remove Assignment </td>
                 {% endif %}
             </tr>
@@ -71,6 +71,7 @@
             <br>
             Add Section:
             <td><select name="section" id="section">
+                <option value="">None</option>
               {% for newsection in allSections %}
                 <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} Section ID: {{newsection.section_id}} Section Type: {{newsection.type }}</option>
               {% endfor %}
