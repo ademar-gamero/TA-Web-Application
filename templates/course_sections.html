@@ -38,15 +38,24 @@
         <th>Course</th>
         <th>Section ID</th>
         <th>Type</th>
+        <th>Meeting Days</th>
+        <th> Meeting Time </th>
+        <th>Location</th>
         {% if usr_role == "Admin"%}
-        <th> Edit Section Info </th>
-        <th>Delete Section</th>
-            {% endif %}
+            <th> Edit Section Info </th>
+            <th>Delete Section</th>
+        {% endif %}
         </tr>
             <tr>
               <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
+                <td>{% for day in section.meeting_days.all %}
+                        {{ day }}
+                    {% endfor %}
+                    </td>
+                <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                <td>{{ section.location }}</td>
                 {% if usr_role == "Admin"%}
               <td> edit section info link </td>
               <td> delete link </td>
@@ -82,40 +91,41 @@
                 Add Teacher Assistants:
                   </br>
                   <select id = "{{section.pk}}" name="{{section.pk}}">
-                        <option value="None">None</option>
+                        <option value=None>None</option>
                       {%for ta in ta_pool%}
                           <option value="{{ta.pk}}">{{ta}}</option>
                       {% endfor %}
                   </select>
                   {% endif %}
                 {%if usr_role == "Admin"%}
-                Add Teacher Assistants:
+                Add Instructors:
                   <select id = "{{section.pk}}" name="{{section.pk}}">
-                      <option value="None">None</option>
+                      <option value=None>None</option>
                       {%for ins in ins_all %}
                       <option value="{{ins.pk}}">{{ins}}</option>
                       {% endfor %}
                   </select>
                 <br>
                 <br>
-                Add Instructors:
+                Add Teacher Assistants:
                   <select id = "{{section.pk}}" name="{{section.pk}}">
-                      <option value="None">None</option>
+                      <option value=None>None</option>
                       {%for tas in ta_all %}
                       <option value="{{tas.pk}}">{{tas}}</option>
                       {% endfor %}
                   </select>
                 {% endif %}
-              <br>
+                <br>
+      {% endfor %}
+                <br>
+                <input type="submit" value="Submit">
+              </form>
+                <br>
                   {{message}}
               <br>
-              <input type="submit" value="Submit">
-              </form>
-        <br>
-      {% endfor %}
-
-        <a href = "/Home/"> Go Home </a>
+              <br>
+        <a href = "/Home/courseList/"> Go Back </a>
         <br>
       <br>
-        <a href = "/Home/courseList/"> Go Back </a>
-     
+      <a href = "/Home/"> Go Home </a>
+  </div>
