@@ -6,7 +6,7 @@ from datetime import time
 
 
 class accountAssignment(TestCase):
-    def setUp(self): 
+    def setUp(self):
 
         self.monday = Day.objects.create(day="MO")
         self.tuesday = Day.objects.create(day="TU")
@@ -66,13 +66,8 @@ class accountAssignment(TestCase):
                 assigned=False
                 )
         self.instructor2 = User.objects.create(name="bob",username="bob",password="instructor",email="inst@email.com",role="Instructor",phone_number=3,address="1",assigned=False)
-        self.Ausername = "admin"
-        self.Apassword = "admin"
-        self.Iusername = "instructor"
-        self.Ipassword = "instructor"
         self.algos = Course(course_id=351,course_name="compsci",description="blah blah blah",semester="Summer")
         self.algos.save()
-        date_str = "Tue 2:30pm"
         self.sec = Section.objects.create(course_parent = self.algos,section_id=1,type="lecture",location="classroom")
         self.sec.save()
         self.sec2 = Section.objects.create(course_parent = self.algos,section_id=2,type="lecture",location="classroom")
@@ -97,6 +92,12 @@ class accountAssignment(TestCase):
         self.lab1.meeting_days.add(self.thursday)
         self.lab1.save()
 
+        self.lab2 = Section.objects.create(course_parent=self.algos, section_id=105, type="LAB",
+                                           start_time=time(11, 0), end_time=time(12, 30), location="class45C")
+
+        self.lab2.meeting_days.add(self.tuesday,self.thursday)
+        self.lab2.save()
+
         self.detail_url_course = reverse('courseSections',args=[self.algos.pk])
 
         self.instructor2.assigned_section.add(self.lecture1)
@@ -106,7 +107,7 @@ class accountAssignment(TestCase):
         self.teacherassistant.save()
 
     def test_adminAccess(self):
-        resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
@@ -151,7 +152,7 @@ class accountAssignment(TestCase):
         self.assertNotContains(resp,"Remove Assignment",msg_prefix="Ta shouldnt be able to add users")
 
     def test_adminAssignValidInSideLecture(self):
-        resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
@@ -163,7 +164,19 @@ class accountAssignment(TestCase):
         self.assertIn(self.teacherassistant,updated_section.assigned_users.all(),"user was not assigned to the section")
 
     def test_adminAssignValidOutSideLecture(self):
-        resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+        resp = self.green.get("/Home/courseList/")
+        self.assertEqual(200,resp.status_code,"role error")
+        self.green.get(self.detail_url_course)
+        self.assertEqual(200,resp.status_code,"page was not displayed")
+        resp = self.green.post(self.detail_url_course, {self.lecture2.pk:self.teacherassistant2.pk},follow=True)
+        self.assertContains(resp, "Successfully assigned user to section",
+                            msg_prefix="message was not printed to the user")
+        updated_section = Section.objects.get(pk=self.lecture2.pk)
+        self.assertIn(self.teacherassistant2,updated_section.assigned_users.all(),"user was not assigned to the section")
+
+    def test_adminAssignValidLabOutSideLecture(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
@@ -172,7 +185,23 @@ class accountAssignment(TestCase):
         self.assertContains(resp, "Successfully assigned user to section",
                             msg_prefix="message was not printed to the user")
         updated_section = Section.objects.get(pk=self.lab1.pk)
-        self.assertIn(self.teacherassistant,updated_section.assigned_users.all(),"user was not assigned to the section")
+        self.assertIn(self.teacherassistant2,updated_section.assigned_users.all(),"user was not assigned to the section")
+
+    def test_adminAssignConflictingSections(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+        resp = self.green.get("/Home/courseList/")
+        self.assertEqual(200,resp.status_code,"role error")
+        self.green.get(self.detail_url_course)
+        self.assertEqual(200,resp.status_code,"page was not displayed")
+        resp = self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant2.pk},follow=True)
+        self.assertContains(resp, "Successfully assigned user to section",
+                            msg_prefix="message was not printed to the user")
+        updated_section = Section.objects.get(pk=self.lab1.pk)
+        self.assertIn(self.teacherassistant2,updated_section.assigned_users.all(),"user was not assigned to the section")
+        resp = self.green.post(self.detail_url_course, {self.lab2.pk:self.teacherassistant2.pk},follow=True)
+        self.assertContains(resp,"The section being assigned conflicts with another section assignment :",msg_prefix="error message was not printed to the user")
+        updated_section = Section.objects.get(pk=self.lab2.pk)
+        self.assertNotIn(self.teacherassistant2,updated_section.assigned_users.all(),"user should have been assigned")
 
     def test_instructorLabInvalidAssignUser(self):
         resp = self.green.post("/login/",{"username":self.instructor2.username,"password":self.instructor2.password},follow=True)
@@ -197,7 +226,7 @@ class accountAssignment(TestCase):
         self.assertIn(self.teacherassistant2,updated_section.assigned_users.all(),"user should have been assigned")
 
     def test_instructorCompleteValidAssignUser(self):
-        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+        resp = self.green.post("/login/",{"username":self.instructor.username,"password":self.instructor.password},follow=True)
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
