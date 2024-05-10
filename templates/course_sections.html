@@ -78,24 +78,38 @@
               <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
                 {% csrf_token %}
                   <br>
-                Add Users to {{section}}:
+                {%if usr_role == "Instructor"%}
+                Add Teacher Assistants to {{section}}:
                   </br>
                   <select id = "{{section.pk}}" name="{{section.pk}}">
                         <option value="None">None</option>
-                      {% if usr_role == "Instructor"%}
                       {%for ta in ta_pool%}
                           <option value="{{ta.pk}}">{{ta}}</option>
                       {% endfor %}
                       {{message}}
-                      {% endif %}
-              
-                  {%if usr_role == "Admin"%}
-                      {%for usr in usr_pool%}
-                      <option value="{{usr.pk}}">{{usr}}</option>
+                  </select>
+                  {% endif %}
+                {%if usr_role == "Admin"%}
+                Add Teacher Assistants:
+                  <select id = "{{section.pk}}" name="{{section.pk}}">
+                      <option value="None">None</option>
+                      {%for ins in ins_all %}
+                      <option value="{{ins.pk}}">{{ins}}</option>
+                      {% endfor %}
+                  </select>
+                <br>
+                <br>
+                Add Instructors:
+                  <select id = "{{section.pk}}" name="{{section.pk}}">
+                      <option value="None">None</option>
+                      {%for tas in ta_all %}
+                      <option value="{{tas.pk}}">{{tas}}</option>
                       {% endfor %}
                       {{message}}
-                      {% endif %}
                   </select>
+                {% endif %}
+              <br>
+              <br>
               <input type="submit" value="Submit">
               </form>
         <br>
