@@ -1,12 +1,26 @@
 
 from django.test import TestCase, Client
 from django.urls import reverse
-from ta_app.models import Course, Section, User
+from ta_app.models import Course, Section, User, Day
 from datetime import time
 
 
 class accountAssignment(TestCase):
-    def setUp(self):
+    def setUp(self): 
+
+        self.monday = Day.objects.create(day="MO")
+        self.tuesday = Day.objects.create(day="TU")
+        self.wednesday = Day.objects.create(day="WE")
+        self.thursday = Day.objects.create(day="TH")
+        self.friday = Day.objects.create(day="FR")
+
+        self.monday.save()
+        self.tuesday.save()
+        self.wednesday.save()
+        self.thursday.save()
+        self.friday.save()
+
+
         self.green = Client()
         self.admin = User.objects.create(
                 name="ad",
@@ -42,7 +56,7 @@ class accountAssignment(TestCase):
                 )
         self.teacherassistant.save()
         self.teacherassistant2 = User.objects.create(
-                name="ta",
+                name="tab",
                 username="tab",
                 password="tab",
                 email="tab@email.com",
@@ -66,24 +80,30 @@ class accountAssignment(TestCase):
         self.accountList = [self.admin,self.instructor]
 
         self.lecture1 = Section.objects.create(course_parent=self.algos, section_id=101, type="LEC",
-                                               start_time=time(12, 0), end_time=time(1, 30),
-                                               meeting_days=["TU", "TH"],location="class25b")
+                                               start_time=time(12, 0), end_time=time(1, 30), location="class25b")
+
+        self.lecture1.meeting_days.add(self.monday, self.wednesday)
+        self.lecture1.save()
 
         self.lecture2 = Section.objects.create(course_parent=self.algos, section_id=205, type="LEC",
-                                               start_time=time(12, 0), end_time=time(1, 30),
-                                               meeting_days=["TH"],location="class25b")
+                                               start_time=time(12, 0), end_time=time(1, 30),location="class25b")
+
+        self.lecture2.meeting_days.add(self.wednesday)
+        self.lecture2.save()
 
         self.lab1 = Section.objects.create(course_parent=self.algos, section_id=102, type="LAB",
-                                               start_time=time(11, 0), end_time=time(12, 30),
-                                               meeting_days=["MO", "WE"],location="class30B")
+                                               start_time=time(11, 0), end_time=time(12, 30),location="class30B")
+
+        self.lab1.meeting_days.add(self.thursday)
+        self.lab1.save()
 
         self.detail_url_course = reverse('courseSections',args=[self.algos.pk])
 
         self.instructor2.assigned_section.add(self.lecture1)
         self.instructor2.save()
 
-        self.teacherassistant2.assigned_section(self.lecture1)
-        self.teacherassistant2.save()
+        self.teacherassistant.assigned_section.add(self.lecture1)
+        self.teacherassistant.save()
 
     def test_adminAccess(self):
         resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
@@ -100,14 +120,14 @@ class accountAssignment(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
     def test_taAccess(self):
-        resp = self.green.post("/login/",{"username":self.ta.username,"password":self.ta.password},follow=True)
+        resp = self.green.post("/login/",{"username":self.teacherassistant.username,"password":self.teacherassistant.password},follow=True)
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
     def test_taAddViewCheck(self):
-        resp = self.green.post("/login/",{"username":self.ta.username,"password":self.ta.password},follow=True)
+        resp = self.green.post("/login/",{"username":self.teacherassistant.username,"password":self.teacherassistant.password},follow=True)
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
@@ -115,7 +135,7 @@ class accountAssignment(TestCase):
         self.assertNotContains(resp,"Add User",msg_prefix="Ta shouldnt be able to add users")
 
     def test_taDeleteViewCheck(self):
-        resp = self.green.post("/login/",{"username":self.ta.username,"password":self.ta.password},follow=True)
+        resp = self.green.post("/login/",{"username":self.teacherassistant.username,"password":self.teacherassistant.password},follow=True)
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
@@ -123,7 +143,7 @@ class accountAssignment(TestCase):
         self.assertNotContains(resp,"delete link",msg_prefix="Ta shouldnt be able Remove a Section")
 
     def test_taRemoveAssignmentViewCheck(self):
-        resp = self.green.post("/login/",{"username":self.ta.username,"password":self.ta.password},follow=True)
+        resp = self.green.post("/login/",{"username":self.teacherassistant.username,"password":self.teacherassistant.password},follow=True)
         resp = self.green.get("/Home/courseList/")
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
@@ -136,9 +156,9 @@ class accountAssignment(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant.id},follow=True)
+        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant.pk},follow=True)
         updated_section = Section.objects.get(pk=self.lab1.pk)
-        self.assertIn(updated_section.assigned_users,self.teacherassistant,"user was not assigned to the section")
+        self.assertIn(self.teacherassistant,updated_section.assigned_users.all(),"user was not assigned to the section")
 
     def test_instructorAssignUser(self):
         resp = self.green.post("/login/",{"username":self.instructor2.username,"password":self.instructor2.password},follow=True)
@@ -146,9 +166,9 @@ class accountAssignment(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant2.id},follow=True)
+        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant2.pk},follow=True)
         updated_section = Section.objects.get(pk=self.lab1.pk)
-        self.assertIn(updated_section.assigned_users,self.teacherassistant2,"user was not assigned to the section")
+        self.assertIn(self.teacherassistant2,updated_section.assigned_users.all(),"user was not assigned to the section")
 
     def test_instructorInvalidAssignUser(self):
         resp = self.green.post("/login/",{"username":self.instructor2.username,"password":self.instructor2.password},follow=True)
@@ -156,6 +176,6 @@ class accountAssignment(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         self.green.get(self.detail_url_course)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant.id},follow=True)
+        self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant.pk},follow=True)
         updated_section = Section.objects.get(pk=self.lab1.pk)
-        self.assertNotIn(updated_section.assigned_users,self.teacherassistant,"user shouldn't have been assigned")
+        self.assertNotIn(self.teacherassistant,updated_section.assigned_users.all(),"user shouldn't have been assigned")
