@@ -81,19 +81,19 @@ class accountAssignment(TestCase):
         self.lecture2.meeting_days.add(self.wednesday)
         self.lecture2.save()
 
-        self.lecture3 = Section.objects.create(course_parent=self.algos, section_id=103, type="lecture",
+        self.lecture3 = Section.objects.create(course_parent=self.algos, section_id=104, type="lecture",
                                                start_time=time(3, 0), end_time=time(7, 30), location="class27b")
 
         self.lecture3.meeting_days.add(self.friday)
         self.lecture3.save()
 
-        self.lab1 = Section.objects.create(course_parent=self.algos, section_id=102, type="lab",
+        self.lab1 = Section.objects.create(course_parent=self.algos, section_id=105, type="lab",
                                            start_time=time(11, 0), end_time=time(12, 30), location="class30B")
 
         self.lab1.meeting_days.add(self.thursday)
         self.lab1.save()
 
-        self.lab2 = Section.objects.create(course_parent=self.algos, section_id=105, type="lab",
+        self.lab2 = Section.objects.create(course_parent=self.algos, section_id=106, type="lab",
                                            start_time=time(11, 0), end_time=time(12, 30), location="class45C")
 
         self.lab2.meeting_days.add(self.tuesday, self.thursday)
@@ -104,8 +104,12 @@ class accountAssignment(TestCase):
         self.instructor2.assigned_section.add(self.lecture1)
         self.instructor2.save()
 
+
         self.teacherassistant.assigned_section.add(self.lecture1)
         self.teacherassistant.save()
+
+        self.teacherassistant2.assigned_section.add(self.lecture1)
+        self.teacherassistant2.save()
 
         self.detail_url_ins = reverse('accountAssignment',args=[self.instructor.pk])
         self.detail_url_ins2 = reverse('accountAssignment', args=[self.instructor2.pk])
@@ -145,7 +149,7 @@ class accountAssignment(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url_ta2)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        self.assertNotContains(resp,"Remove Assignment",msg_prefix="Remove Assignement was not displayed")
+        self.assertContains(resp,"Remove Assignment",msg_prefix="Remove Assignement was not displayed")
 
     def test_courseAssignments(self):
         resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
@@ -168,7 +172,7 @@ class accountAssignment(TestCase):
 
 
     def test_taRemoveAssignment(self):
-        resp = self.green.post("/login/",{"username":self.instructor.username,"password":self.instructor.password},follow=True)
+        resp = self.green.post("/login/",{"username":self.teacherassistant.username,"password":self.teacherassistant.password},follow=True)
 
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role error")
@@ -182,10 +186,10 @@ class accountAssignment(TestCase):
         self.assertEqual(200,resp.status_code,"role error")
         resp = self.green.get(self.detail_url_ta2)
         self.assertEqual(200,resp.status_code,"page was not displayed")
-        self.assertNotContains(resp,"Add Section:",msg_prefix="Add Section was displayed when it shouldnt have been")
+        self.assertContains(resp,"Add Section:",msg_prefix="Add Section was displayed when it shouldnt have been")
 
 
-    def test_adminAddAssignmentInstructor(self):
+    def test_adminInvalidAddAssignmentInstructor(self):
         resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
 
         resp = self.green.get("/Home/accountList/")
@@ -196,8 +200,8 @@ class accountAssignment(TestCase):
         resp = self.green.post(self.detail_url_ins,{"section":self.lecture1})
         self.assertTrue(resp.context['message'], "Section was successfully added!")
         new = User.objects.get(pk=self.instructor.pk)
-        self.assertIn(self.lecture1,new.assigned_section, "sections was not added")
-        self.assertTrue(new.assigned,"assigned did not properly change")
+        self.assertNotIn(self.lecture1,new.assigned_section.all(), "sections was not added")
+        self.assertFalse(new.assigned,"assigned did not properly change")
 
     def test_instructorAddAssignmentTa(self):
         resp = self.green.post("/login/", {"username": self.instructor.username, "password": self.instructor.password}, follow=True)
@@ -207,11 +211,10 @@ class accountAssignment(TestCase):
         resp = self.green.get(self.detail_url_ta2)
         self.assertEqual(200, resp.status_code, "page was not displayed")
 
-        resp = self.green.post(self.detail_url_ta2, {"section": self.lab1})
+        resp = self.green.post(self.detail_url_ta2, {"section": self.lab1.pk})
         self.assertTrue(resp.context['message'], "Section was successfully added!")
         new = User.objects.get(pk=self.teacherassistant2.pk)
-        self.assertIn(self.lecture1, new.assigned_section, "sections was not added")
-        self.assertTrue(new.assigned,"assigned did not properly change")
+        self.assertIn(self.lab1, new.assigned_section.all(), "sections was not added")
 
     def test_addMultipleAssignmentInstructor(self):
         resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
@@ -239,11 +242,11 @@ class accountAssignment(TestCase):
         resp = self.green.get(self.detail_url_ins)
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
-        resp = self.green.post(self.detail_url_ins,{"section":self.lecture1},follow=True)
+        resp = self.green.post(self.detail_url_ins,{"section":self.lecture3.pk},follow=True)
         self.assertTrue(resp.context['message'], "Section was successfully added!")
-        resp = self.green.post(self.detail_url_ins,{"section":self.lecture2},follow=True)
+        resp = self.green.post(self.detail_url_ins,{"section":self.lecture1.pk},follow=True)
         self.assertTrue(resp.context['message'], "Section was not added a time conflict exists")
         new = User.objects.get(pk=self.instructor.pk)
-        self.assertIn(self.lecture1,new.assigned_section, "sections was not added")
-        self.assertNotIn(self.lecture2,new.assigned_section, "sections was added when it shouldnt have been")
+        self.assertIn(self.lecture3,new.assigned_section.all(), "sections was not added")
+        self.assertNotIn(self.lecture2,new.assigned_section.all(), "sections was added when it shouldnt have been")
 

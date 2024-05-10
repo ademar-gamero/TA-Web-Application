@@ -152,29 +152,29 @@ class UserClass(ABC):
                 if lecture:
                     should_assign = True
                 else:
-                    raise ValueError(f"\'{self.username} {self.role}'\ cannot be assinged, User is not assigned to a corresponding lecture section in this course")
+                    raise ValueError(f"'{self.username} {self.role}'cannot be assinged, User is not assigned to a corresponding lecture section in this course")
             elif self.role == "Instructor":
-                if new_section.type == "LEC":
+                if new_section.type == "lecture" or new_section.type == "LEC":
                     try:
                         new_section.assigned_users.get(role="Instructor")
-                        raise ValueError(f"\'{self.username} {self.role}'\ cannot be assinged, There is already an instructor assigned to this lecture")
+                        raise ValueError(f"'{self.username} {self.role}' cannot be assinged, There is already an instructor assigned to this lecture")
                     except User.DoesNotExist:
                         should_assign = True
                 else:
-                    raise ValueError(f"\'{self.username} {self.role}'\ cannot be assinged because Instructors cannot be assigned to lab sections")
+                    raise ValueError(f"'{self.username} {self.role}' cannot be assinged because Instructors cannot be assigned to lab sections")
             if self.assigned_sections is None:
                 self.assigned_sections = [new_section]
             else:
                 if self.assigned_sections.count(new_section) > 0:
-                    raise ValueError(f"\'{self.username} {self.role}' cannot be assinged, user is already assigned to section \'{new_section.course_parent} {new_section.type} {new_section.section_id}'\"")
+                    raise ValueError(f"'{self.username} {self.role}' cannot be assinged, user is already assigned to section '{new_section.course_parent} {new_section.type} {new_section.section_id}'")
                 if self.assigned:
                     # checks for conflicts if user already assigned. if it finds one, this will throw an error
                     self.check_conflicts(new_section)
                 else:
                     if should_assign:
                         self.set_assigned(True)
-                self.assigned_sections.append(new_section)
-                User.objects.get(username=self.username).assigned_section.add(new_section)
+            self.assigned_sections.append(new_section)
+            User.objects.get(username=self.username).assigned_section.add(new_section)
         else:
             raise ValueError("Invalid section entry")
 

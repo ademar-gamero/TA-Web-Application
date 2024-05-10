@@ -36,9 +36,31 @@
             <br>
             <br>
             Assigned Course(s): 
-            {% for course in courses %}
-                {{ course }}
+            <br>
+            <br>
+                {%if not courses %}
+            <p> not assigned to any courses </p>
+            {% endif %}
+    <table>
+      <tr>
+        <th>Course Subject</th>
+        <th>Course ID</th>
+        <th>Semester</th>
+          {% if usr_role == "Admin" %}
+        <th>Remove Course Assignment</th>
+          {% endif %}
+      </tr>
+           {% for course in courses %}
+            <tr>
+              <td>{{ course.course_id }}</td>
+              <td>{{ course.course_name }}</td>
+              <td>{{ course.semester }}</td>
+                {% if usr_role == "Admin" %}
+              <td> Remove Course Assignment </td>
+                {% endif %}
+            </tr>
             {% endfor %}
+    </table>
             <br>
             <br>
             Assigned Section(s):
@@ -70,7 +92,7 @@
             <br>
             <br>
             Add Section:
-            <td><select name="section" id="section">
+            <td><select id="section-id" name="section">
                 <option value="">None</option>
               {% for newsection in allSections %}
                 <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} Section ID: {{newsection.section_id}} Section Type: {{newsection.type }}</option>

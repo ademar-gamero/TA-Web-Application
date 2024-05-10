@@ -165,7 +165,7 @@ class accountAssignment(TestCase):
         self.green.get(self.detail_url_course)
         self.assertEqual(200,resp.status_code,"page was not displayed")
         resp = self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant.pk},follow=True)
-        self.assertContains(resp, "Successfully assigned user to section",
+        self.assertContains(resp, "Successfully assigned user(s) to section(s)",
                             msg_prefix="message was not printed to the user")
         updated_section = Section.objects.get(pk=self.lab1.pk)
         self.assertIn(self.teacherassistant,updated_section.assigned_users.all(),"user was not assigned to the section")
@@ -177,7 +177,7 @@ class accountAssignment(TestCase):
         self.green.get(self.detail_url_course)
         self.assertEqual(200,resp.status_code,"page was not displayed")
         resp = self.green.post(self.detail_url_course, {self.lecture2.pk:self.teacherassistant2.pk},follow=True)
-        self.assertContains(resp, "Successfully assigned user to section",
+        self.assertContains(resp, "Successfully assigned user(s) to section(s)",
                             msg_prefix="message was not printed to the user")
         updated_section = Section.objects.get(pk=self.lecture2.pk)
         self.assertIn(self.teacherassistant2,updated_section.assigned_users.all(),"user was not assigned to the section")
@@ -201,10 +201,10 @@ class accountAssignment(TestCase):
         self.green.get(self.detail_url_course)
         self.assertEqual(200,resp.status_code,"page was not displayed")
         resp = self.green.post(self.detail_url_course, {self.lecture2.pk:self.teacherassistant2.pk},follow=True)
-        self.assertContains(resp, "Successfully assigned user to section",
+        self.assertContains(resp, "Successfully assigned user(s) to section(s)",
                             msg_prefix="message was not printed to the user")
         resp = self.green.post(self.detail_url_course, {self.lab2.pk:self.teacherassistant2.pk},follow=True)
-        self.assertContains(resp, "Successfully assigned user to section",
+        self.assertContains(resp, "Successfully assigned user(s) to section(s)",
                             msg_prefix="message was not printed to the user")
         updated_section = Section.objects.get(pk=self.lab2.pk)
         self.assertIn(self.teacherassistant2,updated_section.assigned_users.all(),"user was not assigned to the section")
@@ -242,12 +242,12 @@ class accountAssignment(TestCase):
         self.green.get(self.detail_url_course)
         self.assertEqual(200,resp.status_code,"page was not displayed")
         resp = self.green.post(self.detail_url_course, {self.lecture2.pk:self.teacherassistant.pk},follow=True)
-        self.assertContains(resp, "Successfully assigned user to section",
+        self.assertContains(resp, "Successfully assigned user(s) to section(s)",
                             msg_prefix="message was not printed to the user")
         updated_section = Section.objects.get(pk=self.lecture2.pk)
         self.assertIn(self.teacherassistant,updated_section.assigned_users.all(),"user should have been assigned")
         resp = self.green.post(self.detail_url_course, {self.lab1.pk:self.teacherassistant.pk},follow=True)
-        self.assertContains(resp,"Successfully assigned user to section",msg_prefix="message was not printed to the user")
+        self.assertContains(resp,"Successfully assigned user(s) to section(s)",msg_prefix="message was not printed to the user")
         updated_section = Section.objects.get(pk=self.lab1.pk)
         self.assertIn(self.teacherassistant,updated_section.assigned_users.all(),"user should have been assigned")
 
