@@ -10,20 +10,27 @@ class accountAssignment(View):
     def get(self,request,pk):
         usr_role = request.session["role"]
         account = User.objects.get(pk=pk)
+        usr_sections = account.assigned_section.all()
         sections = Section.objects.all()
-        return render(request, "account_assignments.html",{'user':account, 'allSections':sections,'usr_role':usr_role})
+        assigned_courses = []
+        for sec in usr_sections:
+            if sec.type == "lecture":
+                assigned_courses.append(sec.course_parent)
+        return render(request, "account_assignments.html",{'user':account, 'allSections':sections,
+                                            'usr_role':usr_role,'sections':usr_sections,"courses":assigned_courses})
 
     def post(self,request,pk):
         curr_acc = request.session["role"]
         if curr_acc != "Admin" and curr_acc != "Instructor":
             return redirect("/Home/")
-        section = request.POST.get('section')
+        sec_pk = request.POST.get('section')
         account = User.objects.get(pk=pk)
-        newacc = UserClass(account.username, account.password, account.name, account.role, account.email,
-                           account.phone_number, account.address, account.assigned, account.assigned_section)
+        newacc = UserClass(username=account.username, password=account.password, name=account.name, role=account.role, email=account.email,
+                           phone_number=account.phone_number, address=account.address, assigned=account.assigned, assigned_sections=account.assigned_section.all())
         sections = Section.objects.all()
         try:
-            newacc.add_section(section)
+            section = Section.objects.get(pk=sec_pk)
+            newacc.add_section(section,curr_acc)
         except ValueError as error:
             return render(request,"account_assignments.html",{'user':account,'allSections':sections,'message': error.__str__()})
 

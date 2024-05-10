@@ -44,7 +44,7 @@ class courseSections(View):
                                    email=acc.email,
                                    phone_number=acc.phone_number, address=acc.address, assigned=acc.assigned,
                                    assigned_sections=acc.assigned_section.all())
-                newacc.add_section(sec)
+                newacc.add_section(sec,usr_role)
 
             except ValueError as failure:
                 return render(request, "course_sections.html", {"course": course, "sections": sections,
@@ -52,7 +52,6 @@ class courseSections(View):
                                                                 "ins_all": instructor_pool, "usr_role": usr_role,
                                                                 "ta_pool": ta_pool, "message": failure})
 
-        usr_role = request.session["role"]
         course = Course.objects.get(pk=course_pk)
         sections = Section.objects.filter(course_parent=course)
         teacherassistant_pool = User.objects.filter(role="Teacher-Assistant")
@@ -63,6 +62,7 @@ class courseSections(View):
             ta = User.objects.filter(role="Teacher-Assistant", assigned_section__in=[section])
             for tas in ta:
                 ta_pool.append(tas)
+
         success = "Successfully assigned user to section"
         return render(request, "course_sections.html", {"course": course, "sections": sections,
                                                         "ta_all": teacherassistant_pool, "ins_all": instructor_pool,
