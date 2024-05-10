@@ -86,7 +86,6 @@
                       {%for ta in ta_pool%}
                           <option value="{{ta.pk}}">{{ta}}</option>
                       {% endfor %}
-                      {{message}}
                   </select>
                   {% endif %}
                 {%if usr_role == "Admin"%}
@@ -105,10 +104,10 @@
                       {%for tas in ta_all %}
                       <option value="{{tas.pk}}">{{tas}}</option>
                       {% endfor %}
-                      {{message}}
                   </select>
                 {% endif %}
               <br>
+                  {{message}}
               <br>
               <input type="submit" value="Submit">
               </form>
