@@ -39,7 +39,7 @@ class accountAssignment(View):
         sections = Section.objects.all()
         try:
             section = Section.objects.get(pk=sec_pk)
-            newacc.add_section(section,usr_role)
+            newacc.add_section(section)
         except ValueError as error:
             return render(request,"account_assignments.html",{'user':account,'allSections':sections,'usr_role':usr_role,"courses":assigned_courses,'message': error.__str__()})
 
