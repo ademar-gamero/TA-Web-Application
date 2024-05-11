@@ -94,8 +94,8 @@
             Add Section:
             <td><select id="section-id" name="section">
                 <option value="">None</option>
-              {% for newsection in allSections %}
-                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} Section ID: {{newsection.section_id}} Section Type: {{newsection.type }}</option>
+              {% for newsection in selectableSections %}
+                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}}</option>
               {% endfor %}
           </select></td>
             <br>

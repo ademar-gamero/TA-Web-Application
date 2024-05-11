@@ -66,6 +66,7 @@ class User(models.Model):
     role = models.CharField(max_length=17, choices=Roles.choices, default=Roles.TA)
     phone_number = models.CharField(max_length=100)
     address = models.CharField(max_length=256)
+    grader_status = models.BooleanField(default=False)
     assigned = models.BooleanField(null=True)
     assigned_section = models.ManyToManyField(Section,related_name="assigned_users", blank=True)
     skills = models.CharField(max_length=500, null=True)

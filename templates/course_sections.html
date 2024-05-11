@@ -37,6 +37,7 @@
       <tr>
           <th>Type</th>
         <th>Section ID</th>
+        <th>Course</th>
         <th>Meeting Days</th>
         <th> Meeting Time </th>
         <th>Location</th>
@@ -50,9 +51,10 @@
                         Lab
                     {% else %}
                         Lecture
-                    {% endif %}    
+                    {% endif %}
                 </td>
               <td>{{ section.section_id }}</td>
+                <td> {{ section.course_parent }}</td>
                 <td>{% for day in section.meeting_days.all %}
                         {{ day }}
                     {% endfor %}
@@ -101,27 +103,39 @@
             </table>
               <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
                 {% csrf_token %}
-                  <br>
-                {%if usr_role == "Instructor"%}
+
+                {%if usr_role == "Instructor" and section.type == "lab"%}
+                    <br>
                 Add Teacher Assistants:
-                  </br>
+                    <br>
                   <select id = "{{section.pk}}" name="{{section.pk}}">
                         <option value=None>None</option>
                       {%for ta in ta_pool%}
                           <option value="{{ta.pk}}">{{ta}}</option>
                       {% endfor %}
                   </select>
+                    <br>
                   {% endif %}
                 {%if usr_role == "Admin"%}
-                Add Instructors:
+                  {% if section.type == "lecture" %}
+                    Add Instructors:
                   <select id = "{{section.pk}}" name="{{section.pk}}">
                       <option value=None>None</option>
                       {%for ins in ins_all %}
                       <option value="{{ins.pk}}">{{ins}}</option>
                       {% endfor %}
                   </select>
-                <br>
-                <br>
+                      <br>
+                      <br>
+                      Add Teacher Assistants:
+                      <select id = "{{section.pk}}" name="{{section.pk}}">
+                      <option value=None>None</option>
+                      {%for tas in ta_all %}
+                      <option value="{{tas.pk}}">{{tas}}</option>
+                      {% endfor %}
+                  </select>
+                  {% endif %}
+                {% if section.type == "lab"%}
                 Add Teacher Assistants:
                   <select id = "{{section.pk}}" name="{{section.pk}}">
                       <option value=None>None</option>
@@ -129,6 +143,7 @@
                       <option value="{{tas.pk}}">{{tas}}</option>
                       {% endfor %}
                   </select>
+                    {% endif %}
                 {% endif %}
                 <br>
       {% endfor %}
