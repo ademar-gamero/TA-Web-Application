@@ -1,43 +1,93 @@
-
-from ta_app.models import Section, Course, Day
+from django.core.exceptions import ValidationError
+from django.db import models
 from datetime import time
 
-class SectionClass:
-    def __init__(self, course_parent=None, section_id=None,meeting_days=None, start_time=None, end_time=None,
-                 section_type=None, location=None, is_online=False):
+from ta_app.models import Section, Course
 
+
+class SectionClass:
+    def __init__(self, course_parent=None, section_id=None, meeting_days=None, start_time=None, end_time=None,
+                 section_type=None, location=None, is_online=None):
+
+        # Validate input types more specifically for certain fields
         if not isinstance(course_parent, Course):
             raise ValueError("course_parent must be an instance of Course")
         if course_parent is None:
             raise ValueError("course_parent must not be None")
-
+        if not isinstance(is_online, bool):
+            raise ValueError("is_online must be a boolean")
+        if not is_online:
+            if location is None:
+                raise ValueError("Location must be provided for in-person classes")
+            if meeting_days is None:
+                raise ValueError("Meeting days must be provided for in-person classes")
+            if start_time is None or end_time is None:
+                raise ValueError("Start time and end time must be provided for in-person classes")
+        if is_online:
+            if location is not None :
+                raise ValueError("For online classes, location, meeting_days, start_time, and end_time must be None")
         self.course_parent = course_parent
         self.section_id = section_id
-        self.section_type = section_type
-        self.meeting_days = meeting_days
+        self.meeting_days = []
+        if meeting_days is not None:
+            for day in meeting_days:
+                if not isinstance(day, models.Model):
+                    raise ValueError("meeting_days must be a list of Day objects")
+                self.meeting_days.append(day)
+        # self.meeting_days = meeting_days
         self.start_time = start_time
         self.end_time = end_time
+        self.section_type = section_type
         self.location = location
         self.is_online = is_online
 
     def create_section(self):
-        if Section.objects.filter(course_parent=self.course_parent, section_id=self.section_id,
-                                  start_time=self.start_time, end_time=self.end_time,
-                                  type=self.section_type).exists():
+        if Section.objects.filter(course_parent=self.course_parent, section_id=self.section_id, location=self.location,
+                                  start_time=self.start_time, end_time=self.end_time, type=self.section_type,
+                                  meeting_days__in=self.meeting_days, is_online=self.is_online).exists():
             raise ValueError("Duplicate section exists.")
-        section = Section.objects.create(course_parent=self.course_parent, section_id=self.section_id,
-                                         start_time=self.start_time, end_time=self.end_time,
-                                         type=self.section_type, is_online=self.is_online)
+        section = Section(
+            course_parent=self.course_parent,
+            section_id=self.section_id,
+            start_time=self.start_time,
+            end_time=self.end_time,
+            type=self.section_type,
+            location=self.location,
+            is_online=self.is_online
+        )
+        section.save()
+
         if not self.is_online:
+            if not self.meeting_days:
+                raise ValueError("In-person classes must have meeting days assigned.")
             for day in self.meeting_days:
                 section.meeting_days.add(day)
+
         return True
 
+    def save_updates(self):
+        try:
+            section = Section.objects.get(section_id=self.section_id)
+        except Section.DoesNotExist:
+            raise ValidationError("Section does not exist")
 
+        # If the section is found, proceed to update its fields
+        section.start_time = self.start_time
+        section.end_time = self.end_time
+        section.type = self.section_type
+        section.location = self.location
+        section.is_online = self.is_online
+        section.save()
+
+        if not self.is_online:
+            section.meeting_days.set(self.meeting_days)  # Ensure meeting days are updated only for in-person classes
 
     def edit_meeting_days(self, new_days):
-        if not self.is_online:
-            self.meeting_days = new_days
+        if self.is_online:
+            raise ValueError("Cannot add meeting days to online classes.")
+        if not new_days:
+            raise ValueError("In-person classes must have at least one meeting day.")
+        self.meeting_days = new_days
 
     def add_meeting_days(self, new_days):
         if not self.is_online:
@@ -57,18 +107,9 @@ class SectionClass:
     def edit_course_parent(self, new_course):
         self.course_parent = new_course
 
-    def save_updates(self):
-        Section.objects.filter(id=self.section_id).update(
-            course_parent=self.course_parent,
-            section_id=self.section_id,
-            meeting_days=self.meeting_days,
-            start_time=self.start_time,
-            end_time=self.end_time,
-            type=self.section_type,
-            location=self.location,
-            is_online=self.is_online
-        )
+
+
     def delete_section(self):
-        section = Section.objects.get(id=self.section_id)
+        section = Section.objects.get(section_id=self.section_id)
         section.delete()
         return True
