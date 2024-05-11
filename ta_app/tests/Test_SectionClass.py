@@ -201,3 +201,55 @@ class Test_SectionClass(TestCase):
         with self.assertRaises(Section.DoesNotExist):
             Section.objects.get(section_id=section_delete.section_id)
 
+    def test_section_edit(self):
+        # Ensure the section to be edited exists in the database
+        initial_section = Section.objects.create(
+            course_parent=self.course1,
+            section_id=12345,
+            start_time=time(9, 0),
+            end_time=time(10, 0),
+            type='LEC',
+            location='Original Location',
+            is_online=False
+        )
+        initial_section.meeting_days.add(self.monday, self.tuesday)
+
+        # Instance of SectionClass
+        section_edit = SectionClass(
+            course_parent=initial_section.course_parent,
+            section_id=initial_section.section_id,
+            meeting_days=initial_section.meeting_days.all(),
+            start_time=initial_section.start_time,
+            end_time=initial_section.end_time,
+            section_type=initial_section.type,
+            location=initial_section.location,
+            is_online=initial_section.is_online
+        )
+
+        # Edit section
+        result = section_edit.edit_section(
+            course_parent=self.course2,
+            section_id=initial_section.section_id,  # Using the same ID for simplicity
+            start_time=time(10, 0),
+            end_time=time(11, 0),
+            section_type='DIS',
+            location='EMS180',
+            is_online=False,
+            days=[self.monday, self.wednesday]
+        )
+
+        # Check if edit was reported as successful
+        self.assertTrue(result, "Edit function did not return True.")
+
+        # Verify the changes
+        updated_section = Section.objects.get(section_id=initial_section.section_id)
+        self.assertTrue(updated_section.course_parent, self.course2)
+        self.assertEqual(updated_section.start_time, time(10, 0))
+        self.assertEqual(updated_section.end_time, time(11, 0))
+        self.assertEqual(updated_section.type, 'DIS')
+        self.assertEqual(updated_section.location, 'EMS180')
+        self.assertFalse(updated_section.is_online)
+        updated_days = list(updated_section.meeting_days.all())
+        self.assertIn(self.monday, updated_days)
+        self.assertIn(self.wednesday, updated_days)
+        self.assertNotIn(self.tuesday, updated_days)  # Make sure the day was actually changed
