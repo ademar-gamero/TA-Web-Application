@@ -191,7 +191,6 @@ class Test_SectionClass(TestCase):
         self.assertEqual(actual_string, expected_string)
 
     def test_section_time_update(self):
-        #use sectionclass update method to update the time for section
         section_update = SectionClass(course_parent=self.section1.course_parent, section_id=self.section1.section_id, meeting_days=self.section1.meeting_days.all(), start_time=self.section1.start_time, end_time=self.section1.end_time,
                                       section_type=self.section1.type, location=self.section1.location, is_online=self.section1.is_online)
         section_update.edit_meeting_time(time(10, 0), time(11, 0))
