@@ -1,10 +1,8 @@
 from django.core.exceptions import ValidationError
-
 from ta_app.Classes.SectionClass import SectionClass
 from ta_app.models import Section, Course, Day
 from datetime import time
 from django.test import TestCase
-
 
 class Test_SectionClass(TestCase):
     def setUp(self):
@@ -42,7 +40,7 @@ class Test_SectionClass(TestCase):
             section_id=12308,
             start_time= None,
             end_time= None,
-            type='LEC',
+            type='DIS',
             location=None,
             is_online=True
         )
@@ -122,7 +120,6 @@ class Test_SectionClass(TestCase):
             )
 
 
-
     def test_section_inperson_notime(self):
         a=Section.objects.create( course_parent=self.course1,   section_id=12319, start_time=None, end_time=None, type='LEC', location='EMS200',
                                     is_online=False)
@@ -153,10 +150,6 @@ class Test_SectionClass(TestCase):
             location='ems200',
             is_online=True
         )
-
-
-
-
 
     def test_section_creation_database(self):
         section5 = SectionClass(course_parent=self.course1, section_id=12320, meeting_days=[self.monday, self.wednesday],
