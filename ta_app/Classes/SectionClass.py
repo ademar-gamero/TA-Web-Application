@@ -9,7 +9,6 @@ class SectionClass:
     def __init__(self, course_parent=None, section_id=None, meeting_days=None, start_time=None, end_time=None,
                  section_type=None, location=None, is_online=None):
 
-        # Validate input types more specifically for certain fields
         if not isinstance(course_parent, Course):
             raise ValueError("course_parent must be an instance of Course")
         if course_parent is None:
@@ -71,7 +70,6 @@ class SectionClass:
         except Section.DoesNotExist:
             raise ValidationError("Section does not exist")
 
-        # If the section is found, proceed to update its fields
         section.start_time = self.start_time
         section.end_time = self.end_time
         section.type = self.section_type
@@ -80,7 +78,7 @@ class SectionClass:
         section.save()
 
         if not self.is_online:
-            section.meeting_days.set(self.meeting_days)  # Ensure meeting days are updated only for in-person classes
+            section.meeting_days.set(self.meeting_days)  # This will remove any existing days and replace them with the new ones
 
     def edit_meeting_days(self, new_days):
         if self.is_online:
