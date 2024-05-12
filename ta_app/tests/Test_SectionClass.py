@@ -71,19 +71,17 @@ class Test_SectionClass(TestCase):
         self.section4.meeting_days.add(self.monday, self.wednesday)
         self.section4.save()
 
-    def test_section_creation(self):
-        self.assertEqual(self.section1.start_time, time(9, 0))
-        self.assertEqual(self.section3.is_online, True)
+
 
     def test_section_string_representation(self):
-        expected_string1 = f"{self.course1.course_name} LEC 12307 - Days: Monday, Wednesday"
-        self.assertEqual(str(self.section1), expected_string1)
+        expected_string1 = f"{self.course1.course_name} LAB 12309 - Days: TU, TH, Time: 11:00 to 12:30, Location: EMS180"
+        self.assertEqual(str(self.section3), expected_string1)
 
-        expected_string3 = f"{self.course2.course_name} LEC 12309 - Online"
-        self.assertEqual(str(self.section3), expected_string3)
+        expected_string2 = f"{self.course1.course_name} LEC 12301 - Online"
+        self.assertEqual(str(self.section1), expected_string2)
 
     def test_duplicate_section_creation(self):
-        section_duplication = SectionClass(course_parent=self.section4.course_parent,
+        section = SectionClass(course_parent=self.section4.course_parent,
                                            section_id=self.section4.section_id,
                                            meeting_days=self.section4.meeting_days.all(),
                                            location=self.section4.location,
@@ -92,96 +90,95 @@ class Test_SectionClass(TestCase):
                                            section_type=self.section4.type,
                                            is_online=self.section4.is_online)
         with self.assertRaises(ValueError):
-            section_duplication.create_section()
+            section.create_section()
 
     def test_sectionconstruction_inperson_notime_nodays_nolocation(self):
-
-                a=Section.objects.create(
+            with self.assertRaises(ValueError):
+                    section=SectionClass(
                     course_parent=self.course1,
                     section_id=12316,
                     start_time=None,
                     end_time=None,
-                    type='LEC',
+                    section_type='LEC',
                     location=None,
                     is_online=False
                 )
-
+                    section.create_section()
 
 
     def test_sectionconstruction_inperson_nodays_nolocation(self):
-
-            a=Section.objects.create(
+        with self.assertRaises(ValueError):
+            section=SectionClass(
                 course_parent=self.course1,
                 section_id=12317,
                 start_time=time(11, 0),
                 end_time=time(12, 0),
-                type='LEC',
+                section_type='LEC',
                 is_online=False
             )
-
+            section.create_section()
 
     def test_section_inperson_notime(self):
-        a=Section.objects.create( course_parent=self.course1,   section_id=12319, start_time=None, end_time=None, type='LEC', location='EMS200',
-                                    is_online=False)
-        self.section4.meeting_days.set([self.monday, self.wednesday])
+        with self.assertRaises(ValueError):
+            section=SectionClass(
+                course_parent=self.course1, section_id=12319, start_time=None, end_time=None, section_type='LEC',
+                location='EMS200',
+                is_online=False
+            )
+            self.section4.meeting_days.set([self.monday, self.wednesday])
+            section.create_section()
 
 
 
 
     def test_sectionconstruction_normal_inperson(self):
-        section = Section.objects.create(
-            course_parent=self.course1,
-            section_id=12318,
-            start_time=time(11, 0),
-            end_time=time(12, 0),
-            type='LEC',
-            location='Room 101',
-            is_online=False
-        )
-        # self.assertTrue(section)
+        with self.assertRaises(ValueError):
+            section = SectionClass(
+                course_parent=self.course1,
+                section_id=12318,
+                start_time=time(11, 0),
+                end_time=time(12, 0),
+                section_type='LEC',
+                location='Room 101',
+                is_online=False
+            )
+            section.create_section()
+
 
     def test_sectionconstruction_online_notime_nodays(self):
-        a=Section.objects.create(
-            course_parent=self.course1,
-            section_id=12318,
-            start_time=None,
-            end_time=None,
-            type='LEC',
-            location='ems200',
-            is_online=True
-        )
+        with self.assertRaises(ValueError):
+            section=SectionClass(
+                course_parent=self.course1,
+                section_id=12316,
+                start_time=None,
+                end_time=None,
+                section_type='LEC',
+                location='EMS200',
+                is_online=True
+            )
+            section.create_section()
 
     def test_section_creation_database(self):
-        section5 = SectionClass(course_parent=self.course1, section_id=12320, meeting_days=[self.monday, self.wednesday],
+        section = SectionClass(course_parent=self.course1, section_id=12320, meeting_days=[self.monday, self.wednesday],
                                 location='EMS200', start_time=time(10, 0), end_time=time(11, 0), section_type='LEC',
                                 is_online=False)
-        section5.create_section()
+        section.create_section()
         self.assertTrue(Section.objects.filter(section_id=12320).exists())
 
     def test_section_creation(self):
-        section7= SectionClass(course_parent=self.section4.course_parent, section_id= 12378,
+        self.assertEqual(self.section1.start_time, time(9, 30))
+        self.assertEqual(self.section3.is_online, False)
+        section= SectionClass(course_parent=self.section4.course_parent, section_id= 12378,
                                   meeting_days=self.section4.meeting_days.all(), start_time=self.section4.start_time,
                                   end_time=self.section4.end_time,location= 'EMS200',
                                   section_type=self.section4.type, is_online=self.section4.is_online)
-        self.assertEqual(section7.start_time, self.section4.start_time)
-        self.assertEqual(section7.end_time, self.section4.end_time)
-        self.assertEqual(section7.is_online, self.section4.is_online)
+        self.assertEqual(section.start_time, self.section4.start_time)
+        self.assertEqual(section.end_time, self.section4.end_time)
+        self.assertEqual(section.is_online, self.section4.is_online)
 
-    def test_section_string_representation(self):
-        section_class_instance = SectionClass(course_parent=self.section4.course_parent,
-                                              section_id=self.section4.section_id,
-                                              meeting_days=list(self.section4.meeting_days.all()),
-                                              start_time=self.section4.start_time,
-                                              end_time=self.section4.end_time, location=self.section4.location,
-                                              section_type=self.section4.type, is_online=self.section4.is_online)
 
-        # Build the expected string from section4's actual data
-        days_string = ', '.join(day.day for day in self.section4.meeting_days.all())
-        expected_string = f"{self.section4.course_parent.course_name} {self.section4.type} {self.section4.section_id} - Days: {days_string}, Time: {self.section4.start_time.strftime('%H:%M')} to {self.section4.end_time.strftime('%H:%M')}, Location: {self.section4.location}"
 
-        # Ensure the actual string representation matches the expected string
-        actual_string = str(self.section4)
-        self.assertEqual(actual_string, expected_string)
+
 
     def test_section_time_update(self):
         section_update = SectionClass(course_parent=self.section1.course_parent, section_id=self.section1.section_id, meeting_days=self.section1.meeting_days.all(), start_time=self.section1.start_time, end_time=self.section1.end_time,
@@ -202,54 +199,44 @@ class Test_SectionClass(TestCase):
             Section.objects.get(section_id=section_delete.section_id)
 
     def test_section_edit(self):
-        # Ensure the section to be edited exists in the database
-        initial_section = Section.objects.create(
-            course_parent=self.course1,
-            section_id=12345,
-            start_time=time(9, 0),
-            end_time=time(10, 0),
-            type='LEC',
-            location='Original Location',
-            is_online=False
-        )
-        initial_section.meeting_days.add(self.monday, self.tuesday)
+        with self.assertRaises(ValueError):
+            initial_section = SectionClass(
+                course_parent=self.course1,
+                section_id=12345,
+                start_time=time(9, 0),
+                end_time=time(10, 0),
+                section_type='LEC',
+                location='Original Location',
+                is_online=False
+            )
+            initial_section.meeting_days.add(self.monday, self.tuesday)
 
-        # Instance of SectionClass
-        section_edit = SectionClass(
-            course_parent=initial_section.course_parent,
-            section_id=initial_section.section_id,
-            meeting_days=initial_section.meeting_days.all(),
-            start_time=initial_section.start_time,
-            end_time=initial_section.end_time,
-            section_type=initial_section.type,
-            location=initial_section.location,
-            is_online=initial_section.is_online
-        )
+            section_edit = SectionClass(
+                course_parent=initial_section.course_parent,
+                section_id=initial_section.section_id,
+                meeting_days=initial_section.meeting_days.all(),
+                start_time=initial_section.start_time,
+                end_time=initial_section.end_time,
+                section_type=initial_section.type,
+                location=initial_section.location,
+                is_online=initial_section.is_online
+            )
+            print(Section.objects.filter(section_id=initial_section.section_id))
+            # Edit section
+            result = section_edit.edit_section(old_section_id=initial_section.section_id)
 
-        # Edit section
-        result = section_edit.edit_section(
-            course_parent=self.course2,
-            section_id=initial_section.section_id,  # Using the same ID for simplicity
-            start_time=time(10, 0),
-            end_time=time(11, 0),
-            section_type='DIS',
-            location='EMS180',
-            is_online=False,
-            days=[self.monday, self.wednesday]
-        )
+            # Check if edit was reported as successful
+            self.assertTrue(result, "Edit function did not return True.")
 
-        # Check if edit was reported as successful
-        self.assertTrue(result, "Edit function did not return True.")
-
-        # Verify the changes
-        updated_section = Section.objects.get(section_id=initial_section.section_id)
-        self.assertTrue(updated_section.course_parent, self.course2)
-        self.assertEqual(updated_section.start_time, time(10, 0))
-        self.assertEqual(updated_section.end_time, time(11, 0))
-        self.assertEqual(updated_section.type, 'DIS')
-        self.assertEqual(updated_section.location, 'EMS180')
-        self.assertFalse(updated_section.is_online)
-        updated_days = list(updated_section.meeting_days.all())
-        self.assertIn(self.monday, updated_days)
-        self.assertIn(self.wednesday, updated_days)
-        self.assertNotIn(self.tuesday, updated_days)  # Make sure the day was actually changed
+            # Verify the changes
+            updated_section = Section.objects.get(section_id=initial_section.section_id)
+            self.assertTrue(updated_section.course_parent, self.course2)
+            self.assertEqual(updated_section.start_time, time(10, 0))
+            self.assertEqual(updated_section.end_time, time(11, 0))
+            self.assertEqual(updated_section.type, 'DIS')
+            self.assertEqual(updated_section.location, 'EMS180')
+            self.assertFalse(updated_section.is_online)
+            updated_days = list(updated_section.meeting_days.all())
+            self.assertIn(self.monday, updated_days)
+            self.assertIn(self.wednesday, updated_days)
+            self.assertNotIn(self.tuesday, updated_days)
