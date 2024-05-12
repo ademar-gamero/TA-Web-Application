@@ -111,15 +111,6 @@ class set_assigned(Common):
         self.assigned_user.set_assigned(True)
         self.assertEqual(True, self.assigned_user.assigned)
 
-class set_grader_status(Common):
-    def test_setGraderStatusInvalid(self):
-        with self.assertRaises(ValueError, msg="Assignment must be a boolean"):
-            self.assigned_user.set_grader_status("President")
-
-    def test_setGraderStatusValid(self):
-        self.assigned_user.set_grader_status(True)
-        self.assertEqual(True, self.assigned_user.grader_status)
-
 
 class set_skills(Common):
     def test_setSkills(self):
@@ -268,22 +259,6 @@ class TestUserClass(Common):
 
         self.assertEqual(temp.assigned_sections, [], "Shouldn't be assigned to any sections")
         self.assertEqual(temp.__str__(), "New : Instructor", "toString returns incorrectly")
-
-    def test_createInstructorWithGraderStatus(self):
-        temp = UserClass(username="new", password="password", name="New", email="new@uwm.edu", role="Instructor",grader_status=True)
-        self.assertEqual(temp.username, "new", "Username is wrong")
-        self.assertEqual(temp.password, "password", "Password is wrong")
-        self.assertEqual(temp.name, "New", "Name is wrong")
-        self.assertEqual(temp.email, "new@uwm.edu", "Email is wrong")
-        self.assertEqual(temp.role, "Instructor", "Role is wrong")
-        self.assertEqual(temp.phone_number, "", "Phone number should be empty")
-        self.assertEqual(temp.address, "", "Address should be empty")
-        self.assertEqual(temp.assigned, False, "Should not be assigned")
-        self.assertEqual(temp.grader_status, True, "Should not be assigned")
-
-        self.assertEqual(temp.assigned_sections, [], "Shouldn't be assigned to any sections")
-        self.assertEqual(temp.__str__(), "New : Instructor", "toString returns incorrectly")
-
     # check if creating an Instructor with all necessary inputs returns successfully
 
     def test_createTA(self):
@@ -296,20 +271,6 @@ class TestUserClass(Common):
         self.assertEqual(temp.phone_number, "", "Phone number should be empty")
         self.assertEqual(temp.address, "", "Address should be empty")
         self.assertEqual(temp.assigned, False, "Should not be assigned")
-        self.assertEqual(temp.assigned_sections, [], "Shouldn't be assigned to any sections")
-        self.assertEqual(temp.__str__(), "New : Teacher-Assistant", "toString returns incorrectly")
-
-    def test_createTAWithGraderStatus(self):
-        temp = UserClass(username="new", password="password", name="New", email="new@uwm.edu", role="Teacher-Assistant",grader_status=True)
-        self.assertEqual(temp.username, "new", "Username is wrong")
-        self.assertEqual(temp.password, "password", "Password is wrong")
-        self.assertEqual(temp.name, "New", "Name is wrong")
-        self.assertEqual(temp.email, "new@uwm.edu", "Email is wrong")
-        self.assertEqual(temp.role, "Teacher-Assistant", "Role is wrong")
-        self.assertEqual(temp.phone_number, "", "Phone number should be empty")
-        self.assertEqual(temp.address, "", "Address should be empty")
-        self.assertEqual(temp.assigned, False, "Should not be assigned")
-        self.assertEqual(temp.grader_status, True, "Should not be assigned")
         self.assertEqual(temp.assigned_sections, [], "Shouldn't be assigned to any sections")
         self.assertEqual(temp.__str__(), "New : Teacher-Assistant", "toString returns incorrectly")
 
@@ -358,36 +319,6 @@ class create_User(TestCase):
         self.assertEqual(db_user.phone_number, self.assigned_user.phone_number, "Phone is wrong")
         self.assertEqual(db_user.address, self.assigned_user.address, "Address is wrong")
         self.assertEqual(db_user.assigned, True, "Assigned is incorrect")
-        j = 0
-        for i in db_user.assigned_section.all():
-            self.assertEqual(self.assigned_user.assigned_sections[j], i, "assigned sections not present")
-            j = j + 1
-
-    def test_createToDBWithNewDetails(self):
-        date_string = "Tue 2:30pm"
-        date_object = datetime.strptime(date_string, "%a %H:%M%p")
-        algos = Course(course_id=351, course_name="compsci", description="blah blah blah")
-        algos.save()
-
-        section = Section(course_parent=algos, section_id=12345, type="lecture")
-        section.save()
-
-        slist = [section]
-        self.assigned_user = UserClass("ta", "ta", "apoorv", "Teacher-Assistant", "email@email.com", "1", "1", True,
-                                       slist,"Computer Science",True)
-        self.assigned_user.create_user()
-        db_user = User.objects.get(name="apoorv")
-
-        self.assertEqual(db_user.username, self.assigned_user.username, "Username is wrong")
-        self.assertEqual(db_user.password, self.assigned_user.password, "Password is wrong")
-        self.assertEqual(db_user.name, self.assigned_user.name, "Name is wrong")
-        self.assertEqual(db_user.role, self.assigned_user.role, "Role is wrong")
-        self.assertEqual(db_user.email, self.assigned_user.email, "Email is wrong")
-        self.assertEqual(db_user.phone_number, self.assigned_user.phone_number, "Phone is wrong")
-        self.assertEqual(db_user.address, self.assigned_user.address, "Address is wrong")
-        self.assertEqual(db_user.assigned, True, "Assigned is incorrect")
-        self.assertEqual(db_user.grader_status, True, "grader status is incorrect")
-        self.assertEqual(db_user.skills, "Computer Science", "skills is incorrect")
         j = 0
         for i in db_user.assigned_section.all():
             self.assertEqual(self.assigned_user.assigned_sections[j], i, "assigned sections not present")
@@ -517,19 +448,6 @@ class TestEditUser(TestCase):
         self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
         self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
         self.assertEqual("The Moon", check.address, "Address should have changed")
-
-    def test_edit_user_grader_status(self):
-        self.user.edit_user(None, None, None, None, None, None, None, grader_status=True)
-        self.assertEqual(True, self.user.grader_status, msg="grader status was not updated")
-        check = User.objects.get(username="user")
-
-        self.assertEqual("password", check.password, "Password should not have changed")
-
-        self.assertEqual("Name", check.name, "Name should not have changed")
-        self.assertEqual("Admin", check.role, "Role should not have changed")
-        self.assertEqual("bla@bla.com", check.email, "Email should not have changed")
-        self.assertEqual("1234567890", check.phone_number, "Phone number should not have changed")
-        self.assertEqual(True, check.grader_status, "Address should have changed")
 
     def test_edit_user_all(self):
         self.user.edit_user("new", "newpass", "New Name", "Instructor", "new@aol.com",
