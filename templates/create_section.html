@@ -35,7 +35,7 @@
                 <label for="course_parent">Course:</label>
                 <select name="course_parent" id="course_parent" required>
                     {% for course in courses %}
-                    <option value="{{ course.id }}">{{ course}}</option>
+                    <option value="{{ course.course_id }}">{{ course}}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -81,12 +81,7 @@
                 <button type="submit">Create Section</button>
             </div>
         </form>
-        {% if check == False %}
-            <h3> Section was not Created </h3>
-        {% endif %}
-        {% if check == True %}
-            <h3> Section was Created </h3>
-        {% endif %}
+        <br>{{ error }}
         <div class="center">
           <h2 class = "center3"> Saved Sections </h2>
           <table class="center2">
@@ -104,7 +99,7 @@
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
               <td>{{ section.location }}</td>
-                <td>{{ section.meeting_days }}</td>
+                <td>{{ section.meeting_days.all}}</td>
               <td>{{ section.start_time }} - {{ section.end_time }}</td>
             </tr>
             {% endfor %}
