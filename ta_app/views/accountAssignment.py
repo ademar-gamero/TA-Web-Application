@@ -9,12 +9,21 @@ class accountAssignment(View):
 
     def get(self,request,pk):
         usr_role = request.session["role"]
+        user_pk = request.session["pk"]
+        viewer = User.objects.get(pk=user_pk)
+        viewer_courses = Section.objects.filter(type="lecture",assigned_users__in=[viewer])
         account = User.objects.get(pk=pk)
         usr_sections = account.assigned_section.all()
         all_sections = Section.objects.all()
         assigned_courses = []
         selectableSections = []
         lab_check = "False"
+        assigned_account_check = "False"
+        for course in viewer_courses:
+            if User.objects.filter(role="Teacher-Assistant",assigned_section__in=[course]).exists():
+                assigned_account_check = "True"
+
+
         for sec in usr_sections:
             if sec.type == "lecture":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
@@ -25,20 +34,23 @@ class accountAssignment(View):
             if sec.type == "lab":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
                     if secs not in usr_sections:
-                        selectableSections.append(secs)
+                        if secs not in selectableSections:
+                            selectableSections.append(secs)
                 lab_check = "True"
         selectableCourses = []
         for secs in  Section.objects.filter(type="lecture"):
             if secs not in usr_sections:
                 selectableCourses.append(secs)
         print(lab_check)
-        return render(request, "account_assignments.html",{'curr_user':account,
+        return render(request, "account_assignments.html",{'curr_user':account, "viewer":viewer,
                                             'usr_role':usr_role,'sections':usr_sections,"courses":assigned_courses,'all_sections':all_sections,
                                             'selectableSections':selectableSections,'selectableCourses':selectableCourses
-                                            ,"lab_check":lab_check})
+                                            ,"lab_check":lab_check,"assigned_account_check":assigned_account_check })
 
     def post(self,request,pk):
         usr_role = request.session["role"]
+        user_pk = request.session["pk"]
+        viewer = User.objects.get(pk=user_pk)
         account = User.objects.get(pk=pk)
         usr_sections = account.assigned_section.all()
         sections = Section.objects.all()
@@ -59,7 +71,8 @@ class accountAssignment(View):
         selectableCourses = []
         for secs in  Section.objects.filter(type="lecture"):
             if secs not in usr_sections:
-                selectableCourses.append(secs)
+                if secs not in selectableSections:
+                    selectableSections.append(secs)
 
         if usr_role != "Admin" and usr_role != "Instructor":
             return redirect("/Home/")
@@ -72,7 +85,7 @@ class accountAssignment(View):
             section = Section.objects.get(pk=sec_pk)
             newacc.add_section(section)
         except ValueError as error:
-            return render(request,"account_assignments.html",{'curr_user':account,'sections':sections,
+            return render(request,"account_assignments.html",{'curr_user':account,'sections':sections,"viewer":viewer,
                                                               'usr_role':usr_role,"courses":assigned_courses,"lab_check":lab_check,
                                                               'selectableSections':selectableSections,'all_sections':sections,
                                                               'selectableCourses': selectableCourses,'message': error.__str__()})
@@ -89,14 +102,15 @@ class accountAssignment(View):
             if sec.type == "lab":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
                     if secs not in usr_sections:
-                        selectableSections.append(secs)
+                        if secs not in selectableSections:
+                            selectableSections.append(secs)
                 lab_check = "True"
         selectableCourses = []
         for secs in  Section.objects.filter(type="lecture"):
             if secs not in usr_sections:
                 selectableCourses.append(secs)
 
-        return render(request,"account_assignments.html",{'curr_user':account,'sections':usr_sections,
+        return render(request,"account_assignments.html",{'curr_user':account,'sections':usr_sections,"viewer":viewer,
                                                           'allSections':sections,'usr_role':usr_role,"courses":assigned_courses,
                                                           "lab_check":lab_check,'selectableSections':selectableSections,
                                                           'selectableCourses':selectableCourses,'all_sections':sections,

@@ -49,7 +49,8 @@ class accountList(View):
                 secs = Section.objects.filter(course_parent = course)
                 for sec in secs:
                     for usr in sec.assigned_users.all():
-                        accounts.append(usr)
+                        if usr not in accounts:
+                            accounts.append(usr)
         else:
             accounts = User.objects.all()
         return render(request, "account_list.html", {"account_list": accounts, "isAdmin": isAdmin, "usr_role": role})

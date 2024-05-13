@@ -69,9 +69,9 @@
               </select>
                 {% endif %}
         {% endif %}
-        
+
     <h1 class = "center"> Course - {{course.course_id}} {{course.course_name}} - Sections </h1>
-    <div class = "center2" align="center">    
+    <div class = "center2" align="center">
       {% if not sections %}
           <p> This Course does not have any sections </p>
       {% else %}
@@ -124,7 +124,12 @@
                       <th>Username</th>
                       <th>Role</th>
                       <th>Email</th>
-                      <th>Remove Assignment</th>
+                        {% if curr_usr.role == "Admin"%}
+                            <th> Remove Assignment </th>
+                        {% endif %}
+                        {% if curr_usr.role == "Instructor"%}
+                            <th> Remove Assignment </th>
+                        {% endif %}
                     </tr>
                       {% for user in section.assigned_users.all %}
                           {% if section.type == "lecture" and user.role == "Teacher-Assistant"%}
@@ -210,10 +215,14 @@
                             <br>
           {% endfor %}
                     <br>
-                {% if curr_usr.role == "Instructor" and instructor_message == 'None' or curr_usr.role == "Admin" %}
+                {% if curr_usr.role == "Admin" %}
+              <input type="submit" value="Submit">
+                {% elif curr_usr.role == "Instructor" and instructor_message == 'None' %}
                     <input type="submit" value="Submit">
                 {% else %}
-                    {{ instructor_message }}                    
+                    {% if curr_usr.role != "Teacher-Assistant" %}
+                        {{ instructor_message }}
+                        {% endif %}
                 {% endif %}
         {% endif %}
                     <br>

@@ -56,6 +56,8 @@ class courseSections(View):
 
     def post(self, request, course_pk):
         usr_role = request.session["role"]
+        pk = request.session["pk"]
+        curr_usr = User.objects.get(pk=pk)
         course = Course.objects.get(pk=course_pk)
         sections = Section.objects.filter(course_parent=course)
         teacherassistant_pool = User.objects.filter(role="Teacher-Assistant")
@@ -95,6 +97,9 @@ class courseSections(View):
                 else:
                     dict[key] = values
         assigned = False
+        instructor_message = 'None'
+        if curr_usr not in assigned_users:
+            instructor_message = "Your are not assigned to this course"
         for key, value in dict.items():
             for val in value:
                 if val != 'None':
@@ -109,10 +114,10 @@ class courseSections(View):
                         assigned = True
 
                     except ValueError as failure:
-                        return render(request, "course_sections.html", {"course": course, "sections": sections,
+                        return render(request, "course_sections.html", {"course": course, "sections": sections,"curr_usr":curr_usr,
                                                                         "ta_all": teacherassistant_pool, "ins_all": instructor_pool, "usr_role": usr_role,
                                                                         "ta_pool": ta_pool, "assigned_users":assigned_users,
-                                                                        "course_lecture":course_lecture,check:"check","message": failure.__str__()})
+                                                                        "course_lecture":course_lecture,check:"check","instructor_message":instructor_message,"message": failure.__str__()})
 
         # get pool of users for sections
         ta_pool = []
@@ -144,8 +149,12 @@ class courseSections(View):
         if assigned:
             success = "Successfully assigned user(s) to section(s)"
 
-        return render(request, "course_sections.html", {"course": course, "sections": sections,
+            instructor_message = 'None'
+            if curr_usr not in assigned_users:
+                instructor_message = "Your are not assigned to this course"
+
+        return render(request, "course_sections.html", {"course": course, "sections": sections,"curr_usr":curr_usr,
                                                         "ta_all": teacherassistant_pool, "ins_all": instructor_pool,
                                                         "usr_role": usr_role, "ta_pool": ta_pool, "assigned_users":assigned_users,
-                                                        "course_lecture":course_lecture,"check":check,
+                                                        "course_lecture":course_lecture,"check":check,"instructor_message":instructor_message,
                                                         "message": success})
