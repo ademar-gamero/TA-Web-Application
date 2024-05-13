@@ -35,29 +35,30 @@
                 <td><label for="address">Address: </label></td>
                 <td><input type="text" id="address" name="address" value = {{user.address}}></td>
             </tr>
-            { % if is_admin % }
+            {% if is_admin %}
                 <tr>
                     <td><label for="role-selection">Role: </label></td>
                     <td><select name="role" id="role-selection">
-                        <option value="{{ user.role }}">Current Role: {{ user.role }}</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Instructor">Instructor</option>
-                        <option value="Teacher-Assistant">Teacher Assistant</option>
+                        {% for role in roles %}
+                        <option value="{{ role }}" {% if role == user.role %}selected{% endif %}>{{ role }}</option>
+                        {% endfor %}
                     </select></td>
                 </tr>
-            { % endif % }
-            { % if not is_admin % }
+                <select name="semester" id="semester">
+        </select></br>
+            {% endif %}
+            {% if not is_admin %}
                 <tr>
                     <td>Role: </td>
                     <td>{{ user.role }}</td>
                 </tr>
-            { % endif % }
-            { % if user.role == "Teacher-Assistant" % }
+            {% endif %}
+            {% if user.role == "Teacher-Assistant" %}
                 <tr>
                     <td><label for="skills">Skills: </label></td>
                     <td><textarea name="skills" id="skills" rows="3" cols="30">{{ user.skills }}</textarea></td>
                 </tr>
-            { % endif % }
+            {% endif %}
         </table>
         <br>
         <input type="submit" value="Submit">

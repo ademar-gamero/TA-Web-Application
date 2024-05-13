@@ -38,9 +38,9 @@
             Assigned Course(s): 
             <br>
             <br>
-                {%if not courses %}
-            <p> not assigned to any courses </p>
-            {% endif %}
+        {%if not courses %}
+            <p> User is not assigned to any courses </p>
+    {% else %}
     <table>
       <tr>
         <th>Course Subject</th>
@@ -61,10 +61,17 @@
             </tr>
             {% endfor %}
     </table>
+    {% endif %}
+
             <br>
             <br>
             Assigned Section(s):
             <br>
+            <br>
+    
+        {% if not sections %}
+        <p>User is not assigned to any sections</p>
+        {% else %}
             <table>
             <br>
             <tr>
@@ -86,6 +93,7 @@
             </tr>
             {% endfor %}
         </table>
+    {% endif %}
         {% if usr_role == "Admin" or usr_role == "Instructor" %}
         <form action="/Home/accountList/accountAssignment/{{user.pk}}/" method="post"> 
         {% csrf_token %}
@@ -94,9 +102,15 @@
             Add Section:
             <td><select id="section-id" name="section">
                 <option value="">None</option>
-              {% for newsection in selectableSections %}
+            {% if usr_role == "Admin" %}
+              {% for newsection in selectableCourses %}
                 <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}}</option>
               {% endfor %}
+                {% else %}
+                {% for newsection in selectableSections %}
+                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}}</option>
+              {% endfor %}
+            {% endif %}
           </select></td>
             <br>
             <br>
