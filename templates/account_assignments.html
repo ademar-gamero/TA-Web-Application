@@ -81,6 +81,9 @@
               <th>Course</th>
               <th>Section ID</th>
               <th>Type</th>
+                <th> Meeting Days </th>
+            <th>Meeting Time </th>
+                <th>Location</th>
                 {% if usr_role == "Admin"%}
               <th> Remove Assignment </th>
                 {% endif %}
@@ -94,6 +97,12 @@
               <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
+                <td>{% for day in section.meeting_days.all %}
+                            {{ day }}
+                        {% endfor %}
+                </td>
+                <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                <td>{{ section.location }}</td>
                 {% if usr_role == "Admin" or usr_role == "Instructor" %}
                     <td> Remove Assignment </td>
                 {% endif %}
