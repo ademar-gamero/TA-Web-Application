@@ -46,8 +46,6 @@ class courseSections(View):
         instructor_message = 'None'
         if curr_usr not in assigned_users:
             instructor_message = "Your are not assigned to this course"
-        print(instructor_message)
-        print(curr_usr.role)
         return render(request, "course_sections.html", {"course": course, "sections": sections,
                                                         "ta_all": teacherassistant_pool, "ins_all": instructor_pool,
                                                         "usr_role": usr_role, "ta_pool": ta_pool, "assigned_users":assigned_users,
@@ -68,7 +66,6 @@ class courseSections(View):
         for section in sections:
             tas = User.objects.filter(role="Teacher-Assistant", assigned_section__in=[section]).distinct()
             ins = User.objects.filter(role="Instructor", assigned_section__in=[section]).distinct()
-            print(ins)
             for inst in ins:
                 if inst not in assigned_users:
                     assigned_users[inst]="True"
@@ -85,10 +82,8 @@ class courseSections(View):
                 course_lecture = secs.pk
         check = "False"
         for usrs in assigned_users:
-            print(usrs)
             if usrs.role == "Instructor":
                 check = "True"
-        print(check)
         dict = {}
         for key,values in request.POST.lists():
             if key != "csrfmiddlewaretoken":

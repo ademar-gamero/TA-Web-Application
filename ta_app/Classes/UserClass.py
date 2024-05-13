@@ -150,7 +150,7 @@ class UserClass(ABC):
             assigner = User.objects.get(pk=user)
         if assigner != None:
             if assigner.role == "Instructor":
-                self.instructorCheck(new_section,assigner)
+                self.instructorCheck(new_section, assigner)
         should_assign = False
         if isinstance(new_section, Section):
             if self.role == "Teacher-Assistant" and new_section.type == "LAB":
@@ -159,9 +159,11 @@ class UserClass(ABC):
                     raise ValueError(
                         f"'{self.username} {self.role}' cannot be assinged, There is already an teacher assistant assigned to this section, '{new_section.course_parent} {new_section.type} {new_section.section_id}'")
                 except User.DoesNotExist:
+                    print(new_section)
                     lecture = (User.objects.get(username=self.username).assigned_section.filter
                             (course_parent=new_section.course_parent, type="LEC"))
                     if lecture:
+                        print(new_section)
                         should_assign = True
                     else:
                         raise ValueError(f"'{self.username} {self.role}'cannot be assinged, User is not assigned to a corresponding lecture section in this course")
@@ -184,8 +186,11 @@ class UserClass(ABC):
                     else:
                         raise ValueError(f"'{self.username} {self.role}' cannot be assinged, user is already assigned to section '{new_section.course_parent} {new_section.type} {new_section.section_id}'")
                 if self.assigned:
+                    print(1)
                     # checks for conflicts if user already assigned. if it finds one, this will throw an error
-                    if(self.role != "Teacher-Assistant" and new_section.type !="lecture"): #added this so teacher assistants can be assigned to multiple conflicting lecture sections
+                    if(self.role == "Teacher-Assistant" and new_section.type !="lecture"): #extra check for teacher assistants so they can be assigned to multipe courses with no conflicts
+                        self.check_conflicts(new_section)
+                    if(self.role != "Teacher-Assitant"):
                         self.check_conflicts(new_section)
                 else:
                     if should_assign:

@@ -204,7 +204,7 @@ class accountAssignment(TestCase):
         self.assertFalse(new.assigned,"assigned did not properly change")
 
     def test_instructorAddAssignmentTa(self):
-        resp = self.green.post("/login/", {"username": self.instructor.username, "password": self.instructor.password}, follow=True)
+        resp = self.green.post("/login/", {"username": self.instructor2.username, "password": self.instructor2.password}, follow=True)
 
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200, resp.status_code, "role error")
