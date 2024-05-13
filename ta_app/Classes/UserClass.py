@@ -144,7 +144,13 @@ class UserClass(ABC):
         else:
             raise ValueError("Assignment must be a boolean")
 
-    def add_section(self, new_section):
+    def add_section(self, new_section, user=None):
+        assigner = None
+        if user is not None:
+            assigner = User.objects.get(pk=user)
+        if assigner != None:
+            if assigner.role == "Instructor":
+                self.instructorCheck(new_section,assigner)
         should_assign = False
         if isinstance(new_section, Section):
             if self.role == "Teacher-Assistant" and new_section.type == "LAB":
@@ -388,3 +394,16 @@ class UserClass(ABC):
                         raise ValueError("The section being assigned conflicts with another section assignment :"
                                          + section.__str__())
                 possible_conflict = False
+
+    def instructorCheck(self, new_section, user):
+        flag = False
+        if user.role == "Instructor":
+            for sec in user.assigned_section.all():
+                if sec.course_parent.pk == new_section.course_parent.pk:
+                    flag = True
+        if flag is False:
+            raise ValueError("Your not assigned to the course of the section your trying to assign")
+        else:
+            return True
+
+

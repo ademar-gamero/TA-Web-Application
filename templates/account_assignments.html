@@ -29,7 +29,7 @@
     <title>Account Assignments</title>
 </head>
 <body>
-<form action="/Home/accountList/accountAssignment/{{curr_user.pk}}/" method="post"> 
+<form action="/Home/accountList/accountAssignment/{{curr_user.pk}}/" method="post">
     {% csrf_token %}
     <h1 class = "center" >{{curr_user.name}} {{curr_user.role}} Assignments</h1>
     <div class = "center2" align="center">
@@ -123,7 +123,7 @@
             <td><select id="section-id" name="section">
                 <option value="">None</option>
               {% for newsection in selectableCourses %}
-                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}} 
+                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}}
                     || Section Schedule: {% for day in newsection.meeting_days.all %}
                             {{ day }}
                         {% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time}}
@@ -144,7 +144,7 @@
             <td><select id="section-id" name="section">
                 <option value="">None</option>
                 {% for newsection in selectableSections %}
-                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}} 
+                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}}
                 || Section Schedule: {% for day in newsection.meeting_days.all %}
                             {{ day }}
                         {% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time}}</option>
@@ -156,7 +156,7 @@
             <br>
             <br>
                 {% if curr_user.pk != viewer_pk %}
-                    {% if viewer.role == "Instructor" and assigned_account == "True"%}
+                    {% if viewer.role == "Instructor"%}
                         <input type="submit" value="Submit">
                     {% elif viewer.role == "Admin" %}
                         <input type="submit" value="Submit">
