@@ -113,6 +113,12 @@
               <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
+                <td>{% for day in section.meeting_days.all %}
+                    {{ day }}
+                {% endfor %}
+                </td>
+                <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                <td>{{ section.location }}</td>
                 {% if usr_role == "Admin" or user.role == "Instructor" %}
               <td> Remove Assignment </td>
                 {% endif %}
