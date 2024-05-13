@@ -193,9 +193,7 @@
                             <select id = "{{section.pk}}" name="{{section.pk}}">
                               <option value=None>None</option>
                               {%for ins in ins_all %}
-                                  {% if ins not in section.assigned_users.all %}
                                     <option value="{{ins.pk}}">{{ins.name}} | {{ ins.username }} | {{ ins.role }}</option>
-                                  {% endif %}
                               {% endfor %}
                             </select>
                               <br>
