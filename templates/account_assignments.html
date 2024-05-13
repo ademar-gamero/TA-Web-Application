@@ -29,10 +29,11 @@
     <title>Account Assignments</title>
 </head>
 <body>
-    <h1 class = "center" >{{user.name}} {{user.role}} Assignments</h1>
+<form action="/Home/accountList/accountAssignment/{{curr_user.pk}}/" method="post"> 
+    {% csrf_token %}
+    <h1 class = "center" >{{curr_user.name}} {{curr_user.role}} Assignments</h1>
     <div class = "center2" align="center">
             <br>
-        Assigned: <b>{{user.assigned}}</b>
             <br>
             <br>
             Assigned Course(s): 
@@ -68,9 +69,11 @@
             Assigned Section(s):
             <br>
             <br>
-    
-        {% if not sections.all %}
+
+        {% if not sections.all%}
         <p>User is not assigned to any sections</p>
+        {% elif curr_user.role == "Teacher-Assistant" and lab_check == "False" %}
+            <p>User is not assigned to any lab sections</p>
         {% else %}
             <table>
             <br>
@@ -82,47 +85,82 @@
               <th> Remove Assignment </th>
                 {% endif %}
             </tr>
-          {%for section in sections %}
+          {%for section in curr_user.assigned_section.all %}
+              {% if section.type == "lab" and curr_user.role == "Teacher-Assistant"%}
             <tr>
               <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
               <td>{{ section.section_id }}</td>
               <td>{{ section.type }}</td>
-                {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                {% if usr_role == "Admin" or user.role == "Instructor" %}
               <td> Remove Assignment </td>
                 {% endif %}
             </tr>
+              {% endif %}
+               {% if section.type == "lecture" and curr_user.role == "Instructor"%}
+            <tr>
+              <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
+              <td>{{ section.section_id }}</td>
+              <td>{{ section.type }}</td>
+                {% if usr_role == "Admin" or user.role == "Instructor" %}
+              <td> Remove Assignment </td>
+                {% endif %}
+            </tr>
+              {% endif %}
             {% endfor %}
         </table>
     {% endif %}
         {% if usr_role == "Admin" or usr_role == "Instructor" %}
-        <form action="/Home/accountList/accountAssignment/{{user.pk}}/" method="post"> 
-        {% csrf_token %}
             <br>
             <br>
-            Add Section:
+            {% if usr_role == "Admin" %}
+            Add Courses:
+                {% if not selectableCourses  %}
+                    <p> users is signed up for all courses or there are no courses to be assigned to</p>
+                    {% else %}
             <td><select id="section-id" name="section">
                 <option value="">None</option>
-            {% if usr_role == "Admin" %}
               {% for newsection in selectableCourses %}
-                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}}</option>
+                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}} 
+                    || Section Schedule: {% for day in newsection.meeting_days.all %}
+                            {{ day }}
+                        {% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time}}
               {% endfor %}
-                {% else %}
-                {% for newsection in selectableSections %}
-                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}}</option>
-              {% endfor %}
-            {% endif %}
+
           </select></td>
+                    {% endif %}
+                {% endif %}
+            <br>
+            {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                {% if curr_user.role != "Instructor" %}
+                <br>
+            Add Section:
+                {% if not selectableSections  %}
+                    <p> User is signed up for all the lab sections in their course(s)
+                    or there are no lab sections to sign up for their in their course(s)</p>
+                    {% else %}
+            <td><select id="section-id" name="section">
+                <option value="">None</option>
+                {% for newsection in selectableSections %}
+                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}} 
+                || Section Schedule: {% for day in newsection.meeting_days.all %}
+                            {{ day }}
+                        {% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time}}</option>
+                {% endfor %}
+          </select></td>
+                    {% endif %}
+                {% endif %}
+                {% endif %}
             <br>
             <br>
           <input type="submit" value="Submit">
-        </form>
         <br>
-      <h3>{{ message }}</h3>
+            {{ message }}
         {% endif %}
       <br>
-      <a href = "/Home/accountList/"> Go Back </a></br>
+      <a href = "/Home/accountList/"> Go Back </a><br>
       <br>
-      <a href = "/Home/"> Go Home </a> </br>
+      <a href = "/Home/"> Go Home </a> <br>
     </div>
+</form>
 </body>
 </html>

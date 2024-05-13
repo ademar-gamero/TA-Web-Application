@@ -16,7 +16,7 @@ from django.core.validators import validate_email
 class UserClass(ABC):
 
     def __init__(self, username, password, name, role, email, phone_number="", address="", assigned=False,
-                 assigned_sections=None, skills="",grader_status = False):
+                 assigned_sections=None, skills=""):
         if (username == "" or password == "" or name == "" or role == "" or email == ""
                 or username is None or password is None or name is None or role is None or email is None):
             raise ValueError("Must include username, password, name, role, and email.")
@@ -37,8 +37,6 @@ class UserClass(ABC):
             raise ValueError("Invalid phone number")
         if not isinstance(address, str):
             raise ValueError("Invalid phone number")
-        if not isinstance(grader_status, bool):
-            raise ValueError("Assigned must be a boolean")
         if not isinstance(assigned, bool):
             raise ValueError("Assigned must be a boolean")
         if not isinstance(skills, str):
@@ -65,6 +63,7 @@ class UserClass(ABC):
                     self.assigned_sections = []
                 for section in assigned_sections:
                     if not isinstance(section, Section):
+                        print(1)
                         raise ValueError("Invalid Section type")
                     self.assigned_sections.append(section)
             elif isinstance(assigned_sections, list):
@@ -77,7 +76,6 @@ class UserClass(ABC):
             else:
                 raise ValueError("Invalid Section type")
         self.skills = skills
-        self.grader_status = grader_status
 
     def __str__(self):
         return f'{self.name} : {self.role}'
@@ -145,13 +143,6 @@ class UserClass(ABC):
             User.objects.filter(username=self.username).update(assigned=self.assigned)
         else:
             raise ValueError("Assignment must be a boolean")
-    def set_grader_status(self, new_grader_status):
-        if isinstance(new_grader_status, bool):
-            self.grader_status = new_grader_status
-            User.objects.filter(username=self.username).update(grader_status=self.grader_status)
-        else:
-            raise ValueError("Assignment must be a boolean")
-
 
     def add_section(self, new_section):
         should_assign = False
@@ -181,10 +172,15 @@ class UserClass(ABC):
                 self.assigned_sections = [new_section]
             else:
                 if self.assigned_sections.count(new_section) > 0:
-                    raise ValueError(f"'{self.username} {self.role}' cannot be assinged, user is already assigned to section '{new_section.course_parent} {new_section.type} {new_section.section_id}'")
+                    if new_section.type == "lecture" or new_section.type == "LEC":
+                        if self.role == "Teacher-Assistant" or self.role == "TA":
+                            raise ValueError(f"'{self.username} {self.role}' cannot be assinged, user is already assigned to course '{new_section.course_parent}'")
+                    else:
+                        raise ValueError(f"'{self.username} {self.role}' cannot be assinged, user is already assigned to section '{new_section.course_parent} {new_section.type} {new_section.section_id}'")
                 if self.assigned:
                     # checks for conflicts if user already assigned. if it finds one, this will throw an error
-                    self.check_conflicts(new_section)
+                    if(self.role != "Teacher-Assistant" and new_section.type !="lecture"): #added this so teacher assistants can be assigned to multiple conflicting lecture sections
+                        self.check_conflicts(new_section)
                 else:
                     if should_assign:
                         self.set_assigned(True)
@@ -285,13 +281,6 @@ class UserClass(ABC):
         except User.DoesNotExist:
             return self.assigned
 
-    def get_grader_status(self):
-        try:
-            return User.objects.get(username=self.username).grader_status
-        except User.DoesNotExist:
-            return self.grader_status
-
-
     def get_assigned_sections(self):
         try:
             return list(User.objects.get(username=self.username).assigned_section.all())
@@ -317,7 +306,7 @@ class UserClass(ABC):
             return contact.email
 
     def edit_user(self, username=None, password=None, name=None, role=None, email=None, phone=None, address=None,
-                  skills=None, grader_status = None):
+                  skills=None):
         old_username = self.username
 
         if username is not None:
@@ -347,14 +336,11 @@ class UserClass(ABC):
             self.set_address(address)
         if skills is not None:
             self.set_skills(skills)
-        if grader_status is not None:
-            self.set_grader_status(grader_status)
         User.objects.filter(username=old_username).update(username=self.username, password=self.password,
                                                           name=self.name,
                                                           role=self.role, email=self.email,
                                                           phone_number=self.phone_number,
-                                                          address=self.address, skills=self.skills,
-                                                          grader_status = self.grader_status)
+                                                          address=self.address, skills=self.skills)
 
     def create_user(self):
         try:
@@ -364,8 +350,7 @@ class UserClass(ABC):
             user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
                                        role=self.get_role(), email=self.get_email(),
                                        phone_number=self.get_phone_number(),
-                                       address=self.get_address(), assigned=self.get_assigned(),
-                                       grader_status=self.get_grader_status(),skills=self.get_skills())
+                                       address=self.get_address(), assigned=self.get_assigned(),skills=self.get_skills())
             for i in self.assigned_sections:
                 user.assigned_section.add(i)
             user.save()

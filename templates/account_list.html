@@ -33,10 +33,10 @@ th, td {
 			</tr>
 			</table>
 			<input type="submit" name="input_button" value="Submit">
-			<input type="submit" name="input_button" value="Clear Filter">
-            {% if usr_role == "Instructor" %}
+            {% if usr_role != "Admin"%}
                 <input type="submit" name="input_button" value="Show Users Assigned To Your Courses">
             {% endif %}
+			<input type="submit" name="input_button" value="Clear Filter">
         </form>
       <br>
       <a href = "/Home/"> Go Home </a>

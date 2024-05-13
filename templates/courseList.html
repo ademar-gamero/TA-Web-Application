@@ -57,8 +57,11 @@
 
         </table>
         <br>
-			  <input type="submit" name="input_btn" value="Submit">
-			  <input type="submit" name="input_btn" value="Clear Filter">
+        <input type="submit" name="input_btn" value="Submit">
+        {% if not is_admin %}
+            <input type="submit" name="input_btn" value="Your Courses">
+        {% endif %}
+        <input type="submit" name="input_btn" value="Clear Filter">
         <br>
     </form>
         <br>

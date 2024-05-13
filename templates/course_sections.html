@@ -1,4 +1,4 @@
-    
+
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -24,8 +24,8 @@
         <title>Course Section Assignments</title>
       </head>
     <body>
-    <div>
-    
+        <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
+            {% csrf_token %}
         <h2>Users Assigned To Course</h2>
     {% if not assigned_users %}
     <p>No Users are assigned to this course</p>
@@ -50,17 +50,33 @@
             </tr>
             {% endfor %}
         </table>
-    {% endif %}
-    </div>
-    <h1 class = "center"> Course {{course.course_id}} {{course.course_name}} - Sections </h1>
-      <div class = "center2" align="center">
+        <br>
+        {% endif %}
+        {% if usr_role == "Admin" %}
+        <strong>Add Teacher Assistants To Course:</strong>
+            {% if course_lecture is None %}
+                <p> There are no lecture sections in the course </p>
+                    <p>please assign a lecture section to the course
+                    </p><p>to begin assigning teacher assistants to the course </p>
+                {% else %}
+                <br>
+                <br>
+              <select id = "{{course_lecture}}" name="{{course_lecture}}">
+                  <option value = None >None</option>
+                  {%for tas in ta_all %}
+                                <option value="{{tas.pk}}">{{tas.name}} | {{ tas.username }} | {{ tas.role }}</option>
+                  {% endfor %}
+              </select>
+                {% endif %}
+        {% endif %}
+        
+    <h1 class = "center"> Course - {{course.course_id}} {{course.course_name}} - Sections </h1>
+    <div class = "center2" align="center">    
       {% if not sections %}
-          {{ sections }}
           <p> This Course does not have any sections </p>
       {% else %}
       {%for section in sections.all %}
           <table>
-          <br>
           <tr>
               <th>Type</th>
             <th>Section ID</th>
@@ -94,14 +110,15 @@
                     {% endif %}
                 </tr>
                 </table>
-    
+
                 <br>
-            <strong>{{section.type}} {{section.section_id}} Assigned Users: </strong>
-                {% if not section.assigned_users.all %}
-                    <p> This Section Does not have any assigned Users </p>
+            <strong> {{section.type}} {{section.section_id}} Assigned Users: </strong>
+                {% if section.type == "lecture" and check == "False" %}
+                    <p> This Section does not have any Users assigned to it </p>
+                {% elif section.type == "lab" and not section.assigned_users.all %}
+                    <p> This Section does not have any Users assigned to it </p>
                 {% else %}
                     <table>
-                    <strong>{{section.type}} {{section.section_id}} Assigned Users: </strong>
                     <tr>
                       <th>Name</th>
                       <th>Username</th>
@@ -150,57 +167,56 @@
                       {% endfor %}
                         </table>
           <br>
-                      <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
-                        {% csrf_token %}
-        
-                        {%if usr_role == "Instructor" and section.type == "lab"%}
+                    {% endif %}
+
+                        {%if usr_role == "Instructor" and section.type == "lab" and is_assigned == True %}
                             <br>
-                        Add Teacher Assistants:
-                            <br>
-                          <select id = "{{section.pk}}" name="{{section.pk}}">
-                                <option value=None>None</option>
-                              {%for ta in ta_pool%}
-                                  <option value="{{ta.pk}}">{{ta}}</option>
-                              {% endfor %}
-                          </select>
-                            <br>
-                          {% endif %}
+                            Add Teacher Assistants:
+                                <br>
+                              <select id = "{{section.pk}}" name="{{section.pk}}">
+                                    <option value=None>None</option>
+                                  {%for ta in ta_pool%}
+                                      <option value="{{ta.pk}}">{{ta.name}} | {{ ta.username }} | {{ ta.role }}</option>
+                                  {% endfor %}
+                              </select>
+                                <br>
+                              {% endif %}
+
                         {%if usr_role == "Admin"%}
                           {% if section.type == "lecture" %}
                             Add Instructors:
-                          <select id = "{{section.pk}}" name="{{section.pk}}">
+                            <select id = "{{section.pk}}" name="{{section.pk}}">
                               <option value=None>None</option>
                               {%for ins in ins_all %}
-                              <option value="{{ins.pk}}">{{ins}}</option>
+                                  {% if ins not in section.assigned_users.all %}
+                                    <option value="{{ins.pk}}">{{ins.name}} | {{ ins.username }} | {{ ins.role }}</option>
+                                  {% endif %}
                               {% endfor %}
-                          </select>
+                            </select>
                               <br>
-                              <br>
-                              Add Teacher Assistants:
-                              <select id = "{{section.pk}}" name="{{section.pk}}">
-                              <option value=None>None</option>
-                              {%for tas in ta_all %}
-                              <option value="{{tas.pk}}">{{tas}}</option>
-                              {% endfor %}
-                          </select>
                           {% endif %}
-                        {% if section.type == "lab"%}
-                        Add Teacher Assistants:
-                          <select id = "{{section.pk}}" name="{{section.pk}}">
-                              <option value=None>None</option>
-                              {%for tas in ta_all %}
-                              <option value="{{tas.pk}}">{{tas}}</option>
-                              {% endfor %}
-                          </select>
+                            {% if section.type == "lab" %}
+                            Add Teacher Assistants:
+                              <select id = "{{section.pk}}" name="{{section.pk}}">
+                                  <option value=None>None</option>
+                                  {%for tas in assigned_users %}
+                                            {% if tas.role == "Teacher-Assistant" %}
+                                            <option value="{{tas.pk}}">{{tas.name}} | {{ tas.username }} | {{ tas.role }}</option>
+                                            {% endif %}
+                                  {% endfor %}
+                              </select>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-                        <br>
-            {% endif %}
+                            <br>
           {% endfor %}
                     <br>
+                {% if curr_usr.role == "Instructor" and instructor_message == 'None' or curr_usr.role == "Admin" %}
                     <input type="submit" value="Submit">
-                  </form>
+                {% else %}
+                    {{ instructor_message }}                    
+                {% endif %}
         {% endif %}
+                    <br>
                     <br>
                       {{message}}
                   <br>
@@ -209,4 +225,6 @@
             <br>
           <br>
           <a href = "/Home/"> Go Home </a>
-      </div>
+        </div>
+    </form>
+    </body>
