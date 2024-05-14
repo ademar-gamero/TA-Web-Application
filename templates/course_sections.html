@@ -49,7 +49,7 @@
               <td>{{ section.type }}</td>
                 {% if usr_role == "Admin"%}
               <td> edit section info link </td>
-              <td> delete link </td>
+              <td><a href="{% url 'deleteSection' section.pk %}">Delete</a></td>
                 {% endif %}
             </tr>
             </table>
@@ -76,6 +76,7 @@
               {% endfor %}
             </table>
               <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
+              {% csrf_token %}
                   <br>
               Add Users to {{section}}:
                   </br>
@@ -97,4 +98,4 @@
         </form>
         <br>
       {% endfor %}
-     
+  </div>

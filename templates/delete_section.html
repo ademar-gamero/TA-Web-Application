@@ -12,7 +12,7 @@
         <form method="post">
             {% csrf_token %}
             <button type="submit" name="confirm" value="yes">Yes</button>
-            <a href="{% url 'courseList' %}">No, go back</a>
+            <a href="{% url 'courseSections' section.course_parent.pk %}">Cancel</a>
         </form>
     </div>
 </body>

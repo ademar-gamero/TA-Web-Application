@@ -64,7 +64,7 @@ th, td {
 						<td>{{account.phone_number}}</td>
 						<td>{{account.address}}</td>
 						<td><a href = "{% url 'accountInfo' pk=account.pk %}">edit {{account.username}}</a></td>
-                        <td>delete account</td>
+                        <td><a href="{% url 'deleteAccount' pk=account.pk %}">delete {{ account.username }}</a></td>
 					{% endif %}
 				</tr>
 			{% endfor %}

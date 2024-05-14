@@ -49,6 +49,6 @@ urlpatterns = [
     path('Home/accountList/deleteAccount/<int:pk>/', deleteAccount.as_view(), name='deleteAccount'),
     path('Home/courseList/courseSections/deleteSection/<int:pk>/', deleteSection.as_view(), name='deleteSection'),
     path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections'),
-    path('Home/removeSection/<int:user_id>/<int:section_id>/', removeSection.as_view(), name='removeSection'),
+    path('Home/courseList/accountAssignments/<int:user_id>/removeSection/<int:section_id>/', removeSection.as_view(), name='removeSection'),
 ]
 
