@@ -137,7 +137,9 @@ class CourseClass(object):
                 # an error if so
                 try:
                     Course.objects.get(course_id=self.course_id, course_name=self.course_name, semester=self.semester)
-                    if self.description != old_description:  # edge case (when only description is being changed)
+                    # edge case (when only description is being changed)
+                    count = Course.objects.filter(course_id=self.course_id, course_name=self.course_name, semester=self.semester, description=self.description).count()
+                    if count == 0 and self.description != old_description:
                         Course.objects.filter(pk=course.pk).update(description=self.description)
                         return True
                     else:
