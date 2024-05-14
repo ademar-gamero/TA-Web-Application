@@ -198,6 +198,37 @@ class Test_SectionClass(TestCase):
         with self.assertRaises(Section.DoesNotExist):
             Section.objects.get(section_id=section_delete.section_id)
 
+    def test_duplicate_section_id(self):
+        # Test creating a section with a duplicate section_id
+        section_duplicate_id = SectionClass(
+            course_parent=self.course1,
+            section_id=12301,  # Duplicate section_id
+            start_time=time(10, 0),
+            end_time=time(11, 0),
+            section_type='LEC',
+            location='EMS200',
+            is_online=False,
+            meeting_days=[self.tuesday, self.thursday]
+        )
+        with self.assertRaises(ValueError):
+            section_duplicate_id.create_section()
+
+    def test_same_location_and_time(self):
+        # Test creating a section with the same location and overlapping time
+        with self.assertRaises(ValueError):
+            section_same_location_and_time = SectionClass(
+                course_parent=self.course1,
+                section_id=12311,
+                start_time=self.section3.start_time,
+                end_time=self.section3.end_time,
+                section_type='LEC',
+                location=self.section3.location  # Same location as section3
+
+            )
+            section_same_location_and_time.create_section()
+
+
+
     def test_section_edit(self):
         with self.assertRaises(ValueError):
             initial_section = SectionClass(
