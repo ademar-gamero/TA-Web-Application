@@ -60,6 +60,7 @@ class EditCourse(TestCase):
                              msg_prefix="incorrectly allowed to access editCourse")
 
     def test_editCourseAllFieldsGood(self):
+        # Test that all fields can be edited and properly updated at the same time
         data = {
             'course_id': 100,
             'course_name': 'new test name',
@@ -83,6 +84,7 @@ class EditCourse(TestCase):
                          "Course semester was not properly updated in the database")
 
     def test_editCourseOnlyID(self):
+        # Test that ID can be edited and properly updated on its own
         data = {
             'course_id': 100,
             'course_name': 'test course',
@@ -96,6 +98,7 @@ class EditCourse(TestCase):
         self.assertEqual(100, course_from_db.course_id, "Course ID was not properly updated in the database")
 
     def test_editCourseOnlyName(self):
+        # Test that name can be edited and properly updated on its own
         data = {
             'course_id': 123,
             'course_name': 'new test name',
@@ -110,6 +113,7 @@ class EditCourse(TestCase):
                          "Course name was not properly updated in the database")
 
     def test_editCourseNameWhitespace(self):
+        # Test that editing name will remove trailing and leading whitespace from input
         data = {
             'course_id': 123,
             'course_name': '  new test name  ',
@@ -124,6 +128,7 @@ class EditCourse(TestCase):
                          "Course name was not properly updated in the database")
 
     def test_editCourseOnlyDescription(self):
+        # Test that description can be edited and properly updated on its own
         data = {
             'course_id': 123,
             'course_name': 'test course',
@@ -138,6 +143,7 @@ class EditCourse(TestCase):
                          "Course description was not properly updated in the database")
 
     def test_editCourseDescriptionWhitespace(self):
+        # Test that editing description will remove trailing and leading whitespace from input
         data = {
             'course_id': 123,
             'course_name': 'test course',
@@ -152,6 +158,7 @@ class EditCourse(TestCase):
                          "Course description was not properly updated in the database")
 
     def test_editCourseOnlySemester(self):
+        # Test that semester can be edited and properly updated on its own
         data = {
             'course_id': 123,
             'course_name': 'test course',
@@ -166,7 +173,7 @@ class EditCourse(TestCase):
                          "Course semester was not properly updated in the database")
 
     def test_editAllIntoConflict(self):
-        # create a new second entry
+        # Test that a duplicate course cannot be made when editing all fields and that values return to original
         edit = {  # all fields match another database entry
             'course_id': 123,
             'course_name': 'test course',
@@ -185,6 +192,7 @@ class EditCourse(TestCase):
         self.assertEqual('Spring', course_from_db.semester, "Course semester was not reverted back to original")
 
     def test_editOnlyIdFullConflict(self):
+        # Test that a duplicate course cannot be made when editing only ID and that value returns to original
         new = Course.objects.create(course_id=100,
                               course_name='test course',
                               description='this is a test',
@@ -199,10 +207,10 @@ class EditCourse(TestCase):
         self.assertEqual(resp.context['errorMessage'], "Exact course already exists!",
                          "Course was allowed to create conflict")
         course_from_db = Course.objects.get(pk=new.pk)
-        # check that value returned back to original
         self.assertEqual(100, course_from_db.course_id, "Course ID was not reverted back to original")
 
     def test_editOnlyNameFullConflict(self):
+        # Test that a duplicate course cannot be made when editing only name and that value returns to original
         new = Course.objects.create(course_id=123,
                               course_name='Anthro',
                               description='this is a test',
@@ -217,10 +225,10 @@ class EditCourse(TestCase):
         self.assertEqual(resp.context['errorMessage'], "Exact course already exists!",
                          "Course was allowed to create conflict")
         course_from_db = Course.objects.get(pk=new.pk)
-        # check that value returned back to original
         self.assertEqual('Anthro', course_from_db.course_name, "Course name was not reverted back to original")
 
     def test_editNameWhitespaceFullConflict(self):
+        # Test that a duplicate course cannot be made when input has trailing or leading whitespace
         new = Course.objects.create(course_id=123,
                               course_name='Anthro',
                               description='this is a test',
@@ -235,10 +243,10 @@ class EditCourse(TestCase):
         self.assertEqual(resp.context['errorMessage'], "Exact course already exists!",
                          "Course was allowed to create conflict")
         course_from_db = Course.objects.get(pk=new.pk)
-        # check that value returned back to original
         self.assertEqual('Anthro', course_from_db.course_name, "Course name was not reverted back to original")
 
     def test_editOnlySemesterFullConflict(self):
+        # Test that a duplicate course cannot be made when editing only semester and that value returns to original
         new = Course.objects.create(course_id=123,
                               course_name='test course',
                               description='this is a test',
@@ -253,6 +261,5 @@ class EditCourse(TestCase):
         self.assertEqual(resp.context['errorMessage'], "Exact course already exists!",
                          "Course was allowed to create conflict")
         course_from_db = Course.objects.get(pk=new.pk)
-        # check that value returned back to original
         self.assertEqual('Winter', course_from_db.semester, "Course semester was not reverted back to original")
 
