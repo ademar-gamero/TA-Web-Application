@@ -26,7 +26,7 @@ class RemoveSectionTests(TestCase):
     def test_confirm_removal_by_admin(self):
         self.simulate_login('admin', 'adminpass')
         response = self.client.post(self.remove_url, {'confirm': 'yes'})
-        self.assertRedirects(response, reverse('accountList'))
+        self.assertRedirects(response, reverse('courseList'))
         self.assertFalse(self.section in self.user.assigned_section.all())
 
     def test_access_denied_for_non_admin(self):

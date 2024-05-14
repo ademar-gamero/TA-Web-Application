@@ -20,7 +20,7 @@ class removeSection(View):
             if 'confirm' in request.POST:
                 user.assigned_section.remove(section)
                 messages.success(request, f'{user.name} removed from section {section}')
-                return redirect('accountList')
+                return redirect('courseList')
             else:
                 messages.warning(request, 'Please confirm removal.')
                 return render(request, 'remove_section.html', {'user': user, 'section': section})
