@@ -73,7 +73,7 @@ class CreateMultipleCourses(TestCase):
         Course.objects.create(course_id=123,
                               course_name='test course',
                               description='this is a test',
-                              semester='Fall').save()
+                              semester='Fall')
 
     def test_createMultipleDifferent(self):
         # will adding multiple courses with all different fields create separate entries in the database?
