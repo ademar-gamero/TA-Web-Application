@@ -2,7 +2,7 @@ from django.views import View
 from django.shortcuts import render, redirect
 
 from ta_app.Classes.CourseClass import CourseClass
-from ta_app.models import Course, Section, User, Semesters
+from ta_app.models import Course, Semesters
 
 
 class editCourse(View):
@@ -23,7 +23,7 @@ class editCourse(View):
         # Extract form data - set no input to None
         courseNumber = request.POST.get("course_id", None)
         courseid = ""
-        if courseNumber != None:
+        if courseNumber is not None:
             courseid = int(courseNumber)
         course_name = request.POST.get("course_name", None)
         description = request.POST.get("description", None)
@@ -39,7 +39,7 @@ class editCourse(View):
                                    semester=semester)
             course = Course.objects.get(pk=course_pk)
             return render(request, "edit_course.html",
-                              {'semesters': semesters, 'course': course, 'errorMessage': "Course edited successfully!"})
+                          {'semesters': semesters, 'course': course, 'errorMessage': "Course edited successfully!"})
         except ValueError as e:
             return render(request, "edit_course.html",
                           {'semesters': semesters, 'course': course, 'errorMessage': str(e)})

@@ -95,7 +95,7 @@ class CourseClass(object):
         sem = self.get_course_semester()
 
         # check that the database does not already contain the id+name+semester combination
-        find_course = Course.objects.all().filter(course_id=courseid,course_name=name,semester=sem)
+        find_course = Course.objects.all().filter(course_id=courseid, course_name=name, semester=sem)
         if find_course.exists():  # if there's something in the returned QuerySet
             return False  # then it already exists
 
@@ -138,7 +138,8 @@ class CourseClass(object):
                 try:
                     Course.objects.get(course_id=self.course_id, course_name=self.course_name, semester=self.semester)
                     # edge case (when only description is being changed)
-                    count = Course.objects.filter(course_id=self.course_id, course_name=self.course_name, semester=self.semester, description=self.description).count()
+                    count = Course.objects.filter(course_id=self.course_id, course_name=self.course_name,
+                                                  semester=self.semester, description=self.description).count()
                     if count == 0 and self.description != old_description:
                         Course.objects.filter(pk=course.pk).update(description=self.description)
                         return True
