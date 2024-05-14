@@ -28,10 +28,11 @@ class SectionClass:
             if start_time > end_time:
                 raise ValueError("Start time must be before end time")
         if not isinstance(is_online, bool):
-            print(1)
             raise ValueError("is_online must be a boolean")
+        print(is_online)
+        print(location)
         if not is_online:
-            if location is None:
+            if location =='None':
                 raise ValueError("Location must be provided for in-person classes")
             if meeting_days is None:
                 raise ValueError("Meeting days must be provided for in-person classes")
@@ -39,7 +40,7 @@ class SectionClass:
                 raise ValueError("Start time and end time must be provided for in-person classes")
         if is_online:
             if location !='None':
-                raise ValueError("Location must be None for online classes")
+                raise ValueError("Please enter 'None' in location for online classes")
         self.course_parent = course_parent
         if section_id is None:
             raise ValueError("Section ID must not be None")
@@ -48,7 +49,6 @@ class SectionClass:
         if meeting_days is not None:
             for day in meeting_days:
                 if not isinstance(day, Day):
-                    print(2)
                     raise ValueError("meeting_days must be a list of Day objects")
                 self.meeting_days.append(day)
         self.start_time = start_time
@@ -111,12 +111,12 @@ class SectionClass:
         return True
 
     def edit_section(self, old_section_id):
-        print(self.section_type)
+        old_section= Section.objects.get(section_id=old_section_id)
         for day in self.meeting_days:
-            if Section.objects.filter(location=self.location, start_time=self.start_time,
-                                      end_time=self.end_time, meeting_days__in=[day]).exists():
-
-                raise ValueError("Section in the same location and at same time can not be edited.")
+            if old_section.section_id!=self.section_id and old_section.location != self.location and old_section.start_time != self.start_time and old_section.end_time != self.end_time:
+                if Section.objects.filter(section_id=self.section_id,location=self.location, start_time=self.start_time,
+                                          end_time=self.end_time, meeting_days__in=[day]).exists():
+                    raise ValueError("Section in the same location and at same time as section can not be added.")
         section = Section.objects.get(section_id=old_section_id)
         section.course_parent = self.course_parent
         section.section_id = self.section_id

@@ -34,18 +34,18 @@
                 <legend>Days:</legend>
                 {% for day in days %}
                     <label>
-                        <input type="checkbox" name="meeting_days" value="{{ value.pk }}" {% if day in section.meeting_days.all %} checked {% endif %}>
-                        {{ day.day }}
+                        <input type="checkbox" name="meeting_days" value="{{ day}}" {% if day in assignedDays %} checked {% endif %}>
+                        {{ day}}
                     </label>
                 {% endfor %}
             </fieldset>
             <div>
                 <label for="start_time">Start Time:</label>
-                <input type="time" name="start_time" id="start_time" value="{{ section.start_time }}" >
+                <input type="time" name="start_time" id="start_time" value="{{ start_time }}" >
             </div>
             <div>
                 <label for="end_time">End Time:</label>
-                <input type="time" name="end_time" id="end_time" value="{{ section.end_time }}" >
+                <input type="time" name="end_time" id="end_time" value="{{ end_time }}" >
             </div>
             <div>
                 <label for="location">Location:</label>
@@ -53,13 +53,16 @@
             </div>
             <div>
                 <label for="is_online">Is Online:</label>
-                <input type="checkbox" name="is_online" id="is_online" {% if section.is_online %} checked {% endif %}>
+                <select name="is_online" id="is_online" required>
+                    <option value="1" {% if section.is_online %} selected {% endif %}>Yes</option>
+                    <option value="" {% if not section.is_online %} selected {% endif %}>No</option>
+            </select>
             </div>
             <div>
                 <label for="section_type">Section Type:</label>
                 <select name="section_type" id="section_type" required>
-                    <option value="LEC" {% if section.section_type == 'LEC' %} selected {% endif %}>Lecture</option>
-                    <option value="LAB" {% if section.section_type == 'LAB' %} selected {% endif %}>Lab</option>
+                    <option value="lecture" {% if section.type == 'lecture' %} selected {% endif %}>Lecture</option>
+                    <option value="lab" {% if section.type == 'lab' %} selected {% endif %}>Lab</option>
                 </select>
             </div>
             <div>

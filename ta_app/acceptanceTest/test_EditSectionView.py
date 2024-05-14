@@ -90,19 +90,70 @@ class EditSectionViewTests(TestCase):
             'section_id': self.section1.section_id,
             'start_time': '10:00',
             'end_time': '11:00',
-            'section_type': 'Lab',
+            'section_type': 'lab',
             'location': 'EMS102',
-            'is_online': 'False',
-            'meeting_days': [self.monday.pk, self.wednesday.pk]
+            'is_online': '',
+            'meeting_days': [self.monday.day, self.wednesday.day]
         }
         resp = self.client.post(self.detail_url_course, post_data, follow=True)
         self.assertEqual(resp.status_code, 200)
 
         updated_section = Section.objects.get(pk=self.obj.pk)
-        self.assertEqual(updated_section.type, 'Lab')
+        self.assertEqual(updated_section.type, 'lab')
         self.assertEqual(updated_section.location, 'EMS102')
         self.assertFalse(updated_section.is_online)
         self.assertEqual(updated_section.start_time, time(10, 0))
         self.assertEqual(updated_section.end_time, time(11, 0))
         self.assertIn(self.monday, updated_section.meeting_days.all())
         self.assertIn(self.wednesday, updated_section.meeting_days.all())
+        self.assertIn(self.wednesday, updated_section.meeting_days.all())
+    def test_invalid_is_online(self):
+        resp = self.client.post(
+            "/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+
+        post_data = {
+            'course_parent': self.course.pk,
+            'section_id': self.section1.section_id,
+            'start_time': '10:00',
+            'end_time': '11:00',
+            'section_type': 'Lab',
+            'location': 'EMS102',
+            'is_online': '1',
+            'meeting_days': [self.monday.day, self.wednesday.day]
+        }
+        resp = self.client.post(self.detail_url_course, post_data, follow=True)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual("Please enter 'None' in location for online classes", resp.context['message'])
+    def test_noLocation_given(self):
+        resp = self.client.post(
+            "/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+
+        post_data = {
+            'course_parent': self.course.pk,
+            'section_id': self.section1.section_id,
+            'start_time': '10:00',
+            'end_time': '11:00',
+            'section_type': 'Lab',
+            'location':'None' ,
+            'is_online': '',
+            'meeting_days': [self.monday.day, self.wednesday.day]
+        }
+        resp = self.client.post(self.detail_url_course, post_data, follow=True)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual("Location must be provided for in-person classes", resp.context['message'])
+    def test_noMeetingdays_given(self):
+        resp = self.client.post(
+            "/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+
+        post_data = {
+            'course_parent': self.course.pk,
+            'section_id': self.section1.section_id,
+            'start_time': '10:00',
+            'end_time': '11:00',
+            'section_type': 'Lab',
+            'location':'ems201' ,
+            'is_online': '',
+        }
+        resp = self.client.post(self.detail_url_course, post_data, follow=True)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual("Meeting days must be provided for in-person classes", resp.context['message'])
