@@ -346,6 +346,8 @@ class UserClass(ABC):
             raise ValueError("This user does not exist and can not be deleted")
 
     def check_conflicts(self, new_section):
+        if self.role == "Teacher-Assistant" and (new_section.type == "LEC"):
+            return
         possible_conflict = False
         for section in self.assigned_sections:
             for day1 in section.meeting_days.values_list():
@@ -353,7 +355,7 @@ class UserClass(ABC):
                     if day1 == day2:
                         possible_conflict = True
                 if possible_conflict:
-                    if self.role == "Teacher-Assistant" and (section.type == "LEC" or new_section.type == "LEC"):
+                    if self.role == "Teacher-Assistant" and (section.type == "LEC"):
                         continue
                     conflict = True
                     if new_section.start_time < section.start_time:
