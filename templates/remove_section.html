@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Delete Section</title>
+    <title>Remove Section</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 </head>
 <body>
     <div class="container">
-        <h1>Delete Section</h1>
-        <p>Are you sure you want to delete the section {{ section }}?</p>
+        <h1>Remove Section</h1>
+        <p>Are you sure you want to remove {{ user.name }} from section {{ section }}?</p>
         <form method="post">
             {% csrf_token %}
             <button type="submit" name="confirm" value="yes">Yes</button>
-            <a href="{% url 'courseList' %}">No, go back</a>
+            <a href="{% url 'accountList' %}">No, go back</a>
         </form>
     </div>
 </body>
