@@ -22,8 +22,7 @@ class accountCreation(View):
         try:
             user = UserClass(username=request.POST['username'], password=request.POST['password'],
                              name=request.POST['name'], role=request.POST['role'], email=request.POST['email'],
-                             phone_number=request.POST['phone_number'], address=request.POST['address'],
-                             skills=request.POST['skills'])
+                             phone_number=request.POST['phone_number'], address=request.POST['address'])
             user.create_user()
             return render(request, 'create_account.html',
                           {'message': f'Account \'{user.username}\' created successfully!'})
