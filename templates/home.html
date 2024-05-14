@@ -52,7 +52,9 @@
                 <a href = "{% url 'accountCreation' %}">Create Account</a>
             {% endif %}
             <a href = "{% url 'accountInfo' pk=user_id %}">Your Account Info</a>
+            {% if role != "Admin" %}
             <a href = "{% url 'accountAssignment' pk=user_id %}">Your Section Assignments</a>
+            {% endif %}
             <form method="post" action="{% url 'Home' %}">
                 {% csrf_token %}
                 <input type="hidden" name="logout" value="1">
