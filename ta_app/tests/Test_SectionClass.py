@@ -221,7 +221,6 @@ class Test_SectionClass(TestCase):
                 location=initial_section.location,
                 is_online=initial_section.is_online
             )
-            print(Section.objects.filter(section_id=initial_section.section_id))
             # Edit section
             result = section_edit.edit_section(old_section_id=initial_section.section_id)
 

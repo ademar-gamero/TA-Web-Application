@@ -57,7 +57,6 @@ class EditSectionView(View):
         location = request.POST.get('location')
         is_online = request.POST.get('is_online')
         meeting_days = request.POST.getlist('meeting_days',None)
-        print(is_online)
         if is_online != '':
             is_online = True
         else:
