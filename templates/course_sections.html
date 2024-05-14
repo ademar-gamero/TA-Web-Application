@@ -45,7 +45,7 @@
                     <td> {{usr.username}} </td>
                     <td> {{usr.role}} </td>
                     {% if usr_role == "Admin"%}
-                    <td> Remove from Course </td>
+                        <td> <button type="submit" name="remove_course" value="{{ usr.pk }}">Remove {{ usr.name }}</button></td>
                     {% endif %}
             </tr>
             {% endfor %}
@@ -141,7 +141,7 @@
                                     <td> {{user.role}} </td>
                                     <td> {{user.email}} </td>
                                     {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td> Remove Assignment </td>
+                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
                                     {% endif %}
                                       </tr>
                                   {% endif %}
@@ -154,7 +154,7 @@
                                         <td> {{user.role}} </td>
                                         <td> {{user.email}} </td>
                                         {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td> Remove Assignment </td>
+                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
                                         {% endif %}
                                           </tr>
                                 {% endif %}
@@ -165,7 +165,7 @@
                                         <td> {{user.role}} </td>
                                         <td> {{user.email}} </td>
                                         {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td> Remove Assignment </td>
+                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
                                         {% endif %}
                                           </tr>
                                 {% endif %}
@@ -217,7 +217,7 @@
                 {% if curr_usr.role == "Admin" %}
               <input type="submit" value="Submit">
                 {% elif curr_usr.role == "Instructor" and instructor_message == 'None' %}
-                    <input type="submit" value="Submit">
+                    <input type="submit" name="input_button" value="Submit">
                 {% else %}
                     {% if curr_usr.role != "Teacher-Assistant" %}
                         {{ instructor_message }}
