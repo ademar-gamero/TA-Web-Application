@@ -93,7 +93,7 @@
         <td>{{ course.semester }}</td>
 
           {%if is_admin%}
-        <td>Edit Course Info</td>
+              <td><a href="{% url 'editCourse' course.pk %}">Edit Course Info</a></td>
           {%endif%}
 
           <td><a href="{% url 'courseSections' course.pk %}">Course Sections</a></td>
