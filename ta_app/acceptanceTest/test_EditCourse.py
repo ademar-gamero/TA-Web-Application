@@ -263,3 +263,41 @@ class EditCourse(TestCase):
         course_from_db = Course.objects.get(pk=new.pk)
         self.assertEqual('Winter', course_from_db.semester, "Course semester was not reverted back to original")
 
+    def test_editCourseNegativeID(self):
+        data = {
+            'course_id': -1,
+            'course_name': 'test course',
+            'description': 'this is a test',
+            'semester': 'Fall'
+        }
+        resp = self.client.post(f"/Home/courseList/editCourse/{self.default.pk}/", data)
+        self.assertEqual(resp.context['errorMessage'], "ID cannot be negative",
+                         "Course was mistakenly allowed to update bad ID")
+        course_from_db = Course.objects.get(pk=self.default.pk)
+        self.assertEqual(123, course_from_db.course_id, "Course ID was not reverted back to original")
+
+    def test_editCourseDigitName(self):
+        data = {
+            'course_id': 123,
+            'course_name': '12345',
+            'description': 'this is a test',
+            'semester': 'Fall'
+        }
+        resp = self.client.post(f"/Home/courseList/editCourse/{self.default.pk}/", data)
+        self.assertEqual(resp.context['errorMessage'], "Course name should not be solely numeric digits",
+                         "Course was mistakenly allowed to update bad name")
+        course_from_db = Course.objects.get(pk=self.default.pk)
+        self.assertEqual("test course", course_from_db.course_name, "Course name was not reverted back to original")
+
+    def test_editCourseBadSemester(self):
+        data = {
+            'course_id': 123,
+            'course_name': 'test course',
+            'description': 'this is a test',
+            'semester': 'bad'
+        }
+        resp = self.client.post(f"/Home/courseList/editCourse/{self.default.pk}/", data)
+        self.assertEqual(resp.context['errorMessage'], "Invalid semester",
+                         "Course was mistakenly allowed to update bad semester")
+        course_from_db = Course.objects.get(pk=self.default.pk)
+        self.assertEqual("Fall", course_from_db.semester, "Course semester was not reverted back to original")
