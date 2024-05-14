@@ -9,6 +9,9 @@ from ta_app.Classes.UserClass import UserClass
 class accountCreation(View):
 
     def get(self, request):
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         current = request.session["role"]
         if current == "Admin":
             return render(request, "create_account.html")
@@ -19,8 +22,7 @@ class accountCreation(View):
         try:
             user = UserClass(username=request.POST['username'], password=request.POST['password'],
                              name=request.POST['name'], role=request.POST['role'], email=request.POST['email'],
-                             phone_number=request.POST['phone_number'], address=request.POST['address'],
-                             skills=request.POST['skills'])
+                             phone_number=request.POST['phone_number'], address=request.POST['address'])
             user.create_user()
             return render(request, 'create_account.html',
                           {'message': f'Account \'{user.username}\' created successfully!'})

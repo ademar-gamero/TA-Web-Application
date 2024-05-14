@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.views.generic.detail import DetailView
 from django.shortcuts import render
 from django.views import View
@@ -11,16 +12,23 @@ class accountInfoView(View):
     acc_pk = None
     val = None
 
-    def get(self, request, pk):
+    def get(self,request,pk):
+        roles = ["Admin","Instructor","Teacher-Assistant"]
+        if 'role' not in request.session or 'name' not in request.session:
+            messages.error(request, "You are not logged in.")
+            return redirect('login')
         curr_acc = request.session["role"]
-        if curr_acc != "Admin" or request.session["pk"] == pk:
+        is_admin = False
+        if curr_acc == "Admin":
+            is_admin = True
+        elif request.session["pk"] != pk:
             return redirect("/Home/")
 
         account = User.objects.get(pk=pk)
-        self.acc_edit = UserClass(account.username, account.password, account.name, account.role,
-                                  account.email, account.phone_number, account.address, account.assigned,
-                                  account.assigned_section, account.skills)
-        return render(request, "accountInfo.html", {'user': account})
+        self.acc_edit = UserClass(username=account.username, password=account.password, name=account.name, role=account.role,
+                                  email=account.email, phone_number=account.phone_number, address=account.address, assigned=account.assigned,
+                                  assigned_sections=account.assigned_section.all(), skills=account.skills)
+        return render(request, "accountInfo.html", {'user': account, 'is_admin': is_admin,"roles":roles})
 
     def post(self, request, pk):
         name = request.POST.get('name')
@@ -35,7 +43,7 @@ class accountInfoView(View):
         account = User.objects.get(pk=pk)
         self.acc_edit = UserClass(account.username, account.password, account.name, account.role,
                                   account.email, account.phone_number, account.address, account.assigned,
-                                  account.assigned_section)
+                                  account.assigned_section.all())
         try:
             self.acc_edit.edit_user(username=username, password=password, name=name, role=role, email=email,
                                     phone=phone_number, address=address)

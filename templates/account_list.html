@@ -33,6 +33,9 @@ th, td {
 			</tr>
 			</table>
 			<input type="submit" name="input_button" value="Submit">
+            {% if usr_role != "Admin"%}
+                <input type="submit" name="input_button" value="Show Users Assigned To Your Courses">
+            {% endif %}
 			<input type="submit" name="input_button" value="Clear Filter">
         </form>
       <br>
@@ -45,7 +48,7 @@ th, td {
 				<th>Name</th>
                 <th>Role</th>
 				<th>Email</th>
-                <th>Assigned Sections</th>
+                <th>Account Assignments</th>
 				{% if isAdmin %}
 					<th>Phone Number</th>
 					<th>Address</th>
@@ -59,7 +62,15 @@ th, td {
 					<td>{{account.name}}</td>
                     <td>{{account.role}}</td>
 					<td>{{account.email}}</td>
-                    <td><a href = "{% url 'accountAssignment' pk=account.pk %}">{{account.username}}'s Assignments</a></td>
+                
+                    {% if account.role != "Admin" %}
+                        <td><a href = "{% url 'accountAssignment' pk=account.pk %}">{{account.username}}'s Assignments</a></td>
+                    {% endif %}
+                
+                    {% if account.role == "Admin" %}
+                        <td> Not Applicable </td>
+                    {% endif %}
+                
 					{% if isAdmin %}
 						<td>{{account.phone_number}}</td>
 						<td>{{account.address}}</td>

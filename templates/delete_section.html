@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Delete Course Confirmation</title>
+    <title>Delete Section Confirmation</title>
 </head>
 <body>
     <h1>Confirm Deletion</h1>
-    <p>Are you sure you want to delete {{ course.course_name }}?</p>
-    <form method="post" action="/Home/courseList/deleteCourse/{{course.id}}/">
+    <p>Are you sure you want to delete {{ section.section_name }}?</p>
+    <form method="post" action="{% url 'deleteCourse' section.id %}">
         {% csrf_token %}
         <button type="submit" name="confirm" value="yes">Confirm Delete</button>
         <button type="{% url 'courseList' %}" class="cancel-button">Cancel</button>

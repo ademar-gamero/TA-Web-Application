@@ -28,6 +28,8 @@ from ta_app.views.accountCreation import accountCreation
 from ta_app.views.loginView import login_view
 from django.views.generic.base import RedirectView
 from ta_app.views.SectionView import SectionView
+from ta_app.views.deleteAccount import deleteAccount
+from ta_app.views.deleteSection import deleteSection
 from ta_app.views.accountAssignment import accountAssignment
 from ta_app.views.courseSections import courseSections
 from ta_app.views.editCourse import editCourse
@@ -45,8 +47,9 @@ urlpatterns = [
     path('Home/accountCreation/',accountCreation.as_view(), name='accountCreation'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
     path('Home/courseList/deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
-    path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections'),
     path('Home/courseList/editCourse/<int:course_pk>/', editCourse.as_view(), name='editCourse')
-    #path('logout/', logout_view.as_view(), name='logout'),
+    path('Home/accountList/deleteAccount/<int:pk>/', deleteAccount.as_view(), name='deleteAccount'),
+    path('Home/courseList/courseSections/deleteSection/int:pk/', deleteSection.as_view(), name='deleteSection'),
+    path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections')
 ]
 
