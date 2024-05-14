@@ -583,6 +583,8 @@ class SectionAssignmentTests(TestCase):
         self.ta.add_section(self.lecture1)
         self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
         self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
+        self.ta2.add_section(self.lecture1)
+        self.assertEqual(self.ta2.assigned_sections[0], self.lecture1, "test")
 
     def test_assignTaToLab(self):
         self.ta.add_section(self.lecture1)
@@ -612,7 +614,7 @@ class SectionAssignmentTests(TestCase):
         self.ta.add_section(self.lab1)
         self.assertEqual(self.ta.assigned_sections[2], self.lab1, "Lab 1 wasn't added successfully")
 
-    def test_assignTAMeultipleLecturesNoActualConflict(self):
+    def test_assignTAMultipleLecturesNoActualConflict(self):
         self.ta.add_section(self.lecture1)
         self.assertEqual(self.ta.assigned_sections[0], self.lecture1, "Lecture 1 should be assigned")
         self.assertFalse(self.ta.assigned, "Assigned flag should not be set for TA with only lectures")
@@ -659,6 +661,9 @@ class RemoveSectionTests(TestCase):
         self.ta = UserClass(username="test_ta", password="pass", name="TA Man", role="Teacher-Assistant",
                             email="ta@uwm.edu")
         self.ta.create_user()
+        self.ta2 = UserClass(username="test_ta2", password="pass", name="TA Man2", role="Teacher-Assistant",
+                            email="ta2@uwm.edu")
+        self.ta2.create_user()
         self.instructor = UserClass(username="test_in", password="pass", name="Instructo", role="Instructor",
                                     email="in@uwm.edu")
         self.instructor.create_user()

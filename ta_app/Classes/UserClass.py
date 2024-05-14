@@ -63,7 +63,6 @@ class UserClass(ABC):
                     self.assigned_sections = []
                 for section in assigned_sections:
                     if not isinstance(section, Section):
-                        print(1)
                         raise ValueError("Invalid Section type")
                     self.assigned_sections.append(section)
             elif isinstance(assigned_sections, list):
@@ -148,7 +147,7 @@ class UserClass(ABC):
         assigner = None
         if user is not None:
             assigner = User.objects.get(pk=user)
-        if assigner != None:
+        if assigner is not None:
             if assigner.role == "Instructor":
                 try:
                     assigner.assigned_section.get(course_parent=new_section.course_parent, type="LEC")
@@ -159,38 +158,35 @@ class UserClass(ABC):
             if self.role == "Teacher-Assistant" and new_section.type == "LAB":
                 try:
                     new_section.assigned_users.get(role="Teacher-Assistant")
-                    raise ValueError(f"'{self.__str__()}' cannot be assinged, There is already an teacher assistant assigned to this section, '{new_section.course_parent} {new_section.type} {new_section.section_id}'")
+                    raise ValueError(self.__str__() + " cannot be assigned, There is already an teacher assistant assigned to this section, " + new_section.__str__())
                 except User.DoesNotExist:
                     lecture = (User.objects.get(username=self.username).assigned_section.filter
                             (course_parent=new_section.course_parent, type="LEC"))
                     if lecture:
                         should_assign = True
                     else:
-                        raise ValueError(f"'{self.__str__()}'cannot be assinged, User is not assigned to a corresponding lecture section in this course")
+                        raise ValueError(self.__str__() + " cannot be assigned, User is not assigned to a corresponding lecture section in this course")
             elif self.role == "Instructor":
                 if new_section.type == "lecture" or new_section.type == "LEC":
                     try:
                         new_section.assigned_users.get(role="Instructor")
-                        raise ValueError(f"'{self.__str__()}' cannot be assinged, There is already an instructor assigned to this lecture, '{new_section.course_parent} {new_section.type} {new_section.section_id}'")
+                        raise ValueError(self.__str__() + " cannot be assigned, There is already an instructor assigned to this lecture, " +  new_section.__str__())
                     except User.DoesNotExist:
                         should_assign = True
                 else:
-                    raise ValueError(f"'{self.__str__()}' cannot be assinged because Instructors cannot be assigned to lab sections, '{new_section.course_parent} {new_section.type} {new_section.section_id}'")
+                    raise ValueError(self.__str__() + " cannot be assigned because Instructors cannot be assigned to lab sections, " + new_section.__str__())
             if self.assigned_sections is None:
                 self.assigned_sections = [new_section]
             else:
                 if self.assigned_sections.count(new_section) > 0:
                     if new_section.type == "lecture" or new_section.type == "LEC":
                         if self.role == "Teacher-Assistant" or self.role == "TA":
-                            raise ValueError(f"'{self.__str__()}' cannot be assinged, user is already assigned to course '{new_section.course_parent}'")
+                            raise ValueError(self.__str__() + " cannot be assigned, user is already assigned to course " + new_section.__str__())
                     else:
-                        raise ValueError(f"'{self.__str__()}' cannot be assigned, user is already assigned to section '{new_section.course_parent} {new_section.type} {new_section.section_id}")
+                        raise ValueError(self.__str__() + " cannot be assigned, user is already assigned to section " + new_section.__str__())
                 if self.assigned:
                     # checks for conflicts if user already assigned. if it finds one, this will throw an error
-                    if(self.role == "Teacher-Assistant" and new_section.type !="lecture"): #extra check for teacher assistants so they can be assigned to multipe courses with no conflicts
-                        self.check_conflicts(new_section)
-                    if(self.role != "Teacher-Assitant"):
-                        self.check_conflicts(new_section)
+                    self.check_conflicts(new_section)
                 else:
                     if should_assign:
                         self.set_assigned(True)
@@ -378,13 +374,15 @@ class UserClass(ABC):
 
     def check_conflicts(self, new_section):
         possible_conflict = False
+        if self.role == "Teacher-Assistant" and new_section.type == "LEC":
+            return
         for section in self.assigned_sections:
             for day1 in section.meeting_days.values_list():
                 for day2 in new_section.meeting_days.values_list():
                     if day1 == day2:
                         possible_conflict = True
                 if possible_conflict:
-                    if self.role == "Teacher-Assistant" and (section.type == "LEC" or new_section.type == "LEC"):
+                    if self.role == "Teacher-Assistant" and section.type == "LEC":
                         continue
                     conflict = True
                     if new_section.start_time < section.start_time:
@@ -396,5 +394,5 @@ class UserClass(ABC):
                         days = []
                         for day in new_section.meeting_days.values_list('day',flat=True):
                             days.append(day)
-                        raise ValueError(f"The section being assigned conflicts with another section assignment :{new_section.course_parent} {new_section.type} {new_section.section_id} - {days} - {new_section.start_time.strftime("%H:%M")} to {new_section.end_time.strftime("%H:%M")}")
+                        raise ValueError("The section being assigned conflicts with another section assignment : " + section.__str__() + f" - {days} - {section.start_time.strftime("%H:%M")} to {section.end_time.strftime("%H:%M")}")
                 possible_conflict = False
