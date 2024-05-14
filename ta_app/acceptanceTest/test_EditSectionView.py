@@ -17,6 +17,12 @@ from ta_app.models import Section, Course, User, Day
     #6.get the section object again
     #7.check if the section is edited properly
     #8.check if the message is displayed properly
+
+    #notes:
+#1. if is_online is True, it should be set to 1
+#2. if is_online is False, it should be set to ""
+#2. if location is None, it should be set to 'None'
+
 class EditSectionViewTests(TestCase):
     def setUp(self):
         self.client = Client()
@@ -157,3 +163,37 @@ class EditSectionViewTests(TestCase):
         resp = self.client.post(self.detail_url_course, post_data, follow=True)
         self.assertEqual(resp.status_code, 200)
         self.assertEqual("Meeting days must be provided for in-person classes", resp.context['message'])
+    def test_duplication(self):
+        resp = self.client.post(
+            "/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+
+        post_data = {
+            'course_parent': self.course.pk,
+            'section_id': self.section2.section_id,
+            'start_time': '10:30',
+            'end_time':'11:20',
+            'section_type':  self.section2.section_type,
+            'location': self.section2.location,
+            'meeting_days': [self.monday.day, self.wednesday.day],
+            'is_online': '',
+        }
+        resp = self.client.post(self.detail_url_course, post_data, follow=True)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(f"The section being edited conflicts with another section assignment :{self.section2.course_parent} {self.section2.section_type} {self.section2.section_id} {self.section2.location} {self.section2.start_time} to {self.section2.end_time} ", resp.context['message'])
+    def test_duplication_two(self):
+        resp = self.client.post(
+            "/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+
+        post_data = {
+            'course_parent': self.course.pk,
+            'section_id': self.section1.section_id,
+            'start_time': '10:30',
+            'end_time':'11:20',
+            'section_type':  self.section2.section_type,
+            'location': self.section2.location,
+            'meeting_days': [self.monday.day, self.wednesday.day],
+            'is_online': '',
+        }
+        resp = self.client.post(self.detail_url_course, post_data, follow=True)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(f"The section being edited conflicts with another section assignment :{self.section2.course_parent} {self.section2.section_type} {self.section2.section_id} {self.section2.location} {self.section2.start_time} to {self.section2.end_time} ", resp.context['message'])

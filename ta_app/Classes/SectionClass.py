@@ -29,8 +29,6 @@ class SectionClass:
                 raise ValueError("Start time must be before end time")
         if not isinstance(is_online, bool):
             raise ValueError("is_online must be a boolean")
-        print(is_online)
-        print(location)
         if not is_online:
             if location =='None':
                 raise ValueError("Location must be provided for in-person classes")
@@ -114,9 +112,11 @@ class SectionClass:
         old_section= Section.objects.get(section_id=old_section_id)
         for day in self.meeting_days:
             if old_section.section_id!=self.section_id and old_section.location != self.location and old_section.start_time != self.start_time and old_section.end_time != self.end_time:
-                if Section.objects.filter(section_id=self.section_id,location=self.location, start_time=self.start_time,
+                if Section.objects.filter(location=self.location, start_time=self.start_time,
                                           end_time=self.end_time, meeting_days__in=[day]).exists():
-                    raise ValueError("Section in the same location and at same time as section can not be added.")
+                    obj=Section.objects.get(location=self.location, start_time=self.start_time,
+                                          end_time=self.end_time, meeting_days__in=[day])
+                    raise ValueError(f"The section being edited conflicts with another section assignment :{self.course_parent} {self.section_type} {obj.section_id} {self.location} {self.start_time} to {self.end_time} ")
         section = Section.objects.get(section_id=old_section_id)
         section.course_parent = self.course_parent
         section.section_id = self.section_id
