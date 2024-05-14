@@ -19,8 +19,11 @@
             <div>
                 <label for="course_parent">Course:</label>
                 <select name="course_parent" id="course_parent" required>
-                    <!-- Dynamically populate with courses -->
-                    <option value="{{ section.course_parent.id }}" selected>{{ section.course_parent.course_name }}</option>
+
+                    {% for course in courses %}
+
+                    <option value="{{ course.pk }}" >{{ course }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div>
@@ -29,21 +32,20 @@
             </div>
             <fieldset>
                 <legend>Days:</legend>
-                <!-- Dynamically check days based on current settings -->
                 {% for day in days %}
                     <label>
-                        <input type="checkbox" name="days" value="{{ day.id }}" {% if day in section.meeting_days.all %} checked {% endif %}>
+                        <input type="checkbox" name="meeting_days" value="{{ value.pk }}" {% if day in section.meeting_days.all %} checked {% endif %}>
                         {{ day.day }}
                     </label>
                 {% endfor %}
             </fieldset>
             <div>
                 <label for="start_time">Start Time:</label>
-                <input type="time" name="start_time" id="start_time" value="{{ section.start_time|date:'H:i' }}" required>
+                <input type="time" name="start_time" id="start_time" value="{{ section.start_time }}" >
             </div>
             <div>
                 <label for="end_time">End Time:</label>
-                <input type="time" name="end_time" id="end_time" value="{{ section.end_time|date:'H:i' }}" required>
+                <input type="time" name="end_time" id="end_time" value="{{ section.end_time }}" >
             </div>
             <div>
                 <label for="location">Location:</label>
