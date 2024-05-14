@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from ta_app.Classes.SectionClass import SectionClass
 from ta_app.models import Section, Course, Day
-from datetime import time
+from datetime import time,datetime
 from django.test import TestCase
 
 class Test_SectionClass(TestCase):
@@ -30,7 +30,7 @@ class Test_SectionClass(TestCase):
             start_time=time(9, 30),
             end_time=time(10, 20),
             type='LEC',
-            location= None,
+            location= 'None',
             is_online=True
         )
         self.section1.meeting_days.add(self.monday, self.wednesday)
