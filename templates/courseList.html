@@ -74,8 +74,8 @@
     {% endif %}
     <table class="center2" style ="border-collapse: collapse;">
       <tr>
-        <th>Course Subject</th>
-        <th>Course ID</th>
+          <th>Course ID</th>
+        <th>Course Name</th>
         <th>Semester</th>
           {%if is_admin%}
         <th>Edit Course Info</th>
@@ -90,8 +90,8 @@
       </tr>
     {%for course in courselist %}
       <tr>
-        <td>{{ course.course_name}}</td>
         <td>{{ course.course_id }}</td>
+          <td>{{ course.course_name}}</td>
         <td>{{ course.semester }}</td>
 
           {%if is_admin%}

@@ -143,7 +143,6 @@
                             {{ day }}
                         {% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time}}
               {% endfor %}
-
           </select></td>
                     {% endif %}
                 {% endif %}
@@ -171,11 +170,14 @@
             <br>
             <br>
                 {% if curr_user.pk != viewer_pk %}
-                    {% if viewer.role == "Instructor" and curr_user.role != "Instructor" and selectableSections%}
-                        <input type="submit" value="Submit">
-                    {% elif viewer.role == "Admin" and selectableSections%}
+                    {% if viewer.role == "Instructor" and curr_user.role != "Instructor" and selectableSections %}
                         <input type="submit" value="Submit">
                         {% endif %}
+                    {% if viewer.role == "Admin" %}
+                        {%if selectableSections or selectableCourses%}
+                            <input type="submit" value="Submit">
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
         <br>
             {{ message }}

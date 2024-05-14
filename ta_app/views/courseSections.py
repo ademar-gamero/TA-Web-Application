@@ -111,7 +111,7 @@ class courseSections(View):
                     except ValueError as failure:
                         return render(request, "course_sections.html", {"course": course, "sections": sections,"curr_usr":curr_usr,
                                                                         "ta_all": teacherassistant_pool, "ins_all": instructor_pool, "usr_role": usr_role,
-                                                                        "ta_pool": ta_pool, "assigned_users":assigned_users,
+                                                                        "ta_pool": ta_pool, "assigned_users":assigned_users,"check":check,
                                                                         "course_lecture":course_lecture,check:"check","instructor_message":instructor_message,"message": failure.__str__()})
 
         # get pool of users for sections
@@ -135,8 +135,10 @@ class courseSections(View):
         for secs in sections:
             if secs.type == "lecture":
                 course_lecture = secs.pk
+
         check = "False"
         for usrs in assigned_users:
+            print(usrs)
             if usrs.role == "Instructor":
                 check = "True"
 
