@@ -137,12 +137,16 @@ class CourseClass(object):
                 # an error if so
                 try:
                     Course.objects.get(course_id=self.course_id, course_name=self.course_name, semester=self.semester)
-                    # If it creates a conflicting course, reset all values back to original
-                    self.course_id = old_id
-                    self.course_name = old_name
-                    self.description = old_description
-                    self.semester = old_semester
-                    raise ValueError("Exact course already exists!")
+                    if self.description != old_description:  # edge case (when only description is being changed)
+                        Course.objects.filter(pk=course.pk).update(description=self.description)
+                        return True
+                    else:
+                        # It is creating a conflicting course, so reset all values back to original
+                        self.course_id = old_id
+                        self.course_name = old_name
+                        self.description = old_description
+                        self.semester = old_semester
+                        raise ValueError("Exact course already exists!")
                 except Course.DoesNotExist:
                     pass  # do nothing. If it doesn't already exist, we're good to go!
             # Now we can update all values in the database.
