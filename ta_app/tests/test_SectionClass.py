@@ -186,6 +186,37 @@ class TestSectionClass(TestCase):
         with self.assertRaises(Section.DoesNotExist):
             Section.objects.get(section_id=section_delete.section_id)
 
+    def test_duplicate_section_id(self):
+        # Test creating a section with a duplicate section_id
+        section_duplicate_id = SectionClass(
+            course_parent=self.course1,
+            section_id=12301,  # Duplicate section_id
+            start_time=time(10, 0),
+            end_time=time(11, 0),
+            section_type='LEC',
+            location='EMS200',
+            is_online=False,
+            meeting_days=[self.tuesday, self.thursday]
+        )
+        with self.assertRaises(ValueError):
+            section_duplicate_id.create_section()
+
+    def test_same_location_and_time(self):
+        # Test creating a section with the same location and overlapping time
+        with self.assertRaises(ValueError):
+            section_same_location_and_time = SectionClass(
+                course_parent=self.course1,
+                section_id=12311,
+                start_time=self.section3.start_time,
+                end_time=self.section3.end_time,
+                section_type='LEC',
+                location=self.section3.location  # Same location as section3
+
+            )
+            section_same_location_and_time.create_section()
+
+
+
     def test_section_edit(self):
         with self.assertRaises(ValueError):
             initial_section = SectionClass(
@@ -314,3 +345,16 @@ class TestSectionClass(TestCase):
         )
         with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
             king_julian.edit_section(self.section1.section_id)
+
+    def test_duplicate_time_conflict(self):
+        with self.assertRaises(ValueError):
+            section_duplicate_time = SectionClass(
+                course_parent=self.section4.course_parent,
+                section_id=1234,
+                meeting_days=self.section4.meeting_days.all(),
+                location=self.section4.location,
+                start_time=time(15, 0),
+                end_time=self.section4.end_time,
+                section_type=self.section4.type,
+                is_online=self.section4.is_online)
+            section_duplicate_time.create_section()

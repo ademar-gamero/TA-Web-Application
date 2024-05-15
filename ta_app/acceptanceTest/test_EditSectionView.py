@@ -157,7 +157,7 @@ class EditSectionViewTests(TestCase):
             'start_time': '10:00',
             'end_time': '11:00',
             'section_type': 'Lab',
-            'location':'ems201' ,
+            'location':'ems201',
             'is_online': '',
         }
         resp = self.client.post(self.detail_url_course, post_data, follow=True)
