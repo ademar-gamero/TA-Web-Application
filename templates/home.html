@@ -4,47 +4,72 @@
     <meta charset="UTF-8">
     <title>Home</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .container { max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; }
-        label { display: block; margin-bottom: 5px; }
+        /* General body styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #0046be; /* Best Buy blue */
+        }
+
+        /* Container styling with blue border and shadow */
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 3px solid #0046be; /* Best Buy blue */
+            background-color: #fff; /* white background */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* subtle shadow */
+        }
+
+        /* Centered text for elements */
+        center, a, p { text-align: center; }
+
+        /* Form inputs */
         input[type="text"], input[type="password"], input[type="submit"] {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
-            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
+
+        /* Link styling */
         a {
             display: block;
             margin-bottom: 10px;
-            color: #007BFF;
+            color: #0046be; /* Best Buy blue */
             text-decoration: none;
-            text-align: center;
         }
+
+        /* Hover effect for links */
         a:hover {
-            color: #0056b3;
+            color: #003087; /* darker blue on hover */
         }
+
+        /* Button and submit input styling */
         button, input[type="submit"] {
             padding: 10px 20px;
             color: #fff;
-            background-color: #007BFF;
+            background-color: #0046be; /* Best Buy blue */
             border: none;
             cursor: pointer;
+            border-radius: 4px;
         }
+
+        /* Hover effect for buttons */
         button:hover, input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #003087; /* darker blue on hover */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2><center>Home</center></h2>
+        <h2>Home</h2>
         <div>
-            <p><center> Welcome to the TA Scheduler App, {{ name }}! </center></p>
+            <p>Welcome to the TA Scheduler App, {{ name }}!</p>
             <a href = "{% url 'courseList' %}">Course Catalog</a>
             {% if role == "Admin" %}
                 <a href = "{% url 'createCourse' %}">Create Course</a>
-            {% endif %}
-            {% if role == "Admin" %}
                 <a href = "{% url 'createSection' %}">Create Section</a>
             {% endif %}
             <a href = "{% url 'accountList' %}">Account List</a>

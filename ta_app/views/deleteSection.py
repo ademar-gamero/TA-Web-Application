@@ -1,31 +1,27 @@
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.shortcuts import render, redirect
-from ta_app.models import Course, User
+from ta_app.models import Section
 from django.contrib import messages
 
 class deleteSection(View):
-    def get(self, request, section_id):
-        if 'role' not in request.session or request.session['role'] != 'Admin':
+    def get(self, request, pk):
+        if 'role' not in request.session or request.session.get('role') != 'Admin':
             messages.error(request, "You are not authorized to view this page.")
-            return redirect('courseList')
+            return redirect('login')
 
-        course = Course.objects.filter(pk=section_id).first()
-        if course:
-            return render(request, 'delete_course.html', {'course': course})
-        else:
-            messages.error(request, 'Section not found!')
-            return redirect('courseList')
+        section = get_object_or_404(Section, pk=pk)
+        return render(request, 'delete_section.html', {'section': section})
 
-    def post(self, request, section_id):
+    def post(self, request, pk):
         if 'role' in request.session and request.session['role'] == 'Admin':
+            section = get_object_or_404(Section, pk=pk)
             if 'confirm' in request.POST:
-                course = Course.objects.filter(pk=section_id).first()
-                if course:
-                    course.delete()
-                    messages.success(request, 'Section deleted successfully!')
-                else:
-                    messages.error(request, 'Section not found!')
-            return redirect('courseList')
+                section.delete()
+                messages.success(request, 'Section deleted successfully!')
+                return redirect('courseList')
+            else:
+                messages.warning(request, 'Please confirm deletion.')
+                return render(request, 'delete_section.html', {'section': section})
         else:
             messages.error(request, "Unauthorized attempt to delete a section.")
-            return redirect('courseList')
+            return redirect('login')
