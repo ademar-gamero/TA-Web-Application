@@ -25,7 +25,7 @@ class removeCourseAssignment(View):
             return render(request, "remove_courseAssignment.html", context={"user": user, "course": course})
         else:
             messages.error(request, "You are not authorized to view this page.")
-            return redirect('/Home/')
+            return redirect('courseSections', course_pk=course_pk)
 
     def post(self, request, user_pk, course_pk):
         # makes sure the course is legit, boots you out to the full course list otherwise
