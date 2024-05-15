@@ -39,6 +39,10 @@ class SectionClass:
         if is_online:
             if location !='None':
                 raise ValueError("Please enter 'None' in location for online classes")
+        if location is not 'None' :
+            #start time   is in between the start and end time of another section
+            if Section.objects.filter(location=location, start_time__range=[start_time, end_time]).exists():
+                raise ValueError("Section in the same location and at same time can not be added.")
         self.course_parent = course_parent
         if section_id is None:
             raise ValueError("Section ID must not be None")
@@ -127,4 +131,3 @@ class SectionClass:
         section.is_online = self.is_online
         section.meeting_days.set(self.meeting_days)
         section.save()
-

@@ -270,3 +270,15 @@ class Test_SectionClass(TestCase):
             self.assertIn(self.monday, updated_days)
             self.assertIn(self.wednesday, updated_days)
             self.assertNotIn(self.tuesday, updated_days)
+    def test_duplicate_time_conflict(self):
+        with self.assertRaises(ValueError):
+            section_duplicate_time = SectionClass(
+                course_parent=self.section4.course_parent,
+                section_id=1234,
+                meeting_days=self.section4.meeting_days.all(),
+                location=self.section4.location,
+                start_time=time(15, 0),
+                end_time=self.section4.end_time,
+                section_type=self.section4.type,
+                is_online=self.section4.is_online)
+            section_duplicate_time.create_section()
