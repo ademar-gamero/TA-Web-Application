@@ -13,19 +13,19 @@ class removeCourseAssignment(View):
         if current == "Admin":
             user = None
             course = None
-            message = ""
+            try:
+                course = Course.objects.get(pk=course_pk)
+            except Course.DoesNotExist:
+                messages.error(request, "Course not found. Returning to course list.")
+                return redirect('courseList')
             try:
                 user = User.objects.get(pk=user_pk)
             except User.DoesNotExist:
-                successful = False
-                message = "Error: User not found."
-                if user is not None:
-                    try:
-                        course = Course.objects.get(pk=course_pk)
-                    except Course.DoesNotExist:
-                        message = "Error: Course not found"
-            return render(request, "remove_courseAssignment.html", context={"user": user, "course": course, "message": message})
+                messages.error(request, "User not found. Returning to course sections page.")
+                return redirect('courseSections')
+            return render(request, "remove_courseAssignment.html", context={"user": user, "course": course})
         else:
+            messages.error(request, "You are not authorized to view this page.")
             return redirect('/Home/')
 
     def post(self, request, user_pk, course_pk):
