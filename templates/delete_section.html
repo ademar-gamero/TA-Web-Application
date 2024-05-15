@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Section</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Delete Section</h1>
+        <p>Are you sure you want to delete the section {{ section }}?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="confirm" value="yes">Yes</button>
+            <a href="{% url 'courseSections' section.course_parent.pk %}">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

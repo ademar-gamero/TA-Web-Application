@@ -1,40 +1,112 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .center {
+            text-align:center;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+
+        }
+        .center2 {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+        .center3 {
+            margin: auto;
+            width: 100%;
+        }
+        th,td{
+            border: 1px solid black;
+            padding: 5px;
+            border-collapse: collapse;
+        }
+
+    </style>
     <title>Course List</title>
 </head>
 <body>
-<h1>Course List Page</h1>
+<h1>Search Courses</h1>
 
-<form action="{% url 'courseList' %}" method="post">
-    {% csrf_token %}
-    <p>Course ID</p>
-    <input type="number" min="0" max="9999" name="course_id" placeholder="course id">
-    <p>Course Name</p>
-    <input type="text" name="course_name" placeholder="course name"><br>
-    <input type="submit" value="Submit">
-</form>
-
-<div>
-    <h3>Courses:</h3>
-    {% if not courselist %}
-        <p>No courses found</p>
-    {% else %}
+    <form action="/Home/courseList/" method="post">
+      {% csrf_token %}
         <table>
-        {% for course in courselist %}
-            <tr>
-                <td>{{ course.course_name }}</td>
-                <td>{{ course.course_id }}</td>
-                {% if is_admin %}
-                <td>
-                    <a href="{% url 'deleteCourse' course.id %}">Delete</a>
-                </td>
-                {% endif %}
-            </tr>
-        {% endfor %}
+
+
+        <tr>
+            <td><p>Course ID: </p></td>
+      <td><input type="number" min="0" max="9999" name="course_id" placeholder = "101">
+      </td>
+            <td><p>Course Name: </p></td>
+      <td><input type="text" name="course_name" placeholder = "Name"></td>
+        <td><label for="semesters">Semester: </label>
+		    <select name="semesters" id="semesters">
+				<option value="">None</option>
+				<option value="Fall">Fall</option>
+				<option value="Winter">Winter</option>
+				<option value = "Spring">Spring</option>
+                <option value = "Summer">Summer</option>
+			</select></td>
+        </tr>
+
         </table>
+        <br>
+        <input type="submit" name="input_btn" value="Submit">
+        {% if not is_admin %}
+            <input type="submit" name="input_btn" value="Your Courses">
+        {% endif %}
+        <input type="submit" name="input_btn" value="Clear Filter">
+        <br>
+    </form>
+        <br>
+        <a href = "/Home/"> Go Home </a>
+
+  <div class="center">
+    <h2 class="center"> Course Catalog </h2>
+    {%if not courselist %}
+      <p> no courses found </p>
     {% endif %}
-</div>
+    <table class="center2" style ="border-collapse: collapse;">
+      <tr>
+          <th>Course ID</th>
+        <th>Course Name</th>
+        <th>Semester</th>
+          {%if is_admin%}
+        <th>Edit Course Info</th>
+          {%endif%}
+
+        <th>Course Sections</th>
+
+          {%if is_admin%}
+        <th>Delete Course</th>
+          {%endif%}
+
+      </tr>
+    {%for course in courselist %}
+      <tr>
+        <td>{{ course.course_id }}</td>
+          <td>{{ course.course_name}}</td>
+        <td>{{ course.semester }}</td>
+
+          {%if is_admin%}
+              <td><a href="{% url 'editCourse' course.pk %}">Edit Course Info</a></td>
+          {%endif%}
+
+          <td><a href="{% url 'courseSections' course.pk %}">Course Sections</a></td>
+
+          {%if is_admin%}
+        <td><a href="{% url 'deleteCourse' course.id %}">Delete</a></td>
+          {%endif%}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
 </body>
 </html>

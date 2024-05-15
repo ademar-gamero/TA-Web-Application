@@ -29,7 +29,12 @@ from ta_app.views.accountCreation import accountCreation
 from ta_app.views.loginView import login_view
 from django.views.generic.base import RedirectView
 from ta_app.views.SectionView import SectionView
-
+from ta_app.views.deleteAccount import deleteAccount
+from ta_app.views.deleteSection import deleteSection
+from ta_app.views.accountAssignment import accountAssignment
+from ta_app.views.courseSections import courseSections
+from ta_app.views.editCourse import editCourse
+from ta_app.views.removeSection import removeSection
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,11 +43,17 @@ urlpatterns = [
     path('Home/createSection/',SectionView.as_view(),name="createSection"),
     path('Home/accountList/',accountList.as_view(),name="accountList"),
     path('Home/accountList/accountInfo/<int:pk>/',accountInfoView.as_view(),name="accountInfo"),
+    path('Home/accountList/accountAssignment/<int:pk>/',accountAssignment.as_view(),name="accountAssignment"),
     path('Home/createCourse/',createCourse.as_view(), name="createCourse"),
     path('login/', login_view.as_view(), name='login'),
     path('Home/accountCreation/',accountCreation.as_view(), name='accountCreation'),
     path('', RedirectView.as_view(pattern_name='login', permanent=False)),
-    path('deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
+    path('Home/courseList/deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
+    path('Home/courseList/editCourse/<int:course_pk>/', editCourse.as_view(), name='editCourse'),
+    path('Home/accountList/deleteAccount/<int:pk>/', deleteAccount.as_view(), name='deleteAccount'),
+    path('Home/courseList/courseSections/deleteSection/<int:pk>/', deleteSection.as_view(), name='deleteSection'),
+    path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections'),
+    path('Home/courseList/accountAssignments/<int:user_id>/removeSection/<int:section_id>/', removeSection.as_view(), name='removeSection'),
     path('Home/createSection/editSection/<int:pk>/',EditSectionView.as_view(), name='editSection'),
 ]
 

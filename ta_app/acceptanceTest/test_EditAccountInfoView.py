@@ -197,7 +197,7 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
         resp = self.green.post(self.detail_url, {"email":self.ta.email} ,follow=True)
-        self.assertTrue(resp.context['message'],"Duplicate email entered, can not be edited",msg_prefix="message was not displayed")
+        self.assertTrue(resp.context['message'],"Duplicate email entered, can not be edited",msg_prefix = "message was not displayed")
         new = User.objects.get(pk=self.instructor.pk)
         self.assertTrue(new.email != self.ta.email,"email was not edited")
 

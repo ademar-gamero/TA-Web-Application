@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remove Section Assignment</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Remove Section Assignment</h1>
+        <p>Are you sure you want to remove {{ user.name }} from section {{ section }}?</p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="referer" value="{{ referer }}">
+            <button type="submit" name="confirm" value="yes">Yes</button>
+            <a href="{{ referer|default:'/Home' }}">
+                <button type="button" class="button-link">Cancel</button>
+            </a>
+        </form>
+    </div>
+</body>
+</html>
