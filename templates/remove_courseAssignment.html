@@ -6,11 +6,11 @@
 </head>
 <body>
     <h1>Confirm Deletion</h1>
-    <p>Are you sure you want to delete {{ section.section_name }}?</p>
-    <form method="post" action="{% url 'deleteCourse' section.id %}">
+    <p>Are you sure you want to remove {{ user.name }} from {{ course_name }}?</p>
+    <form method="post" action="{% url 'removeCourseAssignment' user_pk=user.pk section_pk=section.pk %}">
         {% csrf_token %}
-        <button type="submit" name="confirm" value="yes">Confirm Delete</button>
-        <button type="{% url 'courseList' %}" class="cancel-button">Cancel</button>
+        <button type="submit" name="confirm" value="yes">Confirm Removal</button>
+        <button type="{% url 'courseSections' course_pk=course.pk %}" class="cancel-button">Cancel</button>
     </form>
 </body>
 </html>
