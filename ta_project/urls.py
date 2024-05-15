@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from ta_app.views import removeCourseAssignment
 from ta_app.views.deleteCourse import deleteCourse
 from ta_app.views.Home import Home
 from ta_app.views.courseList import courseList
@@ -49,5 +50,6 @@ urlpatterns = [
     path('Home/accountList/deleteAccount/<int:pk>/', deleteAccount.as_view(), name='deleteAccount'),
     path('Home/courseList/courseSections/deleteSection/int:pk/', deleteSection.as_view(), name='deleteSection'),
     path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections')
+    path('Home/courseList/courseSection/removeCourseAssignment/<int:user_pk>/<int:section_pk>/', removeCourseAssignment.as_view(), name='removeCourseAssignment')
 ]
 
