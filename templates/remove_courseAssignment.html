@@ -7,7 +7,7 @@
 <body>
     <h1>Confirm Deletion</h1>
     <p>Are you sure you want to remove {{ user.name }} from {{ course_name }}?</p>
-    <form method="post" action="{% url 'removeCourseAssignment' user_pk=user.pk section_pk=section.pk %}">
+    <form method="post" action="{% url 'removeCourseAssignment' user_pk=user.pk course_pk=course.pk %}">
         {% csrf_token %}
         <button type="submit" name="confirm" value="yes">Confirm Removal</button>
         <button type="{% url 'courseSections' course_pk=course.pk %}" class="cancel-button">Cancel</button>

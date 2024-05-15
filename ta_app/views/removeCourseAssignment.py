@@ -5,8 +5,8 @@ from django.contrib import messages
 
 
 class removeCourseAssignment(View):
-    def get(self, request, user_pk, section_pk):
+    def get(self, request, user_pk, course_pk):
         pass
 
-    def post(self, request, user_pk, section_pk):
+    def post(self, request, user_pk, course_pk):
         pass

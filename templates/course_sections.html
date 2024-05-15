@@ -45,7 +45,7 @@
                     <td> {{usr.username}} </td>
                     <td> {{usr.role}} </td>
                     {% if usr_role == "Admin"%}
-                        <td> <button type="submit" name="remove_course" value="{{ usr.pk }}">Remove {{ usr.name }}</button></td>
+                        <td><a href = "{% url 'removeCourseAssignment' user_pk=usr.pk course_pk=course.pk%}">Remove {{ usr.name }} from course</a></td>
                     {% endif %}
             </tr>
             {% endfor %}
