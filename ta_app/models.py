@@ -59,9 +59,7 @@ class Section(models.Model):
             return f"{self.course_parent.course_name} {self.type} {self.section_id} - Online"
         else:
             days = ', '.join(day.day for day in self.meeting_days.all())
-            return (f"{self.course_parent.course_name} {self.type} {self.section_id} - Days: {days}, "
-                    f"Time: {self.start_time.strftime('%H:%M')} to {self.end_time.strftime('%H:%M')}, "
-                    f"Location: {self.location}")
+            return f"{self.course_parent.course_name} {self.type} {self.section_id} - Days: {days}"
 
 
 class User(models.Model):
@@ -72,8 +70,8 @@ class User(models.Model):
     role = models.CharField(max_length=17, choices=Roles.choices, default=Roles.TA)
     phone_number = models.CharField(max_length=100)
     address = models.CharField(max_length=256)
-    assigned = models.BooleanField(null=True)
-    assigned_section = models.ManyToManyField(Section, blank=True)
+    assigned = models.BooleanField(null=True, default=False)
+    assigned_section = models.ManyToManyField(Section, related_name="assigned_users", blank=True)
     skills = models.CharField(max_length=500, null=True, default="None")
 
     def __str__(self):

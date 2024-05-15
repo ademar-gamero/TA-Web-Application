@@ -73,7 +73,7 @@ class TestSectionClass(TestCase):
         self.section4.save()
 
     def test_section_string_representation(self):
-        expected_string1 = f"{self.course1.course_name} LAB 12309 - Days: TU, TH, Time: 11:00 to 12:30, Location: EMS180"
+        expected_string1 = f"{self.course1.course_name} LAB 12309 - Days: TU, TH"
         self.assertEqual(str(self.section3), expected_string1)
 
         expected_string2 = f"{self.course1.course_name} LEC 12301 - Online"

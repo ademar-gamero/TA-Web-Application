@@ -55,10 +55,15 @@ class UserClass(ABC):
         self.address = address
         self.assigned = assigned
         self.assigned_sections = []
+        if not isinstance(assigned_sections, list) and not isinstance(assigned_sections, QuerySet):
+            all_assigned_sections = assigned_sections.all()
+            assigned_sections = all_assigned_sections
         if assigned_sections is not None:
             if isinstance(assigned_sections, Section):
                 self.assigned_sections.append(assigned_sections)
             elif isinstance(assigned_sections, QuerySet):
+                if assigned_sections.exists():
+                    self.assigned_sections = []
                 if assigned_sections.count() == 0:
                     self.assigned_sections = []
                 for section in assigned_sections:
