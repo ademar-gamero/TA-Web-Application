@@ -18,6 +18,9 @@
             margin: auto;
             width: 100%;
         }
+        fieldset{
+            width: 30%
+        }
         td,th {
             border:1px solid black;
             border-collapse: collapse;
@@ -52,7 +55,6 @@
                 {% for day in days %}
                     <label><input type="checkbox" name="days" value="{{ day.pk }}"> {{ day }}</label>
                 {% endfor %}
-
             </fieldset>
 
             </div>
