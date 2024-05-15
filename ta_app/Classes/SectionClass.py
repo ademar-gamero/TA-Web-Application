@@ -25,6 +25,8 @@ class SectionClass:
                 raise ValueError("Start time and end time must not be the same")
             if start_time > end_time:
                 raise ValueError("Start time must be before end time")
+            if meeting_days == []:
+                raise ValueError("You entered time, but did not enter any meeting days")
         if not isinstance(is_online, bool):
             raise ValueError("is_online must be a boolean")
         if not is_online:
@@ -43,6 +45,8 @@ class SectionClass:
         self.section_id = section_id
         self.meeting_days = []
         if meeting_days is not None:
+            if start_time is None or end_time is None:
+                raise ValueError("You provided days, but did not provide a time")
             for day in meeting_days:
                 if not isinstance(day, Day):
                     raise ValueError("meeting_days must be a list of Day objects")
@@ -108,15 +112,10 @@ class SectionClass:
         return True
 
     def edit_section(self, old_section_id):
-        old_section= Section.objects.get(section_id=old_section_id)
+        old_section = Section.objects.get(section_id=old_section_id)
         for day in self.meeting_days:
-            if old_section.section_id!=self.section_id and old_section.location != self.location and old_section.start_time != self.start_time and old_section.end_time != self.end_time:
+            if old_section.section_id != self.section_id and old_section.location != self.location and old_section.start_time != self.start_time and old_section.end_time != self.end_time:
                 self.check_section_conflicts()
-                if Section.objects.filter(location=self.location, start_time=self.start_time,
-                                          end_time=self.end_time, meeting_days__in=[day]).exists():
-                    obj=Section.objects.get(location=self.location, start_time=self.start_time,
-                                          end_time=self.end_time, meeting_days__in=[day])
-                    raise ValueError(f"The section being edited conflicts with another section assignment :{self.course_parent} {self.section_type} {obj.section_id} {self.location} {self.start_time} to {self.end_time} ")
         check = True
         for day in old_section.meeting_days.all():
             for day2 in self.meeting_days:
@@ -124,16 +123,15 @@ class SectionClass:
                     check = False
         if old_section.start_time != self.start_time or old_section.end_time != self.end_time or check is False:
             self.check_section_conflicts()
-        section = Section.objects.get(section_id=old_section_id)
-        section.course_parent = self.course_parent
-        section.section_id = self.section_id
-        section.start_time = self.start_time
-        section.end_time = self.end_time
-        section.type = self.section_type
-        section.location = self.location
-        section.is_online = self.is_online
-        section.meeting_days.set(self.meeting_days)
-        section.save()
+        old_section.course_parent = self.course_parent
+        old_section.section_id = self.section_id
+        old_section.start_time = self.start_time
+        old_section.end_time = self.end_time
+        old_section.type = self.section_type
+        old_section.location = self.location
+        old_section.is_online = self.is_online
+        old_section.meeting_days.set(self.meeting_days)
+        old_section.save()
 
     def check_section_conflicts(self):
         possible_conflict = False

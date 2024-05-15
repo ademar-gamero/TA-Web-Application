@@ -330,6 +330,20 @@ class TestSectionClass(TestCase):
         with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
             king_julian.edit_section(self.section1.section_id)
 
+    def test_editConflictTimeSame(self):
+        king_julian = SectionClass(
+            course_parent=self.course1,
+            section_id=12309,
+            start_time="11:00",  # same
+            end_time="12:30",  # same
+            section_type='LAB',
+            location='EMS180',
+            is_online=False,
+            meeting_days=self.section3.meeting_days.all()
+        )
+        with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
+            king_julian.edit_section(self.section1.section_id)
+
     def test_editConflictDifferentCourse(self):
         course3 = Course.objects.create(course_id=30313, course_name='math', description='Mathematics',
                                         semester='Fall')  # need another course that is in the same semester
