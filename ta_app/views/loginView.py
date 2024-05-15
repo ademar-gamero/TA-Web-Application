@@ -6,13 +6,11 @@ from django.contrib.messages import get_messages
 
 class login_view(View):
     def get(self, request):
-        messages_list = get_messages(request)
-        relevant_messages = []
-        for message in messages_list:
-            if 'logged out' in message.message or 'username' or 'password' in message.message:
-                relevant_messages.append(message)
+        messages_list = list(get_messages(request))
+        latest_message = messages_list[-1] if messages_list else None
+        latest_message_text = latest_message.message if latest_message else None
 
-        context = {'messages': relevant_messages}
+        context = {'messages': latest_message_text}
         return render(request, 'login.html', context)
 
     def post(self, request):
@@ -28,7 +26,10 @@ class login_view(View):
 
         # Return to login page if any input checks failed
         if not username or not password:
-            return render(request, 'login.html')
+            messages_list = list(get_messages(request))
+            latest_message = messages_list[-1] if messages_list else None
+            latest_message_text = latest_message.message if latest_message else None
+            return render(request, 'login.html', {'messages': latest_message_text})
 
         # Searches for user in the database
         try:
@@ -40,4 +41,7 @@ class login_view(View):
             return redirect('Home')  # Ensure this matches the URL name defined in urls.py
         except User.DoesNotExist:
             messages.error(request, 'Invalid username or password.')
-            return render(request, 'login.html')
+            messages_list = list(get_messages(request))
+            latest_message = messages_list[-1] if messages_list else None
+            latest_message_text = latest_message.message if latest_message else None
+            return render(request, 'login.html', {'messages': latest_message_text})

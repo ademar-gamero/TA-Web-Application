@@ -120,7 +120,7 @@
                 <td>{{ section.start_time }} - {{ section.end_time }}</td>
                 <td>{{ section.location }}</td>
                 {% if usr_role == "Admin" or user.role == "Instructor" %}
-              <td> Remove Assignment </td>
+              <td><a href="{% url 'removeSection' curr_user.pk section.pk %}">Remove Assignment</a></td>
                 {% endif %}
             </tr>
               {% endif %}
