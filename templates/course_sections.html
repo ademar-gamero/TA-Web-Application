@@ -81,6 +81,7 @@
               <th>Type</th>
             <th>Section ID</th>
             <th>Course</th>
+            <th>Online</th>
             <th>Meeting Days</th>
             <th> Meeting Time </th>
             <th>Location</th>
@@ -98,6 +99,7 @@
                     </td>
                   <td>{{ section.section_id }}</td>
                     <td> {{ section.course_parent }}</td>
+                    <td>{{ section.is_online }}</td>
                     <td>{% for day in section.meeting_days.all %}
                             {{ day }}
                         {% endfor %}
