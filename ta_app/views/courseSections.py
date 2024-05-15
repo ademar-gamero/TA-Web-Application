@@ -155,23 +155,3 @@ class courseSections(View):
                                                         "usr_role": usr_role, "ta_pool": ta_pool, "assigned_users":assigned_users,
                                                         "course_lecture":course_lecture,"check":check,"instructor_message":instructor_message,
                                                         "message": success})
-
-        check = "False"
-        for usrs in assigned_users:
-            print(usrs)
-            if usrs.role == "Instructor":
-                check = "True"
-
-        success = "Nothing was Submitted"
-        if assigned:
-            success = "Successfully assigned user(s) to section(s)"
-
-            instructor_message = 'None'
-            if curr_usr not in assigned_users:
-                instructor_message = "Your are not assigned to this course"
-
-        return render(request, "course_sections.html", {"course": course, "sections": sections,"curr_usr":curr_usr,
-                                                        "ta_all": teacherassistant_pool, "ins_all": instructor_pool,
-                                                        "usr_role": usr_role, "ta_pool": ta_pool, "assigned_users":assigned_users,
-                                                        "course_lecture":course_lecture,"check":check,"instructor_message":instructor_message,
-                                                        "message": success})
