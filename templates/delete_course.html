@@ -3,14 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Delete Course Confirmation</title>
+    <style>
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 3px solid #0046be;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        button, .cancel-button {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #0046be;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        button:hover, .cancel-button:hover {
+            background-color: #003087;
+        }
+    </style>
 </head>
 <body>
-    <h1>Confirm Deletion</h1>
-    <p>Are you sure you want to delete {{ course.course_name }}?</p>
-    <form method="post" action="/Home/courseList/deleteCourse/{{course.id}}/">
-        {% csrf_token %}
-        <button type="submit" name="confirm" value="yes">Confirm Delete</button>
-        <button type="{% url 'courseList' %}" class="cancel-button">Cancel</button>
-    </form>
+    <div class="container">
+        <h1>Confirm Deletion</h1>
+        <p>Are you sure you want to delete {{ course.course_name }}?</p>
+        <form method="post" action="/Home/courseList/deleteCourse/{{course.id}}/">
+            {% csrf_token %}
+            <button type="submit" name="confirm" value="yes">Confirm</button>
+            <a href="{% url 'courseList' %}" class="cancel-button">Cancel</a>
+        </form>
+    </div>
 </body>
 </html>

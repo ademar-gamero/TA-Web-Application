@@ -1,88 +1,164 @@
-
-<!DOCTYPE html> 
-  <html lang="en"> 
-  <head> 
-      <meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <title>Account List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #000; /* Change to black */
+        }
+
+        .container {
+            max-width: 1200px; /* Increased width */
+            margin: 50px auto;
+            padding: 20px;
+            border: 3px solid #0046be; /* Best Buy blue */
+            background-color: #fff; /* white background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* subtle shadow */
+            text-align: center;
+        }
+
+        th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 10px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensure padding and border are included in width */
+        }
+
+        button, input[type="submit"], .button-link {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #0046be; /* Best Buy blue */
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        button:hover, input[type="submit"]:hover, .button-link:hover {
+            background-color: #003087; /* darker blue on hover */
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        .form-table td {
+            padding: 5px;
+        }
+
+        .button-link {
+            margin-bottom: 20px; /* Add margin bottom to create space below */
+        }
+    </style>
 </head>
-<style>
-th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-th, td {
-  padding: 10px;
-}
-</style>
 <body>
-<h1 align="center">User Account Roster</h1>
-		Filter for:
-		<form action="/Home/accountList/" method="post">
-		    {% csrf_token %}
-		    <table>
-		    <tr>
-		    <td>Name : <input type="text" name="name" placeholder = "name"></td>
-		    <td>Username : <input type="text" name="username" placeholder = "username"></td>
-		    <td><label for="roles">Role : </label>
-		    <select name="roles" id="roles">
-				<option value="">None</option>
-				<option value="Admin">Admin</option>
-				<option value="Instructor">Instructor</option>
-				<option value = "Teacher-Assistant">Teacher Assistant</option>
-			</select></td>
-			</tr>
-			</table>
-			<input type="submit" name="input_button" value="Submit">
-            {% if usr_role != "Admin"%}
-                <input type="submit" name="input_button" value="Show Users Assigned To Your Courses">
-            {% endif %}
-			<input type="submit" name="input_button" value="Clear Filter">
+    <div class="container">
+        <h1 align="center">User Account Roster</h1>
+        Filter for:
+        <form action="/Home/accountList/" method="post">
+            {% csrf_token %}
+            <table class="form-table" style="width: 100%;">
+                <tr>
+                    <td>Name:</td>
+                    <td><input type="text" name="name" placeholder="name"></td>
+                </tr>
+                <tr>
+                    <td>Username:</td>
+                    <td><input type="text" name="username" placeholder="username"></td>
+                </tr>
+                <tr>
+                    <td>Role:</td>
+                    <td>
+                        <select name="roles" id="roles">
+                            <option value="">None</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Instructor">Instructor</option>
+                            <option value="Teacher-Assistant">Teacher Assistant</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" name="input_button" value="Submit">
+                        {% if usr_role != "Admin"%}
+                            <input type="submit" name="input_button" value="Show Users Assigned To Your Courses">
+                        {% endif %}
+                        <input type="submit" name="input_button" value="Clear Filter">
+                    </td>
+                </tr>
+            </table>
         </form>
-      <br>
-      <a href = "/Home/"> Go Home </a>
-	<br>
-	<div align="center">
-		<table style="width:75%; border-collapse: collapse;">
-			<tr>
-				<th>Username</th>
-				<th>Name</th>
-                <th>Role</th>
-				<th>Email</th>
-                <th>Account Assignments</th>
-				{% if isAdmin %}
-					<th>Phone Number</th>
-					<th>Address</th>
-					<th>Edit Info</th>
-					<th>Delete User</th>
-				{% endif %}
-			</tr>
-			{% for account in account_list %}
-				<tr>
-					<td>{{account.username}}</td>
-					<td>{{account.name}}</td>
-                    <td>{{account.role}}</td>
-					<td>{{account.email}}</td>
-                
-                    {% if account.role != "Admin" %}
-                        <td><a href = "{% url 'accountAssignment' pk=account.pk %}">{{account.username}}'s Assignments</a></td>
+        <br>
+        <a href="/Home/" class="button-link">Home</a>
+        <br>
+        <div align="center">
+            <table style="width:75%; border-collapse: collapse;">
+                <tr>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Account Assignments</th>
+                    {% if isAdmin %}
+                        <th>Phone Number</th>
+                        <th>Address</th>
+                        <th>Edit Info</th>
+                        <th>Delete User</th>
                     {% endif %}
-                
-                    {% if account.role == "Admin" %}
-                        <td> Not Applicable </td>
-                    {% endif %}
-                
-					{% if isAdmin %}
-						<td>{{account.phone_number}}</td>
-						<td>{{account.address}}</td>
-						<td><a href = "{% url 'accountInfo' pk=account.pk %}">edit {{account.username}}</a></td>
-                        <td><a href="{% url 'deleteAccount' pk=account.pk %}">delete {{ account.username }}</a></td>
-					{% endif %}
-				</tr>
-			{% endfor %}
-		</table>
-        {% if not account_list %}
-            <h3>No accounts found</h3>
-        {% endif %}
+                </tr>
+                {% for account in account_list %}
+                    <tr>
+                        <td>{{account.username}}</td>
+                        <td>{{account.name}}</td>
+                        <td>{{account.role}}</td>
+                        <td>{{account.email}}</td>
+
+                        {% if account.role != "Admin" %}
+                            <td>
+                                <form action="{% url 'accountAssignment' pk=account.pk %}" method="get">
+                                    <button type="submit">{{account.username}}'s Assignments</button>
+                                </form>
+                            </td>
+                        {% else %}
+                            <td>Not Applicable</td>
+                        {% endif %}
+
+                        {% if isAdmin %}
+                            <td>{{account.phone_number}}</td>
+                            <td>{{account.address}}</td>
+                            <td>
+                                <form action="{% url 'accountInfo' pk=account.pk %}" method="get">
+                                    <button type="submit">Edit {{account.username}}</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="{% url 'deleteAccount' pk=account.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit">Delete {{ account.username }}</button>
+                                </form>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+            {% if not account_list %}
+                <h3>No accounts found</h3>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
