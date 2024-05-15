@@ -33,6 +33,7 @@ from ta_app.views.deleteAccount import deleteAccount
 from ta_app.views.deleteSection import deleteSection
 from ta_app.views.accountAssignment import accountAssignment
 from ta_app.views.courseSections import courseSections
+from ta_app.views.removeCourseAssignment import removeCourseAssignment
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -49,7 +50,7 @@ urlpatterns = [
     path('Home/courseList/deleteCourse/<int:course_id>/', deleteCourse.as_view(), name='deleteCourse'),
     path('Home/accountList/deleteAccount/<int:pk>/', deleteAccount.as_view(), name='deleteAccount'),
     path('Home/courseList/courseSections/deleteSection/int:pk/', deleteSection.as_view(), name='deleteSection'),
-    path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections')
+    path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections'),
     path('Home/courseList/courseSection/removeCourseAssignment/<int:user_pk>/<int:section_pk>/', removeCourseAssignment.as_view(), name='removeCourseAssignment')
 ]
 
