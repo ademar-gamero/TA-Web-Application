@@ -1,3 +1,4 @@
+from datetime import datetime
 
 from django.views import View
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -12,16 +13,20 @@ class SectionView(View):
     def get(self, request):
         courses = Course.objects.all()
         sections = Section.objects.all()
-        return render(request, self.template_name, {'courses': courses, 'sections': sections})
+        days = Day.objects.all()
+        return render(request, self.template_name, {'courses': courses, 'sections': sections, 'days': days})
 
     def post(self, request):
         course_parent_id = request.POST.get("course_parent")
         section_id = request.POST.get("section_id")
         meeting_days = request.POST.getlist("days")
-        for i in range(len(meeting_days)):
-            meeting_days[i] = Day.objects.create(day=meeting_days[i])
-        start_time = request.POST.get("start_time", None)
-        end_time = request.POST.get("end_time", None)
+        all_days = Section.objects.all()
+        days = []
+        for day in meeting_days:
+            days.append(Day.objects.get(pk=day))
+        meeting_days = days
+        start_time = request.POST.get("start_time")
+        end_time = request.POST.get("end_time")
         if start_time == '':
             start_time = None
         if end_time == '':
@@ -39,7 +44,7 @@ class SectionView(View):
         context = {'courses': Course.objects.all(), 'sections': sections, 'check': True}
         bool=True
         try:
-            course_parent = Course.objects.get(course_id=course_parent_id)
+            course_parent = Course.objects.get(pk=course_parent_id)
             new_section = SectionClass(course_parent=course_parent, section_id=section_id,
                                        meeting_days=meeting_days, location=location, start_time=start_time,end_time=end_time,
                                        section_type=section_type, is_online=is_online)
@@ -52,5 +57,5 @@ class SectionView(View):
             bool=False
         if bool:
             context.update({'error': "Section created successfully"})
-
+        context.update({'days': all_days})
         return render(request, self.template_name, context)

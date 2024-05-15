@@ -4,7 +4,8 @@ from ta_app.models import Section, Course, Day
 from datetime import time,datetime
 from django.test import TestCase
 
-class Test_SectionClass(TestCase):
+
+class TestSectionClass(TestCase):
     def setUp(self):
         # Create courses
         self.course1 = Course.objects.create(course_id=30311, course_name='compsci', description='Computer Science',
@@ -71,8 +72,6 @@ class Test_SectionClass(TestCase):
         self.section4.meeting_days.add(self.monday, self.wednesday)
         self.section4.save()
 
-
-
     def test_section_string_representation(self):
         expected_string1 = f"{self.course1.course_name} LAB 12309 - Days: TU, TH, Time: 11:00 to 12:30, Location: EMS180"
         self.assertEqual(str(self.section3), expected_string1)
@@ -105,7 +104,6 @@ class Test_SectionClass(TestCase):
                 )
                     section.create_section()
 
-
     def test_sectionconstruction_inperson_nodays_nolocation(self):
         with self.assertRaises(ValueError):
             section=SectionClass(
@@ -128,9 +126,6 @@ class Test_SectionClass(TestCase):
             self.section4.meeting_days.set([self.monday, self.wednesday])
             section.create_section()
 
-
-
-
     def test_sectionconstruction_normal_inperson(self):
         with self.assertRaises(ValueError):
             section = SectionClass(
@@ -143,7 +138,6 @@ class Test_SectionClass(TestCase):
                 is_online=False
             )
             section.create_section()
-
 
     def test_sectionconstruction_online_notime_nodays(self):
         with self.assertRaises(ValueError):
@@ -176,10 +170,6 @@ class Test_SectionClass(TestCase):
         self.assertEqual(section.end_time, self.section4.end_time)
         self.assertEqual(section.is_online, self.section4.is_online)
 
-
-
-
-
     def test_section_time_update(self):
         section_update = SectionClass(course_parent=self.section1.course_parent, section_id=self.section1.section_id, meeting_days=self.section1.meeting_days.all(), start_time=self.section1.start_time, end_time=self.section1.end_time,
                                       section_type=self.section1.type, location=self.section1.location, is_online=self.section1.is_online)
@@ -187,8 +177,6 @@ class Test_SectionClass(TestCase):
         section_update.save_updates()
         section_updated = Section.objects.get(section_id=self.section1.section_id)
         self.assertEqual(section_updated.start_time, time(10, 0))
-
-
 
     def test_delete_section(self):
         section_delete = SectionClass(course_parent=self.section1.course_parent, section_id=self.section1.section_id, meeting_days=self.section1.meeting_days.all(),
@@ -217,7 +205,8 @@ class Test_SectionClass(TestCase):
                 meeting_days=initial_section.meeting_days.all(),
                 start_time=initial_section.start_time,
                 end_time=initial_section.end_time,
-                section_type=initial_section.type,
+                #section_type=initial_section.type,
+                section_type=initial_section.section_type,
                 location=initial_section.location,
                 is_online=initial_section.is_online
             )
@@ -225,7 +214,7 @@ class Test_SectionClass(TestCase):
             result = section_edit.edit_section(old_section_id=initial_section.section_id)
 
             # Check if edit was reported as successful
-            self.assertTrue(result, "Edit function did not return True.")
+            self.assertTrue(result, "Edit function did not return True.")  # ???
 
             # Verify the changes
             updated_section = Section.objects.get(section_id=initial_section.section_id)
@@ -239,3 +228,89 @@ class Test_SectionClass(TestCase):
             self.assertIn(self.monday, updated_days)
             self.assertIn(self.wednesday, updated_days)
             self.assertNotIn(self.tuesday, updated_days)
+
+    def test_createSectionConflictsAll(self):
+        king_julian = SectionClass(
+            course_parent=self.course1,
+            section_id=1,
+            start_time="11:30",
+            end_time="12:00",
+            section_type='LAB',
+            location='EMS180',
+            is_online=False,
+            meeting_days=self.section3.meeting_days.all()
+        )
+        with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
+            king_julian.create_section()
+
+    def test_editConflictTimeStartAfterEndBefore(self):
+        king_julian = SectionClass(
+            course_parent=self.course1,
+            section_id=12309,
+            start_time="11:30",
+            end_time="12:00",
+            section_type='LAB',
+            location='EMS180',
+            is_online=False,
+            meeting_days=self.section3.meeting_days.all()
+        )
+        with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
+            king_julian.edit_section(self.section1.section_id)
+
+    def test_editConflictTimeStartBeforeEndBefore(self):
+        king_julian = SectionClass(
+            course_parent=self.course1,
+            section_id=12309,
+            start_time="10:30",  # start earlier
+            end_time="12:00",  # end sooner
+            section_type='LAB',
+            location='EMS180',
+            is_online=False,
+            meeting_days=self.section3.meeting_days.all()
+        )
+        with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
+            king_julian.edit_section(self.section1.section_id)
+
+    def test_editConflictTimeStartAfterEndAfter(self):
+        king_julian = SectionClass(
+            course_parent=self.course1,
+            section_id=12309,
+            start_time="12:00",  # start after
+            end_time="13:00",  # end after
+            section_type='LAB',
+            location='EMS180',
+            is_online=False,
+            meeting_days=self.section3.meeting_days.all()
+        )
+        with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
+            king_julian.edit_section(self.section1.section_id)
+
+    def test_editConflictTimeStartBeforeEndAfter(self):
+        king_julian = SectionClass(
+            course_parent=self.course1,
+            section_id=12309,
+            start_time="10:30",  # start earlier
+            end_time="13:00",  # end after
+            section_type='LAB',
+            location='EMS180',
+            is_online=False,
+            meeting_days=self.section3.meeting_days.all()
+        )
+        with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
+            king_julian.edit_section(self.section1.section_id)
+
+    def test_editConflictDifferentCourse(self):
+        course3 = Course.objects.create(course_id=30313, course_name='math', description='Mathematics',
+                                        semester='Fall')  # need another course that is in the same semester
+        king_julian = SectionClass(
+            course_parent=course3,
+            section_id=1,
+            start_time="11:30",  # start after
+            end_time="12:00",  # end before
+            section_type='LAB',
+            location='EMS180',
+            is_online=False,
+            meeting_days=self.section3.meeting_days.all()
+        )
+        with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
+            king_julian.edit_section(self.section1.section_id)

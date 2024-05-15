@@ -33,10 +33,14 @@
             {% csrf_token %}
             <div>
                 <label for="course_parent">Course:</label>
+                {% if not courses %}
+                    <p>You must create a course to assign a section to a course!</p>
+                {% else %}
                 <select name="course_parent" id="course_parent" required>
                     {% for course in courses %}
-                    <option value="{{ course.course_id }}">{{ course}}</option>
+                    <option value="{{ course.pk }}">{{ course}}</option>
                     {% endfor %}
+                {% endif %}
                 </select>
             </div>
             <div>
@@ -46,11 +50,10 @@
             <div>
             <fieldset>
                 <legend>Days:</legend>
-                <label><input type="checkbox" name="days" value="Monday"> Monday</label>
-                <label><input type="checkbox" name="days" value="Tuesday"> Tuesday</label>
-                <label><input type="checkbox" name="days" value="Wednesday"> Wednesday</label>
-                <label><input type="checkbox" name="days" value="Thursday"> Thursday</label>
-                <label><input type="checkbox" name="days" value="Friday"> Friday</label>
+                {% for day in days %}
+                    <label><input type="checkbox" name="days" value="{{ day.pk }}"> {{ day }}</label>
+                {% endfor %}
+
             </fieldset>
 
             </div>
@@ -69,7 +72,7 @@
             </div>
             <div>
                 <label for="location">Location:</label>
-                <input type="text" name="location" id="location" value="None" required >
+                <input type="text" name="location" id="location" placeholder = 'N/A'>
             </div>
             <div>
                 <label for="section_type">Section Type:</label>
@@ -79,7 +82,11 @@
                 </select>
             </div>
             <div>
-                <button type="submit">Create Section</button>
+                {% if courses %}
+                    <button type="submit">Create Section</button>
+                {% else %}
+                    <p>You must create a course to create a section!</p>
+                {% endif %}
             </div>
         </form>
         <br>{{ error }}

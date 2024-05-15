@@ -15,11 +15,9 @@ class SectionClass:
             raise ValueError("course_parent must be an instance of Course")
 
         if start_time is not None and not isinstance(start_time, time) :
-
                 start_time = datetime.strptime(start_time, '%H:%M').time()
 
         if end_time is not None and not isinstance(end_time, time) :
-
                 end_time = datetime.strptime(end_time, '%H:%M').time()
 
         if start_time is not None and end_time is not None:
@@ -62,6 +60,7 @@ class SectionClass:
             if Section.objects.filter(location=self.location, start_time=self.start_time,
                                       end_time=self.end_time, meeting_days__in=[day]).exists():
                 raise ValueError("Section in the same location and at same time can not be added.")
+        self.check_section_conflicts()
         section = Section.objects.create(
             course_parent=self.course_parent,
             section_id=self.section_id,
@@ -112,11 +111,19 @@ class SectionClass:
         old_section= Section.objects.get(section_id=old_section_id)
         for day in self.meeting_days:
             if old_section.section_id!=self.section_id and old_section.location != self.location and old_section.start_time != self.start_time and old_section.end_time != self.end_time:
+                self.check_section_conflicts()
                 if Section.objects.filter(location=self.location, start_time=self.start_time,
                                           end_time=self.end_time, meeting_days__in=[day]).exists():
                     obj=Section.objects.get(location=self.location, start_time=self.start_time,
                                           end_time=self.end_time, meeting_days__in=[day])
                     raise ValueError(f"The section being edited conflicts with another section assignment :{self.course_parent} {self.section_type} {obj.section_id} {self.location} {self.start_time} to {self.end_time} ")
+        check = True
+        for day in old_section.meeting_days.all():
+            for day2 in self.meeting_days:
+                if day != day2:
+                    check = False
+        if old_section.start_time != self.start_time or old_section.end_time != self.end_time or check is False:
+            self.check_section_conflicts()
         section = Section.objects.get(section_id=old_section_id)
         section.course_parent = self.course_parent
         section.section_id = self.section_id
@@ -128,3 +135,27 @@ class SectionClass:
         section.meeting_days.set(self.meeting_days)
         section.save()
 
+    def check_section_conflicts(self):
+        possible_conflict = False
+        maurice = Section.objects.filter(location=self.location)
+        for section in maurice:
+            if section.course_parent.semester == self.course_parent.semester:
+                for day1 in section.meeting_days.all():
+                    for day2 in self.meeting_days:
+                        if day1 == day2:
+                            possible_conflict = True
+                    if possible_conflict:
+                        conflict = True
+                        if self.start_time < section.start_time:
+                            if self.end_time < section.start_time:
+                                conflict = False
+                        if self.start_time > section.end_time:
+                            if self.end_time > section.end_time:
+                                conflict = False
+                        if conflict:
+                            days = []
+                            for day in self.meeting_days:
+                                days.append(day)
+                            raise ValueError(
+                                "The section being created conflicts with another section : " + section.__str__() + f" - {days} - {section.start_time.strftime("%H:%M")} to {section.end_time.strftime("%H:%M")}")
+                    possible_conflict = False
