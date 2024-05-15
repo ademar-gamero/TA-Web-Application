@@ -13,7 +13,9 @@
             {% csrf_token %}
             <input type="hidden" name="referer" value="{{ referer }}">
             <button type="submit" name="confirm" value="yes">Yes</button>
-            <a href="{{ referer|default:'/Home' }}">Cancel</a>
+            <a href="{{ referer|default:'/Home' }}">
+                <button type="button" class="button-link">Cancel</button>
+            </a>
         </form>
     </div>
 </body>
