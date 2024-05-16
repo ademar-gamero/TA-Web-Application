@@ -54,6 +54,6 @@ urlpatterns = [
     path('Home/courseList/courseSections/deleteSection/<int:pk>/', deleteSection.as_view(), name='deleteSection'),
     path('Home/courseList/courseSection/<int:course_pk>/', courseSections.as_view(), name='courseSections'),
     path('Home/courseList/accountAssignments/<int:user_id>/removeSection/<int:section_id>/', removeSection.as_view(), name='removeSection'),
-    path('Home/createSection/editSection/<int:pk>/',EditSectionView.as_view(), name='editSection'),
+    path('Home/editSection/<int:pk>/', EditSectionView.as_view(), name='editSection'),
 ]
 

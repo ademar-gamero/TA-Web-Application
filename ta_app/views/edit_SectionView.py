@@ -73,7 +73,7 @@ class EditSectionView(View):
             section_edit = SectionClass(course_parent=course_parent, section_id=section_id, meeting_days=days,
                                         start_time=start_time, end_time=end_time, section_type=section_type,
                                         location=location, is_online=is_online)
-            section_edit.edit_section(oldsection.section_id)
+            section_edit.edit_section(oldsection.pk)
 
         except ValueError as error:
             return render(request, "editSection.html", {'courses':courses,'section': section, 'days':daysContext,'assignedDays': assignedDays,'start_time':start_time,'end_time':end_time,'message': str(error)})

@@ -286,7 +286,7 @@ class TestSectionClass(TestCase):
             meeting_days=self.section3.meeting_days.all()
         )
         with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
-            king_julian.edit_section(self.section1.section_id)
+            king_julian.edit_section(self.section1.pk)
 
     def test_editConflictTimeStartBeforeEndBefore(self):
         king_julian = SectionClass(
@@ -300,7 +300,7 @@ class TestSectionClass(TestCase):
             meeting_days=self.section3.meeting_days.all()
         )
         with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
-            king_julian.edit_section(self.section1.section_id)
+            king_julian.edit_section(self.section1.pk)
 
     def test_editConflictTimeStartAfterEndAfter(self):
         king_julian = SectionClass(
@@ -314,7 +314,7 @@ class TestSectionClass(TestCase):
             meeting_days=self.section3.meeting_days.all()
         )
         with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
-            king_julian.edit_section(self.section1.section_id)
+            king_julian.edit_section(self.section1.pk)
 
     def test_editConflictTimeStartBeforeEndAfter(self):
         king_julian = SectionClass(
@@ -328,7 +328,7 @@ class TestSectionClass(TestCase):
             meeting_days=self.section3.meeting_days.all()
         )
         with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
-            king_julian.edit_section(self.section1.section_id)
+            king_julian.edit_section(self.section1.pk)
 
     def test_editConflictTimeSame(self):
         king_julian = SectionClass(
@@ -342,7 +342,7 @@ class TestSectionClass(TestCase):
             meeting_days=self.section3.meeting_days.all()
         )
         with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
-            king_julian.edit_section(self.section1.section_id)
+            king_julian.edit_section(self.section1.pk)
 
     def test_editConflictDifferentCourse(self):
         course3 = Course.objects.create(course_id=30313, course_name='math', description='Mathematics',
@@ -358,7 +358,7 @@ class TestSectionClass(TestCase):
             meeting_days=self.section3.meeting_days.all()
         )
         with self.assertRaises(ValueError, msg="Conflicting section fails to raise ValueError"):
-            king_julian.edit_section(self.section1.section_id)
+            king_julian.edit_section(self.section1.pk)
 
     def test_duplicate_time_conflict(self):
         with self.assertRaises(ValueError):
@@ -372,3 +372,18 @@ class TestSectionClass(TestCase):
                 section_type=self.section4.type,
                 is_online=self.section4.is_online)
             section_duplicate_time.create_section()
+
+    def test_editConflictTimeItself(self):
+        king_julian = SectionClass(
+            course_parent=self.course1,
+            section_id=12301,
+            start_time="9:30",
+            end_time="12:00",
+            section_type='LEC',
+            location='None',
+            is_online=True,
+            meeting_days=self.section1.meeting_days.all()
+        )
+        king_julian.edit_section(self.section1.pk)
+        obj = Section.objects.get(section_id=self.section1.section_id)
+        self.assertEqual(obj.end_time, time(12,00), "Update was not successful")

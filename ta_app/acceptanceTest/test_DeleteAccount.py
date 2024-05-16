@@ -6,8 +6,8 @@ from django.contrib.messages import get_messages
 class DeleteAccountTests(TestCase):
     def setUp(self):
         self.client = Client()
-        self.admin = User.objects.create(username='admin', password='adminpass', role='Admin')
-        self.user = User.objects.create(username='user1', password='userpass', role='TA')
+        self.admin = User.objects.create(username='admin', password='adminpass', name = "admin", role="Admin", email='jdoe@gmail.com')
+        self.user = User.objects.create(username='user1', password='userpass', name = 'user1', role="Teacher-Assistant", email='adoe@gmail.com')
         self.delete_url = reverse('deleteAccount', kwargs={'pk': self.user.id})
         self.login_url = reverse('login')
 

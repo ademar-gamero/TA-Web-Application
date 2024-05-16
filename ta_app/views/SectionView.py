@@ -20,7 +20,7 @@ class SectionView(View):
         course_parent_id = request.POST.get("course_parent")
         section_id = request.POST.get("section_id")
         meeting_days = request.POST.getlist("days")
-        all_days = Section.objects.all()
+        all_days = Day.objects.all()
         days = []
         for day in meeting_days:
             days.append(Day.objects.get(pk=day))
@@ -41,7 +41,7 @@ class SectionView(View):
             is_online = False
 
         sections = Section.objects.all()
-        context = {'courses': Course.objects.all(), 'sections': sections, 'check': True}
+        context = {'courses': Course.objects.all(), 'sections': sections, 'days': all_days, 'check': True}
         bool=True
         try:
             course_parent = Course.objects.get(pk=course_parent_id)

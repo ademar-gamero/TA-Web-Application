@@ -104,7 +104,7 @@
                     <td>{{ section.start_time }} - {{ section.end_time }}</td>
                     <td>{{ section.location }}</td>
                     {% if usr_role == "Admin"%}
-                  <td> edit section info link </td>
+                  <td><a href="{% url 'editSection' section.pk %}" class="button">Edit Section Info</a></td>
                   <td><a href="{% url 'deleteSection' section.pk %}">Delete</a></td>
                     {% endif %}
                 </tr>

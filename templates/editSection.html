@@ -22,7 +22,7 @@
 
                     {% for course in courses %}
 
-                    <option value="{{ course.pk }}" >{{ course }}</option>
+                    <option value="{{ course.pk }}" {% if course.pk == section.course_parent.pk %}selected{% endif %} >{{ course }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -70,5 +70,7 @@
             </div>
         </form>
     </div>
+<td><a href="{% url 'courseSections' section.course_parent.pk %}">Go Back</a></td><br>
+<a href = "/Home/"> Go Home </a>
 </body>
 </html>
