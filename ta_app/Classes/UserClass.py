@@ -55,6 +55,7 @@ class UserClass(ABC):
         self.address = address
         self.assigned = assigned
         self.assigned_sections = []
+
         if not isinstance(assigned_sections, list) and not isinstance(assigned_sections, QuerySet):
             all_assigned_sections = assigned_sections.all()
             assigned_sections = all_assigned_sections

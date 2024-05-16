@@ -52,7 +52,8 @@
             <div>
                 <label for="is_online">Is Online:</label>
                 <input type="checkbox" name="is_online" id="is_online" value="True">
-
+                <br>
+                <p> Leave Start Time, End Time, Location, and Days empty for asynchronous classes </p>
             </div>
             <div>
                 <label for="start_time">Start Time:</label>
@@ -112,7 +113,11 @@
                     None
                 {% endif %}
                 </td>
-              <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                {% if section.start_time is not None and section.end_time is not None %}
+                    <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                {% else %}
+                    <td>None</td>
+                {% endif %}
             </tr>
             {% endfor %}
           </table>
