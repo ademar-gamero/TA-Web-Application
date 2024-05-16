@@ -117,7 +117,7 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
         resp = self.green.post(self.detail_url, {"username":"felix"} ,follow=True)
-        self.assertTrue(resp.context['message'],"Account admin edited successfully!",msg_prefix="message was not displayed")
+        self.assertTrue(resp.context['message'],"Account admin edited successfully!")
         new = User.objects.get(pk=self.instructor.pk)
         self.assertTrue(new.username == "felix","username was not edited")
 
@@ -130,7 +130,7 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
         resp = self.green.post(self.detail_url, {"username":"ta"} ,follow=True)
-        self.assertTrue(resp.context['message'],"Username 'ta' taken please enter a different username", msg_prefix="message was not displayed")
+        self.assertTrue(resp.context['message'],"Username 'ta' taken please enter a different username")
         self.assertTrue(self.instructor.username == "instructor","username was edited when it shouldnt have been")
 
 
@@ -143,7 +143,7 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
         resp = self.green.post(self.detail_url, {"password":"Mr.Robot"} ,follow=True)
-        self.assertTrue(resp.context['message'],"Account instructor edited successfully!",msg_prefix="message was not displayed")
+        self.assertTrue(resp.context['message'],"Account instructor edited successfully!")
         new = User.objects.get(pk=self.instructor.pk)
         self.assertTrue(new.password == "Mr.Robot","password was not edited")
         
@@ -155,10 +155,10 @@ class editAccount(TestCase):
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
-        resp = self.green.post(self.detail_url, {"role":self.ta.role} ,follow=True)
-        self.assertTrue(resp.context['message'],"Account instructor edited successfully!",msg_prefix="message was not displayed")
+        resp = self.green.post(self.detail_url, {"role":self.teacherassistant.role} ,follow=True)
+        self.assertTrue(resp.context['message'],"Account instructor edited successfully!")
         new = User.objects.get(pk=self.instructor.pk)
-        self.assertTrue(new.role == self.ta.role,"role was not edited")
+        self.assertTrue(new.role == self.teacherassistant.role,"role was not edited")
 
 
     def test_editPhoneNumber(self):
@@ -170,7 +170,7 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
         resp = self.green.post(self.detail_url, {"phone_number":"371-121-121"} ,follow=True)
-        self.assertTrue(resp.context['message'],"Account instructor edited successfully!",msg_prefix="message was not displayed")
+        self.assertTrue(resp.context['message'],"Account instructor edited successfully!")
         new = User.objects.get(pk=self.instructor.pk)
         self.assertTrue(new.phone_number == "371-121-121","phone_number was not edited")
 
@@ -183,7 +183,7 @@ class editAccount(TestCase):
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
         resp = self.green.post(self.detail_url, {"email":"newgrounds@email.com"} ,follow=True)
-        self.assertTrue(resp.context['message'],"Account instructor edited successfully!",msg_prefix="message was not displayed")
+        self.assertTrue(resp.context['message'],"Account instructor edited successfully!")
         new = User.objects.get(pk=self.instructor.pk)
         self.assertTrue(new.email == "newgrounds@email.com","email was not edited")
 
@@ -196,10 +196,10 @@ class editAccount(TestCase):
         resp = self.green.get(self.detail_url)
         self.assertEqual(200,resp.status_code,"page was not displayed")
 
-        resp = self.green.post(self.detail_url, {"email":self.ta.email} ,follow=True)
-        self.assertTrue(resp.context['message'],"Duplicate email entered, can not be edited",msg_prefix = "message was not displayed")
+        resp = self.green.post(self.detail_url, {"email":self.teacherassistant.email} ,follow=True)
+        self.assertTrue(resp.context['message'],"Duplicate email entered, can not be edited")
         new = User.objects.get(pk=self.instructor.pk)
-        self.assertTrue(new.email != self.ta.email,"email was not edited")
+        self.assertTrue(new.email != self.teacherassistant.email,"email was not edited")
 
 ## tests below need adjustment
 

@@ -44,17 +44,20 @@ class courseList(TestCase):
         self.assertEqual(200,resp.status_code,"role validation failed")
 
     def test_displayCourses(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         resp = self.green.get("/Home/courseList/")
         for j in resp.context["courselist"]:
             self.assertIn(j.course_name,self.courselist[j.course_id],"not all courses are listed")    
 
     def test_searchCourseName(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_course = "compsci"
         resp = self.green.post("/Home/courseList/",{"course_name":search_course},follow=True)
         for j in resp.context["courselist"]:
             self.assertEqual(j.course_name,search_course,"search is not working")
 
     def test_searchIncorrectCourse(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_course = "logic" 
         resp = self.green.post("/Home/courseList/",{"course_name":search_course},follow=True)
         clist = resp.context["courselist"]
@@ -64,6 +67,7 @@ class courseList(TestCase):
         self.assertTrue(checker,"search returned a value with it shouldnt have")
 
     def test_searchIncorrectCourseID(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_courseid = 125
         resp = self.green.post("/Home/courseList/",{"course_id":search_courseid},follow=True)
         clist = resp.context["courselist"]
@@ -73,12 +77,14 @@ class courseList(TestCase):
         self.assertTrue(checker,"search returned a value with it shouldnt have")
 
     def test_searchCourseID(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_courseid = 351
         resp = self.green.post("/Home/courseList/",{"course_id":search_courseid},follow=True)
         for j in resp.context["courselist"]:
             self.assertEqual(j.course_id,search_courseid,"search shouldve found a course id but didnt")
 
     def test_searchCourseBoth(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_courseid = 351
         search_course = "compsci"
         resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
@@ -86,6 +92,7 @@ class courseList(TestCase):
             self.assertEqual(j.course_name,search_course,"search did not work")
 
     def test_searchCourseBothIncorrect(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_courseid = 123
         search_course = "sci"
         resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
@@ -96,6 +103,7 @@ class courseList(TestCase):
         self.assertTrue(checker,"search returned a value with it shouldnt have")
     
     def test_searchCourseBothReversed(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_courseid = 351
         search_course = "compsci"
         resp = self.green.post("/Home/courseList/",{"course_id":search_courseid,"course_name":search_course},follow=True)
@@ -103,6 +111,7 @@ class courseList(TestCase):
             self.assertEqual(j.course_name,search_course,"search did not work")
 
     def test_searchtriple(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_courseid = 351
         search_course = "compsci"
         search_semester = "Summer"
@@ -113,6 +122,7 @@ class courseList(TestCase):
         self.assertTrue(len(clist) == 1)
 
     def test_searchNothing(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_courseid = ""
         search_course = ""
         search_semester = ""
@@ -121,6 +131,7 @@ class courseList(TestCase):
         self.assertTrue(len(clist) == 3)
 
     def test_searchSemester(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_semester = "Summer"
         resp = self.green.post("/Home/courseList/",{"semesters":search_semester},follow=True)
         for j in resp.context["courselist"]:
@@ -129,6 +140,7 @@ class courseList(TestCase):
         self.assertTrue(len(clist) == 2)
 
     def test_searchSemesterInvalid(self):
+        resp = self.green.post("/login/", {"username": self.Iusername, "password": self.Ipassword}, follow=True)
         search_semester = "Spring"
         resp = self.green.post("/Home/courseList/",{"semesters":search_semester},follow=True)
         clist = resp.context['courselist']

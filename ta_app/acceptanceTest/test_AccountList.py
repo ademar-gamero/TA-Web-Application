@@ -112,102 +112,114 @@ class accountList(TestCase):
         self.teacherassistant.save()
 
     def test_access(self):
-        resp = self.green.post("/login/",{"username":self.Ausername,"password":self.Apassword},follow=True)
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         resp = self.green.get("/Home/accountList/")
         self.assertEqual(200,resp.status_code,"role validation failed")
         
     def test_displayAccounts(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         resp = self.green.get("/Home/accountList/")
-        for j in resp.context["accountlist"]:
+        for j in resp.context["account_list"]:
             self.assertIn(j,self.accountList,"not all accounts are listed")
 
     def test_searchCorrectName(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         name = self.instructor.name
         resp = self.green.post("/Home/accountList/",{"name":name},follow=True)
-        for j in resp.context["accountlist"]:
+        for j in resp.context["account_list"]:
             self.assertEqual(j.name,name,"search shouldve found a course id but didnt")
 
     def test_searchIncorrectCourseID(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         name = "Quentin Tarantino"
         resp = self.green.post("/Home/accountList/",{"name":name},follow=True)
 
-        clist = resp.context["accountlist"]
+        clist = resp.context["account_list"]
         checker = False
         if len(clist) == 0:
             checker = True
         self.assertTrue(checker,"search returned a value with it shouldnt have")
 
     def test_searchAccountUserName(self):
-        username = self.Iusername
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
+        username = self.instructor.username
         resp = self.green.post("/Home/accountList/",{"username":username},follow=True)
-        for j in resp.context["accountlist"]:
+        for j in resp.context["account_list"]:
             self.assertEqual(j.username,username,"search is not working")
 
     def test_searchIncorrectUserName(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         username = "Teacher_Assistant" 
         resp = self.green.post("/Home/accountList/",{"username":username},follow=True)
-        alist = resp.context["accountlist"]
+        alist = resp.context["account_list"]
         checker = False
         if len(alist) == 0:
             checker = True
         self.assertTrue(checker,"search returned a value with it shouldnt have")
 
     def test_searchAccountRole(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         role = self.instructor.role
         resp = self.green.post("/Home/accountList/",{"role":role},follow=True)
-        for j in resp.context["accountlist"]:
+        for j in resp.context["account_list"]:
             self.assertEqual(j.role,role,"search is not working")
             
     def test_searchIncorrectAccountRole(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         role = "Teacher-Assistant"
         print(role)
         resp = self.green.post("/Home/accountList/",{"role":role},follow=True)
-        alist = resp.context["accountlist"]
+        alist = resp.context["account_list"]
         checker = False
         if len(alist) == 0:
             checker = True
         self.assertTrue(checker,"search returned a value with it shouldnt have")
 
     def test_searchNameRole(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         name = self.instructor.name
         role = self.instructor.role
         resp = self.green.post("/Home/accountList/",{"name":name,"role":role},follow=True)
-        for j in resp.context["accountlist"]:
+        for j in resp.context["account_list"]:
             self.assertEqual(j.role,role,"search did not work")
             self.assertEqual(j.name,name,"search did not work")
 
     def test_searchUserNameRole(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         username = self.instructor.username
         role = self.instructor.role
         resp = self.green.post("/Home/accountList/",{"username":username,"role":role},follow=True)
-        for j in resp.context["accountlist"]:
+        for j in resp.context["account_list"]:
             self.assertEqual(j.role,role,"search did not work")
             self.assertEqual(j.username,username,"search did not work")
 
     def test_searchUsernameName(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         username = self.instructor.username
         name = self.instructor.name
         resp = self.green.post("/Home/accountList/",{"username":username,"name":name},follow=True)
-        for j in resp.context["accountlist"]:
+        for j in resp.context["account_list"]:
             self.assertEqual(j.username,username,"search did not work")
             self.assertEqual(j.name,name,"search did not work")
 
     def test_searchUserNameRoleThree(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         username = self.instructor.username
         name = self.instructor.name
         role = self.instructor.role
         resp = self.green.post("/Home/accountList/",{"name":name,"username":username,"role":role},follow=True)
-        for j in resp.context["accountlist"]:
+        for j in resp.context["account_list"]:
             self.assertEqual(j.name,name,"search did not work")
             self.assertEqual(j.username,username,"search did not work")
             self.assertEqual(j.role,role,"search did not work")
 
     def test_searchNone(self):
+        resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
         username = ''
         name = ''
         role = ''
         resp = self.green.post("/Home/accountList/", {"name": name, "username": username, "role": role}, follow=True)
-        self.assertTrue(resp.context['accountlist'] == [],"search found objects it shouldnt have")
+        self.assertTrue(resp.context['account_list'] == [],"search found objects it shouldnt have")
 
     def test_adminInvalidSearchAssignedUsers(self):
         resp = self.green.post("/login/",{"username":self.admin.username,"password":self.admin.password},follow=True)
