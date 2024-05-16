@@ -152,7 +152,7 @@
                     <td>{{ course.course_name }}</td>
                     <td>{{ course.semester }}</td>
                     {% if is_admin %}
-                        <td><a href="#" class="button-link">Edit Course Info</a></td>
+                        <td><a href="{% url 'editCourse' course.pk %}" class="button-link">Edit Course Info</a></td>
                     {% endif %}
                     <td><a href="{% url 'courseSections' course.pk %}" class="button-link">Course Sections</a></td>
                     {% if is_admin %}

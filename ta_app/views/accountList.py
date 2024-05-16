@@ -21,8 +21,8 @@ class accountList(View):
         username = request.POST.get('username', '')
         role = request.POST.get('roles', '')
         accounts = []
-        role = request.session["role"]
-        if role == "Admin":
+        curr_role = request.session["role"]
+        if curr_role == "Admin":
             isAdmin = True
         if request.POST.get('input_button') == "Submit":
             if name != '' and username != '' and role != '':
@@ -53,7 +53,7 @@ class accountList(View):
                             accounts.append(usr)
         else:
             accounts = User.objects.all()
-        return render(request, "account_list.html", {"account_list": accounts, "isAdmin": isAdmin, "usr_role": role})
+        return render(request, "account_list.html", {"account_list": accounts, "isAdmin": isAdmin, "usr_role": curr_role})
 
 
 

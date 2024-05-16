@@ -84,6 +84,12 @@
             <a href="{% url 'accountCreation' %}" class="button">Create Account</a>
             <div class="description">Add a new user account</div>
         {% endif %}
+            <a href = "{% url 'accountInfo' pk=user_id %}" class="button">Your Account Info</a>
+                <div class="description">View and edit all your contact information and account information</div>
+            {% if role != "Admin" %}
+            <a href = "{% url 'accountAssignment' pk=user_id %}" class="button">Your Section Assignments</a>
+                <div class="description">View your Course and Section Assignments </div>
+            {% endif %}
         <form method="post" action="{% url 'Home' %}">
             {% csrf_token %}
             <input type="hidden" name="logout" value="1">

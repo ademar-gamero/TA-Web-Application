@@ -189,7 +189,6 @@
                         {% endif %}
                     </td>
                     <td>{{ section.start_time }} - {{ section.end_time }}</td>
-                </tr>
                 {% endfor %}
                 {% if not section.meeting_days.all %}
                     None
@@ -201,9 +200,7 @@
                     <td>None</td>
                 {% endif %}
             </tr>
-            {% endfor %}
           </table>
-                <a href = "/Home/"> Go Home </a>
         </div>
         <a href="/Home/" class="home-button">Go Home</a>
     </div>
