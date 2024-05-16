@@ -1,9 +1,29 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Account Assignments</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003087;
+            color: #fff;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #0046be;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        h1, h2, h3 {
+            color: #FFEA00;
+        }
+
         .center {
             text-align: center;
             margin-left: auto;
@@ -15,167 +35,189 @@
             margin-right: auto;
             width: 100%;
         }
-        table, th, td {
-            border: 1px solid black;
-            padding: 5px;
-            border-collapse: collapse;
+
+        .table-container {
+            display: flex;
+            justify-content: center;
         }
+
+        table {
+            background-color: #fff;
+            color: #000;
+            border-radius: 10px;
+            padding: 10px;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 10px;
+        }
+
         .button {
             padding: 10px 20px;
-            color: #fff;
-            background-color: #0046be;
+            color: #000;
+            background-color: #FFEA00;
             border: none;
             cursor: pointer;
             border-radius: 4px;
             text-decoration: none;
             display: inline-block;
             margin: 5px;
+            font-weight: bold;
         }
+
         .button:hover {
-            background-color: #003087;
+            background-color: #E5C700;
         }
     </style>
-    <title>Account Assignments</title>
 </head>
 <body>
-<form action="/Home/accountList/accountAssignment/{{curr_user.pk}}/" method="post">
-    {% csrf_token %}
-    <h1 class="center">{{curr_user.name}} {{curr_user.role}} Assignments</h1>
-    <div class="center2" align="center">
-        <br><br><br>
-        <div class="center">
-            <h2>Assigned Course(s):</h2>
-            {% if not courses %}
-                <p>User is not assigned to any courses</p>
-            {% else %}
-                <table>
-                    <tr>
-                        <th>Course ID</th>
-                        <th>Course Name</th>
-                        <th>Semester</th>
-                        {% if usr_role == "Admin" %}
-                            <th>Remove Course Assignment</th>
-                        {% endif %}
-                    </tr>
-                    {% for course in courses %}
-                        <tr>
-                            <td>{{ course.course_id }}</td>
-                            <td>{{ course.course_name }}</td>
-                            <td>{{ course.semester }}</td>
-                            {% if usr_role == "Admin" %}
-                                <td>Remove Course Assignment</td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                </table>
-            {% endif %}
-        </div>
-        <br><br>
-        <div class="center">
-            <h2>Assigned Section(s):</h2>
-            {% if not sections.all %}
-                <p>User is not assigned to any sections</p>
-            {% elif curr_user.role == "Teacher-Assistant" and lab_check == "False" %}
-                <p>User is not assigned to any lab sections</p>
-            {% else %}
-                <table>
-                    <br>
-                    <tr>
-                        <th>Course</th>
-                        <th>Section ID</th>
-                        <th>Type</th>
-                        <th>Meeting Days</th>
-                        <th>Meeting Time</th>
-                        <th>Location</th>
-                        {% if usr_role == "Admin" %}
-                            <th>Remove Assignment</th>
-                        {% endif %}
-                        {% if curr_user.role != "Instructor" and usr_role == "Instructor" %}
-                            <th>Remove Assignment</th>
-                        {% endif %}
-                    </tr>
-                    {% for section in curr_user.assigned_section.all %}
-                        {% if section.type == "lab" and curr_user.role == "Teacher-Assistant" %}
-                            <tr>
-                                <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
-                                <td>{{ section.section_id }}</td>
-                                <td>{{ section.type }}</td>
-                                <td>{% for day in section.meeting_days.all %}{{ day }}{% endfor %}</td>
-                                <td>{{ section.start_time }} - {{ section.end_time }}</td>
-                                <td>{{ section.location }}</td>
-                                {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                    <td><a href="{% url 'removeSection' curr_user.pk section.pk %}" class="button">Remove Assignment</a></td>
-                                {% endif %}
-                            </tr>
-                        {% endif %}
-                        {% if section.type == "lecture" and curr_user.role == "Instructor" %}
-                            <tr>
-                                <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
-                                <td>{{ section.section_id }}</td>
-                                <td>{{ section.type }}</td>
-                                <td>{% for day in section.meeting_days.all %}{{ day }}{% endfor %}</td>
-                                <td>{{ section.start_time }} - {{ section.end_time }}</td>
-                                <td>{{ section.location }}</td>
-                                {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                    <td><a href="{% url 'removeSection' curr_user.pk section.pk %}" class="button">Remove Assignment</a></td>
-                                {% endif %}
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                </table>
-            {% endif %}
-        </div>
-        {% if usr_role == "Admin" or usr_role == "Instructor" %}
-            <br><br>
-            {% if usr_role == "Admin" %}
-                <h3>Add Courses:</h3>
-                {% if not selectableCourses %}
-                    <p>User is signed up for all courses or there are no courses to be assigned to</p>
-                {% else %}
-                    <select id="section-id" name="section">
-                        <option value="">None</option>
-                        {% for newsection in selectableCourses %}
-                            <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}} || Section Schedule: {% for day in newsection.meeting_days.all %}{{ day }}{% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time }}</option>
-                        {% endfor %}
-                    </select>
-                {% endif %}
-            {% endif %}
-            <br>
-            {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                {% if curr_user.role != "Instructor" %}
-                    <h3>Add Section:</h3>
-                    {% if not selectableSections %}
-                        <p>User is signed up for all the lab sections in their course(s) or there are no lab sections to sign up for their in their course(s)</p>
+    <div class="container">
+        <form action="/Home/accountList/accountAssignment/{{curr_user.pk}}/" method="post">
+            {% csrf_token %}
+            <h1 class="center">{{curr_user.name}} {{curr_user.role}} Assignments</h1>
+            <div class="center2" align="center">
+                <br><br><br>
+                <div class="center">
+                    <h2>Assigned Course(s):</h2>
+                    {% if not courses %}
+                        <p>User is not assigned to any courses</p>
                     {% else %}
-                        <select id="section-id" name="section">
-                            <option value="">None</option>
-                            {% for newsection in selectableSections %}
-                                <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}} || Section Schedule: {% for day in newsection.meeting_days.all %}{{ day }}{% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time }}</option>
-                            {% endfor %}
-                        </select>
+                        <div class="table-container">
+                            <table>
+                                <tr>
+                                    <th>Course ID</th>
+                                    <th>Course Name</th>
+                                    <th>Semester</th>
+                                    {% if usr_role == "Admin" %}
+                                        <th>Remove Course Assignment</th>
+                                    {% endif %}
+                                </tr>
+                                {% for course in courses %}
+                                    <tr>
+                                        <td>{{ course.course_id }}</td>
+                                        <td>{{ course.course_name }}</td>
+                                        <td>{{ course.semester }}</td>
+                                        {% if usr_role == "Admin" %}
+                                            <td>Remove Course Assignment</td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
                     {% endif %}
-                {% endif %}
-            {% endif %}
-            <br><br>
-            {% if curr_user.pk != viewer_pk %}
-                {% if viewer.role == "Instructor" and curr_user.role != "Instructor" and selectableSections %}
-                    <input type="submit" value="Submit" class="button">
-                {% endif %}
-                {% if viewer.role == "Admin" %}
-                    {% if selectableSections or selectableCourses %}
-                        <input type="submit" value="Submit" class="button">
+                </div>
+                <br><br>
+                <div class="center">
+                    <h2>Assigned Section(s):</h2>
+                    {% if not sections.all %}
+                        <p>User is not assigned to any sections</p>
+                    {% elif curr_user.role == "Teacher-Assistant" and lab_check == "False" %}
+                        <p>User is not assigned to any lab sections</p>
+                    {% else %}
+                        <div class="table-container">
+                            <table>
+                                <br>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Section ID</th>
+                                    <th>Type</th>
+                                    <th>Meeting Days</th>
+                                    <th>Meeting Time</th>
+                                    <th>Location</th>
+                                    {% if usr_role == "Admin" %}
+                                        <th>Remove Assignment</th>
+                                    {% endif %}
+                                    {% if curr_user.role != "Instructor" and usr_role == "Instructor" %}
+                                        <th>Remove Assignment</th>
+                                    {% endif %}
+                                </tr>
+                                {% for section in curr_user.assigned_section.all %}
+                                    {% if section.type == "lab" and curr_user.role == "Teacher-Assistant" %}
+                                        <tr>
+                                            <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
+                                            <td>{{ section.section_id }}</td>
+                                            <td>{{ section.type }}</td>
+                                            <td>{% for day in section.meeting_days.all %}{{ day }} {% endfor %}</td> <!-- Added space between days -->
+                                            <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                                            <td>{{ section.location }}</td>
+                                            {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                                                <td><a href="{% url 'removeSection' curr_user.pk section.pk %}" class="button">Remove Assignment</a></td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endif %}
+                                    {% if section.type == "lecture" and curr_user.role == "Instructor" %}
+                                        <tr>
+                                            <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
+                                            <td>{{ section.section_id }}</td>
+                                            <td>{{ section.type }}</td>
+                                            <td>{% for day in section.meeting_days.all %}{{ day }} {% endfor %}</td> <!-- Added space between days -->
+                                            <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                                            <td>{{ section.location }}</td>
+                                            {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                                                <td><a href="{% url 'removeSection' curr_user.pk section.pk %}" class="button">Remove Assignment</a></td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </table>
+                        </div>
                     {% endif %}
+                </div>
+                {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                    <br><br>
+                    {% if usr_role == "Admin" %}
+                        <h3>Add Courses:</h3>
+                        {% if not selectableCourses %}
+                            <p>User is signed up for all courses or there are no courses to be assigned to</p>
+                        {% else %}
+                            <select id="section-id" name="section">
+                                <option value="">None</option>
+                                {% for newsection in selectableCourses %}
+                                    <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}} || Section Schedule: {% for day in newsection.meeting_days.all %}{{ day }}{% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                    {% endif %}
+                    <br>
+                    {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                        {% if curr_user.role != "Instructor" %}
+                            <h3>Add Section:</h3>
+                            {% if not selectableSections %}
+                                <p>User is signed up for all the lab sections in their course(s) or there are no lab sections to sign up for their in their course(s)</p>
+                            {% else %}
+                                <select id="section-id" name="section">
+                                    <option value="">None</option>
+                                    {% for newsection in selectableSections %}
+                                        <option value="{{newsection.pk}}">Course: {{newsection.course_parent}} || Section Type: {{newsection.type}} || Section ID: {{newsection.section_id}} || Section Schedule: {% for day in newsection.meeting_days.all %}{{ day }}{% endfor %} || {{ newsection.start_time }} - {{ newsection.end_time }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    <br><br>
+                    {% if curr_user.pk != viewer_pk %}
+                        {% if viewer.role == "Instructor" and curr_user.role != "Instructor" and selectableSections %}
+                            <input type="submit" value="Submit" class="button">
+                        {% endif %}
+                        {% if viewer.role == "Admin" %}
+                            {% if selectableSections or selectableCourses %}
+                                <input type="submit" value="Submit" class="button">
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    <br>
+                    {{ message }}
                 {% endif %}
-            {% endif %}
-            <br>
-            {{ message }}
-        {% endif %}
-        <br>
-        <div>
-            <a href="/Home/accountList/" class="button">Go Back</a>
-            <a href="/Home/" class="button">Go Home</a>
-        </div>
+                <br>
+                <div>
+                    <a href="/Home/accountList/" class="button">Go Back</a>
+                    <a href="/Home/" class="button">Go Home</a>
+                </div>
+            </div>
+        </form>
     </div>
-</form>
 </body>
 </html>
