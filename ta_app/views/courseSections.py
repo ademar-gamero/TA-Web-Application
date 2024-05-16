@@ -60,7 +60,7 @@ class courseSections(View):
         sections = Section.objects.filter(course_parent=course)
         teacherassistant_pool = User.objects.filter(role="Teacher-Assistant")
         instructor_pool = User.objects.filter(role="Instructor")
-# get pool of users for sections
+        # get pool of users for sections
         ta_pool = []
         assigned_users={}
         for section in sections:
@@ -94,7 +94,7 @@ class courseSections(View):
         assigned = False
         instructor_message = 'None'
         if curr_usr not in assigned_users:
-            instructor_message = "Your are not assigned to this course"
+            instructor_message = "You are not assigned to this course"
         for key, value in dict.items():
             for val in value:
                 if val != 'None':
@@ -149,6 +149,30 @@ class courseSections(View):
             instructor_message = 'None'
             if curr_usr not in assigned_users:
                 instructor_message = "Your are not assigned to this course"
+
+        to_remove = request.POST.get('remove_section')
+        if to_remove != "":
+            keys = to_remove.split('-')
+            try:
+                remove = User.objects.get(pk=int(keys[0]))
+                s = None
+                try:
+                    s = Section.objects.get(pk=int(keys[1]))
+                except Section.DoesNotExist:
+                    # this will be caught by the remove_section so can just pass right now
+                    pass
+                u = UserClass(username=remove.username, password=remove.password, name=remove.name, role=remove.role,
+                              email=remove.email, phone_number=remove.phone_number, skills=remove.skills,
+                              address=remove.address, assigned=remove.assigned,
+                              assigned_sections=remove.assigned_section.all())
+                try:
+                    u.remove_section(s)
+                    success = "Successfully removed" + u.__str__() + " from " + s.__str__()
+                except ValueError as failure:
+                    # changes the error message, then proceeds, removing need for another return
+                    success = failure.__str__()
+            except User.DoesNotExist:
+                success = "User does not exist"
 
         return render(request, "course_sections.html", {"course": course, "sections": sections,"curr_usr":curr_usr,
                                                         "ta_all": teacherassistant_pool, "ins_all": instructor_pool,

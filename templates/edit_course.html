@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Course </title>
+    <style>
+        .home-button {
+            display: inline-block;
+            padding: 5px 15px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .home-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Course</h1>
+    <div>
+      {{ session }}
+    <form action="/Home/courseList/editCourse/{{ course.pk }}/" method="post">
+      {% csrf_token %}
+        <label for="course_id">Course ID:</label>
+        <input type="number" min="0" max="9999" name="course_id" value="{{ course.course_id }}"><br>
+        <label for="course_name">Course name:</label>
+        <input type="text" name="course_name" value="{{ course.course_name }}"><br>
+        <label for="semester">Semester:</label>
+        <select name="semester" id="semester">
+            {% for semester_key, semester_value in semesters %}
+                <option value="{{ semester_key }}" {% if course.semester == semester_key %}selected{% endif %}>{{ semester_value }}</option>
+            {% endfor %}
+        </select></br>
+        <label for="description">Course description:</label>
+        <textarea name="description" rows="5" cols="30"> {{ course.description }}</textarea></br>
+        <input type="submit" value="Save Changes"></br>
+    </form>
+       {{ errorMessage }}
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <a href = "/Home/" class="home-button">Go Home </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Section</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Section</h1>
+        {% if message %}
+            <p style="color: green;">{{ message }}</p>
+        {% endif %}
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <form method="post" action="">
+            {% csrf_token %}
+            <div>
+                <label for="course_parent">Course:</label>
+                <select name="course_parent" id="course_parent" required>
+
+                    {% for course in courses %}
+
+                    <option value="{{ course.pk }}" {% if course.pk == section.course_parent.pk %}selected{% endif %} >{{ course }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="section_id">Section ID:</label>
+                <input type="text" name="section_id" id="section_id" value="{{ section.section_id }}" required>
+            </div>
+            <fieldset>
+                <legend>Days:</legend>
+                {% for day in days %}
+                    <label>
+                        <input type="checkbox" name="meeting_days" value="{{ day}}" {% if day in assignedDays %} checked {% endif %}>
+                        {{ day}}
+                    </label>
+                {% endfor %}
+            </fieldset>
+            <div>
+                <label for="start_time">Start Time:</label>
+                <input type="time" name="start_time" id="start_time" value="{{ start_time }}" >
+            </div>
+            <div>
+                <label for="end_time">End Time:</label>
+                <input type="time" name="end_time" id="end_time" value="{{ end_time }}" >
+            </div>
+            <div>
+                <label for="location">Location:</label>
+                <input type="text" name="location" id="location" value="{{ section.location }}">
+            </div>
+            <div>
+                <label for="is_online">Is Online:</label>
+                <select name="is_online" id="is_online" required>
+                    <option value="1" {% if section.is_online %} selected {% endif %}>Yes</option>
+                    <option value="" {% if not section.is_online %} selected {% endif %}>No</option>
+            </select>
+            </div>
+            <div>
+                <label for="section_type">Section Type:</label>
+                <select name="section_type" id="section_type" required>
+                    <option value="lecture" {% if section.type == 'lecture' %} selected {% endif %}>Lecture</option>
+                    <option value="lab" {% if section.type == 'lab' %} selected {% endif %}>Lab</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit">Update Section</button>
+            </div>
+        </form>
+    </div>
+<td><a href="{% url 'courseSections' section.course_parent.pk %}">Go Back</a></td><br>
+<a href = "/Home/"> Go Home </a>
+</body>
+</html>

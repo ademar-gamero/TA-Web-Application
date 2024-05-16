@@ -17,7 +17,7 @@ class deleteAccount(View):
         if 'confirm' in request.POST:
             deleted = UserClass(username=user.username, password=user.password, name=user.name, role=user.role,
                                 email=user.email, address=user.address, phone_number=user.phone_number,
-                                skills=user.skills, assigned=user.assigned, assigned_sections=user.assigned_section)
+                                skills=user.skills, assigned=user.assigned, assigned_sections=list(user.assigned_section.all()))
             try:
                 deleted.delete_user()
                 messages.success(request, 'Account deleted successfully!')
