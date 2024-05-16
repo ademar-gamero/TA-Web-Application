@@ -101,7 +101,7 @@
                                         <td>{{ course.course_name }}</td>
                                         <td>{{ course.semester }}</td>
                                         {% if usr_role == "Admin" %}
-                                            <td>Remove Course Assignment</td>
+                                            <td><a href = "{% url 'removeCourseAssignment' user_pk=curr_user.pk course_pk=course.pk%}">Remove {{ curr_user.name }} from course</a></td>
                                         {% endif %}
                                     </tr>
                                 {% endfor %}
