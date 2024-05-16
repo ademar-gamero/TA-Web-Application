@@ -107,6 +107,10 @@
         </div>
         <br>
         <a href="/Home/" class="button-link">Home</a>
+        {% if isAdmin %}
+          <a href = "/Home/accountCreation/"> Create Account </a>
+	        <br>
+        {% endif %}
         <br>
         <div align="center">
             <table style="width:100%; border-collapse: collapse;">

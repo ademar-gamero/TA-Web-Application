@@ -129,7 +129,11 @@
                 {% if user.role == "Teacher-Assistant" %}
                     <tr>
                         <td><label for="skills">Skills: </label></td>
-                        <td><textarea name="skills" id="skills" rows="3" cols="30">{{ user.skills }}</textarea></td>
+                        {% if own_acc %}
+                          <td><textarea name="skills" id="skills" rows="3" cols="30">{{ user.skills }}</textarea></td>
+                        {% else %}
+                          <td><textarea name="skills" id="skills" rows="3" cols="30" readonly>{{ user.skills }}</textarea></td>
+                        {% endif %}
                     </tr>
                 {% endif %}
             </table>

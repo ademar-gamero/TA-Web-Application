@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        fieldset{
+            width: 30%
+        }
+    </style>
     <title>Edit Section</title>
     <style>
         body {
@@ -134,8 +139,8 @@
             <div>
                 <label for="section_type">Section Type:</label>
                 <select name="section_type" id="section_type" required>
-                    <option value="lecture" {% if section.type == 'lecture' %}selected{% endif %}>Lecture</option>
-                    <option value="lab" {% if section.type == 'lab' %}selected{% endif %}>Lab</option>
+                    <option value="LEC" {% if section.type == 'LEC' %} selected {% endif %}>Lecture</option>
+                    <option value="LAB" {% if section.type == 'LAB' %} selected {% endif %}>Lab</option>
                 </select>
             </div>
             <div>

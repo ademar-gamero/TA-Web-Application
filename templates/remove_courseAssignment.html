@@ -63,7 +63,7 @@
     <div class="container">
         <h1>Confirm Course Un-Assignment</h1>
         <form method="post" action="{% url 'removeCourseAssignment' user_pk=user.pk course_pk=course.pk %}">
-            <p>Are you sure you want to remove {{ user.name }} from {{ course_name }}?</p>
+            <p>Are you sure you want to remove {{ user.name }} from {{ course }}?</p>
             {% csrf_token %}
             <button type="submit" name="confirm" value="yes">Confirm Removal</button>
             <a href="{% url 'courseSections' course_pk=course.pk %}" class="cancel-button">Cancel</a>

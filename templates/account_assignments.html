@@ -135,7 +135,7 @@
                                     {% endif %}
                                 </tr>
                                 {% for section in curr_user.assigned_section.all %}
-                                    {% if section.type == "lab" and curr_user.role == "Teacher-Assistant" %}
+                                    {% if section.type == "LAB" and curr_user.role == "Teacher-Assistant" %}
                                         <tr>
                                             <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
                                             <td>{{ section.section_id }}</td>
@@ -148,7 +148,7 @@
                                             {% endif %}
                                         </tr>
                                     {% endif %}
-                                    {% if section.type == "lecture" and curr_user.role == "Instructor" %}
+                                    {% if section.type == "LEC" and curr_user.role == "Instructor" %}
                                         <tr>
                                             <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
                                             <td>{{ section.section_id }}</td>

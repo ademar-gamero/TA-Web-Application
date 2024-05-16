@@ -11,7 +11,7 @@ class accountAssignment(View):
         usr_role = request.session["role"]
         user_pk = request.session["pk"]
         viewer = User.objects.get(pk=user_pk)
-        viewer_courses = Section.objects.filter(type="lecture",assigned_users__in=[viewer])
+        viewer_courses = Section.objects.filter(type="LEC",assigned_users__in=[viewer])
         account = User.objects.get(pk=pk)
         usr_sections = account.assigned_section.all()
         all_sections = Section.objects.all()
@@ -25,20 +25,20 @@ class accountAssignment(View):
 
 
         for sec in usr_sections:
-            if sec.type == "lecture":
+            if sec.type == "LEC":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
                     if secs not in usr_sections:
                         selectableSections.append(secs)
                     if secs.course_parent not in assigned_courses:
                         assigned_courses.append(secs.course_parent)
-            if sec.type == "lab":
+            if sec.type == "LAB":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
                     if secs not in usr_sections:
                         if secs not in selectableSections:
                             selectableSections.append(secs)
                 lab_check = "True"
         selectableCourses = []
-        for secs in  Section.objects.filter(type="lecture"):
+        for secs in  Section.objects.filter(type="LEC"):
             if secs not in usr_sections:
                 selectableCourses.append(secs)
         print(lab_check)
@@ -58,18 +58,18 @@ class accountAssignment(View):
         lab_check = "False"
         selectableSections = []
         for sec in usr_sections:
-            if sec.type == "lecture":
+            if sec.type == "LEC":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
                     if secs not in usr_sections:
                         selectableSections.append(secs)
                     if secs.course_parent not in assigned_courses:
                         assigned_courses.append(secs.course_parent)
-            if sec.type == "lab":
+            if sec.type == "LAB":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
                     if secs not in usr_sections:
                         selectableSections.append(secs)
         selectableCourses = []
-        for secs in  Section.objects.filter(type="lecture"):
+        for secs in  Section.objects.filter(type="LEC"):
             if secs not in usr_sections:
                 if secs not in selectableSections:
                     selectableSections.append(secs)
@@ -93,20 +93,20 @@ class accountAssignment(View):
         print(account.assigned_section.all())
         selectableSections = []
         for sec in usr_sections:
-            if sec.type == "lecture":
+            if sec.type == "LEC":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
                     if secs not in usr_sections:
                         selectableSections.append(secs)
                     if secs.course_parent not in assigned_courses:
                         assigned_courses.append(secs.course_parent)
-            if sec.type == "lab":
+            if sec.type == "LAB":
                 for secs in Section.objects.filter(course_parent=sec.course_parent):
                     if secs not in usr_sections:
                         if secs not in selectableSections:
                             selectableSections.append(secs)
                 lab_check = "True"
         selectableCourses = []
-        for secs in  Section.objects.filter(type="lecture"):
+        for secs in  Section.objects.filter(type="LEC"):
             if secs not in usr_sections:
                 selectableCourses.append(secs)
 

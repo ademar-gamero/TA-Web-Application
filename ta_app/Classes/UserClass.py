@@ -55,9 +55,7 @@ class UserClass(ABC):
         self.address = address
         self.assigned = assigned
         self.assigned_sections = []
-        if not isinstance(assigned_sections, list) and not isinstance(assigned_sections, QuerySet):
-            all_assigned_sections = assigned_sections.all()
-            assigned_sections = all_assigned_sections
+
         if assigned_sections is not None:
             if isinstance(assigned_sections, Section):
                 self.assigned_sections.append(assigned_sections)
@@ -184,7 +182,7 @@ class UserClass(ABC):
                 self.assigned_sections = [new_section]
             else:
                 if self.assigned_sections.count(new_section) > 0:
-                    if new_section.type == "lecture" or new_section.type=="LEC" and (self.role == "Teacher-Assistant"):
+                    if new_section.type=="LEC" and (self.role == "Teacher-Assistant"):
                         raise ValueError(self.__str__() + " cannot be assigned, teacher assistant is already assigned to course " + new_section.course_parent.__str__())
                     raise ValueError(self.__str__() + " cannot be assigned, user is already assigned to section " + new_section.__str__())
                 if self.assigned:
@@ -318,32 +316,32 @@ class UserClass(ABC):
                   skills=None):
         old_username = self.username
 
-        if username is not None:
+        if (username is not None) and (username != self.username):
             try:
                 User.objects.get(username=username)
                 raise ValueError("Username already in use. Please choose a unique username.")
             except User.DoesNotExist or ValueError as e:
                 self.set_username(username)
-        if password is not None:
+        if password is not None and (password != self.password):
             self.set_password(password)
-        if name is not None:
+        if name is not None and (name != self.name):
             self.set_name(name)
-        if role is not None:
+        if role is not None and (role != self.role):
             self.set_role(role)
-        if email is not None:
+        if email is not None and (email != self.email):
             try:
                 User.objects.get(email=email)
                 raise ValueError("Email already in use. Please use a unique email.")
             except User.DoesNotExist:
                 self.set_email(email)
-        if phone is not None:
+        if phone is not None and (phone != self.phone_number):
             try:
                 User.objects.get(phone_number=phone)
             except User.DoesNotExist:
                 self.set_phone_number(phone)
-        if address is not None:
+        if address is not None and (address != self.address):
             self.set_address(address)
-        if skills is not None:
+        if skills is not None and (skills != self.skills):
             self.set_skills(skills)
         User.objects.filter(username=old_username).update(username=self.username, password=self.password,
                                                           name=self.name,

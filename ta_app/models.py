@@ -29,9 +29,9 @@ class Semesters(models.TextChoices):
 
 
 class Types(models.TextChoices):
-    LAB = "lab"
-    LEC = "lecture"
-    DIS = "discussion"
+    LAB = "LAB"
+    LEC = "LEC"
+    DIS = "DIS"
 
 
 class Course(models.Model):
