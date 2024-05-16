@@ -95,11 +95,71 @@ class CourseClass(object):
         sem = self.get_course_semester()
 
         # check that the database does not already contain the id+name+semester combination
-        # return False if it's already there
-        find_course = Course.objects.all().filter(course_id=courseid,course_name=name,semester=sem)
+        find_course = Course.objects.all().filter(course_id=courseid, course_name=name, semester=sem)
         if find_course.exists():  # if there's something in the returned QuerySet
             return False  # then it already exists
 
         # otherwise, create new entry and return True
         Course.objects.create(course_id=courseid, course_name=name, description=descr, semester=sem)
         return True
+
+    def edit_course(self, course_id=None, course_name=None, description=None, semester=None):
+        # Store old versions of critical course information.
+        old_id = self.get_course_id()
+        old_name = self.get_course_name()
+        old_description = self.get_course_description()
+        old_semester = self.get_course_semester()
+
+        # Get the calling course that we want to edit (there should only be one option ever returned... or none)
+        # Protect against trying to edit a course that does not exist in the database.
+        try:
+            course = Course.objects.get(course_id=old_id, course_name=old_name, semester=old_semester)
+        except Course.DoesNotExist:
+            raise ValueError("Course not found!")
+
+        # Use setters to edit each field that the user has provided input to edit. The setters will raise an error
+        # if any of the input values do not pass the validation.
+        try:
+            check = False
+            if course_id is not None:
+                check = True
+                self.set_id(course_id)
+            if course_name is not None:
+                check = True
+                self.set_name(course_name)
+            if description is not None:
+                self.set_description(description)
+            if semester is not None:
+                check = True
+                self.set_semester(semester)
+            if check:  # if we have changed any one of the three critical values (ID, name, and/or semester)
+                # check the database to see if the course we are attempting to make already exists and raise
+                # an error if so
+                try:
+                    Course.objects.get(course_id=self.course_id, course_name=self.course_name, semester=self.semester)
+                    # edge case (when only description is being changed)
+                    count = Course.objects.filter(course_id=self.course_id, course_name=self.course_name,
+                                                  semester=self.semester, description=self.description).count()
+                    if count == 0 and self.description != old_description:
+                        Course.objects.filter(pk=course.pk).update(description=self.description)
+                        return True
+                    else:
+                        # It is creating a conflicting course, so reset all values back to original
+                        self.course_id = old_id
+                        self.course_name = old_name
+                        self.description = old_description
+                        self.semester = old_semester
+                        raise ValueError("Exact course already exists!")
+                except Course.DoesNotExist:
+                    pass  # do nothing. If it doesn't already exist, we're good to go!
+            # Now we can update all values in the database.
+            Course.objects.filter(pk=course.pk).update(course_id=self.course_id, course_name=self.course_name,
+                                                       description=self.description, semester=self.semester)
+            return True
+        except TypeError or ValueError as e:
+            # If any validation fails during setters, reset all values back to original
+            self.course_id = old_id
+            self.course_name = old_name
+            self.description = old_description
+            self.semester = old_semester
+            raise ValueError(e.__str__())
