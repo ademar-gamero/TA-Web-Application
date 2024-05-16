@@ -41,9 +41,9 @@ class accountInfoView(View):
 
         self.val = False
         account = User.objects.get(pk=pk)
-        self.acc_edit = UserClass(account.username, account.password, account.name, account.role,
-                                  account.email, account.phone_number, account.address, account.assigned,
-                                  account.assigned_section.all())
+        self.acc_edit = UserClass(username=account.username, password=account.password, name=account.name, role=account.role,
+                                  email=account.email, phone_number=account.phone_number, address=account.address, assigned=account.assigned,
+                                  assigned_sections=account.assigned_section.all(), skills=account.skills)
         try:
             self.acc_edit.edit_user(username=username, password=password, name=name, role=role, email=email,
                                     phone=phone_number, address=address)
