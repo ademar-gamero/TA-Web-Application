@@ -3,14 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <title>Course Assignment Removal Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003087;
+            color: #fff;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #0046be;
+            border-radius: 15px;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #FFEA00;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            color: #000;
+            background-color: #FFEA00;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #E5C700;
+        }
+
+        .cancel-button {
+            background-color: #ccc;
+            color: #000;
+        }
+
+        .cancel-button:hover {
+            background-color: #999;
+        }
+    </style>
 </head>
 <body>
-    <h1>Confirm Course Un-Assignment</h1>
-	<form method="post" action="{% url 'removeCourseAssignment' user_pk=user.pk course_pk=course.pk %}">
-        <p>Are you sure you want to remove {{ user.name }} from {{ course }}?</p>
-        {% csrf_token %}
-        <button type="submit" name="confirm" value="yes">Confirm Removal</button>
-        <button type="{% url 'courseSections' course_pk=course.pk %}" class="cancel-button">Cancel</button>
-	</form>
+    <div class="container">
+        <h1>Confirm Course Un-Assignment</h1>
+        <form method="post" action="{% url 'removeCourseAssignment' user_pk=user.pk course_pk=course.pk %}">
+            <p>Are you sure you want to remove {{ user.name }} from {{ course }}?</p>
+            {% csrf_token %}
+            <button type="submit" name="confirm" value="yes">Confirm Removal</button>
+            <a href="{% url 'courseSections' course_pk=course.pk %}" class="cancel-button">Cancel</a>
+        </form>
+    </div>
 </body>
 </html>

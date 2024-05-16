@@ -4,88 +4,91 @@
     <meta charset="UTF-8">
     <title>Home</title>
     <style>
-        /* General body styles */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #0046be; /* Best Buy blue */
+            background-color: #003087;
+            color: #000;
+            text-align: center;
         }
 
-        /* Container styling with blue border and shadow */
-        .container {
-            max-width: 400px;
+        .banner-container {
+            max-width: 600px;
             margin: 50px auto;
-            padding: 20px;
-            border: 3px solid #0046be; /* Best Buy blue */
-            background-color: #fff; /* white background */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* subtle shadow */
+            padding: 10px;
+            background-color: #FFEA00;
+            color: #000;
+            font-weight: bold;
+            font-size: 1.5em;
+            border-radius: 10px;
+            border: 3px solid black;
         }
 
-        /* Centered text for elements */
-        center, a, p { text-align: center; }
-
-        /* Form inputs */
-        input[type="text"], input[type="password"], input[type="submit"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        /* Link styling */
-        a {
+        .welcome-message {
+            font-size: 0.8em;
             display: block;
-            margin-bottom: 10px;
-            color: #0046be; /* Best Buy blue */
-            text-decoration: none;
+            margin-top: 5px;
         }
 
-        /* Hover effect for links */
-        a:hover {
-            color: #003087; /* darker blue on hover */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #0046be;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
         }
 
-        /* Button and submit input styling */
-        button, input[type="submit"] {
-            padding: 10px 20px;
-            color: #fff;
-            background-color: #0046be; /* Best Buy blue */
+        .button {
+            width: 80%;
+            padding: 10px;
+            color: #000;
+            background-color: #FFEA00;
             border: none;
-            cursor: pointer;
             border-radius: 4px;
+            text-decoration: none;
+            margin: 10px auto;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            font-size: 1em;
         }
 
-        /* Hover effect for buttons */
-        button:hover, input[type="submit"]:hover {
-            background-color: #003087; /* darker blue on hover */
+        .button:hover {
+            background-color: #FFD700;
+        }
+
+        .description {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
+    <div class="banner-container">
+        Best Buy Tech Support's Extra Great Scheduler
+        <span class="welcome-message">Welcome {{ name }}!</span>
+    </div>
     <div class="container">
-        <h2>Home</h2>
-        <div>
-            <p>Welcome to the TA Scheduler App, {{ name }}!</p>
-            <a href = "{% url 'courseList' %}">Course Catalog</a>
-            {% if role == "Admin" %}
-                <a href = "{% url 'createCourse' %}">Create Course</a>
-                <a href = "{% url 'createSection' %}">Create Section</a>
-            {% endif %}
-            <a href = "{% url 'accountList' %}">Account List</a>
-            {% if role == "Admin" %}
-                <a href = "{% url 'accountCreation' %}">Create Account</a>
-            {% endif %}
-            <a href = "{% url 'accountInfo' pk=user_id %}">Your Account Info</a>
-            {% if role != "Admin" %}
-            <a href = "{% url 'accountAssignment' pk=user_id %}">Your Section Assignments</a>
-            {% endif %}
-            <form method="post" action="{% url 'Home' %}">
-                {% csrf_token %}
-                <input type="hidden" name="logout" value="1">
-                <input type="submit" value="Logout">
-            </form>
-        </div>
+        <a href="{% url 'courseList' %}" class="button">Course Catalog</a>
+        <div class="description">View all available courses</div>
+        {% if role == "Admin" %}
+            <a href="{% url 'createCourse' %}" class="button">Create Course</a>
+            <div class="description">Add a new course to the catalog</div>
+            <a href="{% url 'createSection' %}" class="button">Create Section</a>
+            <div class="description">Create a new section for a course</div>
+        {% endif %}
+        <a href="{% url 'accountList' %}" class="button">Account Roster</a>
+        <div class="description">View and manage user accounts</div>
+        {% if role == "Admin" %}
+            <a href="{% url 'accountCreation' %}" class="button">Create Account</a>
+            <div class="description">Add a new user account</div>
+        {% endif %}
+        <form method="post" action="{% url 'Home' %}">
+            {% csrf_token %}
+            <input type="hidden" name="logout" value="1">
+            <input type="submit" value="Logout" class="button">
+        </form>
     </div>
 </body>
 </html>

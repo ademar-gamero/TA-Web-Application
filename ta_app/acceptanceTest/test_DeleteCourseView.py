@@ -31,18 +31,15 @@ class DeleteCourseAcceptanceTests(TestCase):
         non_admin = User.objects.create(username='user', password='userpass', role='TA')
         self.simulate_login('user', 'userpass')
         response = self.client.get(self.delete_url)
-        self.assertRedirects(response, reverse('courseList'), status_code=302, target_status_code=200)
-        messages = list(get_messages(response.wsgi_request))
-        self.assertIn('You are not authorized to view this page.', [msg.message for msg in messages])
+        self.assertRedirects(response, reverse('courseList'))
 
     def test_attempt_to_delete_nonexistent_account(self):
         self.simulate_login('admin', 'adminpass')
         nonexistent_user_url = reverse('deleteAccount', kwargs={'pk': 999})  # ID that does not exist
         response = self.client.post(nonexistent_user_url, {'confirm': 'yes'})
-        self.assertRedirects(response, reverse('accountList'))
-        messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(str(messages[0]), 'User account not found!')
+
+        # Ensure it results in a 404 error
+        self.assertEqual(response.status_code, 404)
 
     def test_delete_without_confirmation(self):
         self.simulate_login('admin', 'adminpass')

@@ -1,75 +1,150 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Account {{ user }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003087;
+            color: #FFEA00;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: none;
+            background-color: #0046be;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        table {
+            margin: 0 auto;
+            background-color: #0046be;
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        td {
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        input[type="text"], input[type="password"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #000;
+            background-color: #fff;
+        }
+
+        input[type="submit"], .button {
+            padding: 10px 20px;
+            color: #000;
+            background-color: #FFEA00;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        input[type="submit"]:hover, .button:hover {
+            background-color: #E5C700;
+        }
+
+        input[type="text"].name-box {
+            width: 300px; /* Increased width for name box */
+        }
+
+        input[type="text"].address-box {
+            width: 400px; /* Increased width for address box */
+        }
+
+        .message {
+            margin-top: 20px;
+            color: red;
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1 align = "center">Edit Account Info</h1>
-    <div align = "center">
-    <form action="/Home/accountList/accountInfo/{{user.pk}}/" method="post"> 
-        {% csrf_token %}
-        <table>
-            <tr>
-                <td><label for="name">Name: </label></td>
-                <td><input type="text" id="name" name="name" value = {{user.name}}></td>
-            </tr>
-            <tr>
-                <td><label for="username">Username: </label></td>
-                <td><input type="text" id="username" name="username" value = {{user.username}}></td>
-            </tr>
-            <tr>
-                <td><label for="email">Email:</label></td>
-                <td><input type="text" id="email" name="email" value = {{user.email}}></td>
-            </tr>
-            <tr>
-                <td><label for="password">Password:</label></td>
-                <td><input type="password" id="password" name="password" value = {{user.password}}></td>
-            </tr>
-            <tr>
-                <td><label for="phone_number">Phone Number: </label></td>
-                <td><input type="text" id="phone_number" name="phone_number" value = {{user.phone_number}}></td>
-            </tr>
-            <tr>
-                <td><label for="address">Address: </label></td>
-                <td><input type="text" id="address" name="address" value = {{user.address}}></td>
-            </tr>
-            {% if is_admin %}
+    <div class="container">
+        <h1>Edit Account Info</h1>
+        <form action="/Home/accountList/accountInfo/{{user.pk}}/" method="post">
+            {% csrf_token %}
+            <table>
                 <tr>
-                    <td><label for="role-selection">Role: </label></td>
-                    <td><select name="role" id="role-selection">
-                        {% for role in roles %}
-                        <option value="{{ role }}" {% if role == user.role %}selected{% endif %}>{{ role }}</option>
-                        {% endfor %}
-                    </select></td>
+                    <td><label for="name">Name: </label></td>
+                    <td><input type="text" id="name" name="name" value="{{ user.name }}"></td>
                 </tr>
-            {% endif %}
-            {% if not is_admin %}
                 <tr>
-                    <td>Role: </td>
-                    <td>{{ user.role }}</td>
+                    <td><label for="username">Username: </label></td>
+                    <td><input type="text" id="username" name="username" value="{{ user.username }}"></td>
                 </tr>
-            {% endif %}
-            {% if user.role == "Teacher-Assistant" %}
                 <tr>
-                    <td><label for="skills">Skills: </label></td>
-                    {% if own_acc %}
-                        <td><textarea name="skills" id="skills" rows="3" cols="30">{{ user.skills }}</textarea></td>
-                    {% else %}
-                        <td><textarea name="skills" id="skills" rows="3" cols="30" readonly>{{ user.skills }}</textarea></td>
-                    {% endif %}
+                    <td><label for="email">Email:</label></td>
+                    <td><input type="text" id="email" name="email" value="{{ user.email }}"></td>
                 </tr>
-            {% endif %}
-        </table>
-        <br>
-        <input type="submit" value="Submit">
-    </form>
-        <h3>{{ message }}</h3>
-        <br>
-        <a href = "/Home/accountList/"> Account List </a></br>
-        <br>
-        <a href = "/Home/"> Go Home </a> </br>
+                <tr>
+                    <td><label for="password">Password:</label></td>
+                    <td><input type="password" id="password" name="password" value="{{ user.password }}"></td>
+                </tr>
+                <tr>
+                    <td><label for="phone_number">Phone Number: </label></td>
+                    <td><input type="text" id="phone_number" name="phone_number" value="{{ user.phone_number }}"></td>
+                </tr>
+                <tr>
+                    <td><label for="address">Address: </label></td>
+                    <td><input type="text" id="address" name="address" value="{{ user.address }}"></td>
+                </tr>
+                {% if is_admin %}
+                    <tr>
+                        <td><label for="role-selection">Role: </label></td>
+                        <td>
+                            <select name="role" id="role-selection">
+                                {% for role in roles %}
+                                    <option value="{{ role }}" {% if role == user.role %}selected{% endif %}>{{ role }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>Role: </td>
+                        <td>{{ user.role }}</td>
+                    </tr>
+                {% endif %}
+                {% if user.role == "Teacher-Assistant" %}
+                    <tr>
+                        <td><label for="skills">Skills: </label></td>
+                        {% if own_acc %}
+                          <td><textarea name="skills" id="skills" rows="3" cols="30">{{ user.skills }}</textarea></td>
+                        {% else %}
+                          <td><textarea name="skills" id="skills" rows="3" cols="30" readonly>{{ user.skills }}</textarea></td>
+                        {% endif %}
+                    </tr>
+                {% endif %}
+            </table>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+        <h3 class="message">{{ message }}</h3>
+        <div class="button-group">
+            <a href="/Home/accountList/" class="button">Back</a>
+            <a href="/Home/" class="button">Home</a>
+        </div>
     </div>
 </body>
 </html>

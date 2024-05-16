@@ -11,20 +11,18 @@ class removeSection(View):
 
         user = get_object_or_404(User, pk=user_id)
         section = get_object_or_404(Section, pk=section_id)
-        referer = request.META.get('HTTP_REFERER', '/')
-        return render(request, 'remove_section.html', {'user': user, 'section': section, 'referer': referer})
+        return render(request, 'remove_section.html', {'user': user, 'section': section})
 
     def post(self, request, user_id, section_id):
         if 'role' in request.session and request.session['role'] == 'Admin':
             user = get_object_or_404(User, pk=user_id)
             section = get_object_or_404(Section, pk=section_id)
-            referer = request.POST.get('referer', '/Home')
             if 'confirm' in request.POST:
                 user.assigned_section.remove(section)
                 messages.success(request, f'{user.name} removed from section {section}')
             else:
                 messages.warning(request, 'Removal not confirmed.')
-            return redirect(referer)
+            return redirect('accountAssignment', pk=user_id)
         else:
             messages.error(request, "Unauthorized attempt to remove section assignment.")
             return redirect('login')

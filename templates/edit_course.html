@@ -2,49 +2,148 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Course </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Section</title>
     <style>
-        .home-button {
-            display: inline-block;
-            padding: 5px 15px;
-            background-color: #007BFF;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003087;
             color: #fff;
-            text-decoration: none;
-            border: none;
-            border-radius: 5px;
-            font-size: 13px;
-            cursor: pointer;
+            text-align: center;
         }
 
-        .home-button:hover {
-            background-color: #0056b3;
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #0046be;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #FFEA00;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="time"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #000;
+            background-color: #fff;
+        }
+
+        button, input[type="submit"], .button-link {
+            padding: 10px 20px;
+            color: #000;
+            background-color: #FFEA00;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        button:hover, input[type="submit"]:hover, .button-link:hover {
+            background-color: #E5C700;
+        }
+
+        .message {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .link-button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            color: #000;
+            background-color: #FFEA00;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link-button:hover {
+            background-color: #E5C700;
         }
     </style>
 </head>
 <body>
-    <h1>Edit Course</h1>
-    <div>
-      {{ session }}
-    <form action="/Home/courseList/editCourse/{{ course.pk }}/" method="post">
-      {% csrf_token %}
-        <label for="course_id">Course ID:</label>
-        <input type="number" min="0" max="9999" name="course_id" value="{{ course.course_id }}"><br>
-        <label for="course_name">Course name:</label>
-        <input type="text" name="course_name" value="{{ course.course_name }}"><br>
-        <label for="semester">Semester:</label>
-        <select name="semester" id="semester">
-            {% for semester_key, semester_value in semesters %}
-                <option value="{{ semester_key }}" {% if course.semester == semester_key %}selected{% endif %}>{{ semester_value }}</option>
-            {% endfor %}
-        </select></br>
-        <label for="description">Course description:</label>
-        <textarea name="description" rows="5" cols="30"> {{ course.description }}</textarea></br>
-        <input type="submit" value="Save Changes"></br>
-    </form>
-       {{ errorMessage }}
-    </div>
-    <div style="text-align: center; margin-top: 20px;">
-        <a href = "/Home/" class="home-button">Go Home </a>
+    <div class="container">
+        <h1>Edit Section</h1>
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <form method="post" action="">
+            {% csrf_token %}
+            <div>
+                <label for="course_parent">Course:</label>
+                <select name="course_parent" id="course_parent" required>
+                    {% for course in courses %}
+                        <option value="{{ course.pk }}" {% if course.pk == section.course_parent.pk %}selected{% endif %}>{{ course }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="section_id">Section ID:</label>
+                <input type="text" name="section_id" id="section_id" value="{{ section.section_id }}" required>
+            </div>
+            <fieldset>
+                <legend>Days:</legend>
+                {% for day in days %}
+                    <label>
+                        <input type="checkbox" name="meeting_days" value="{{ day }}" {% if day in assignedDays %}checked{% endif %}>
+                        {{ day }}
+                    </label>
+                {% endfor %}
+            </fieldset>
+            <div>
+                <label for="start_time">Start Time:</label>
+                <input type="time" name="start_time" id="start_time" value="{{ start_time }}">
+            </div>
+            <div>
+                <label for="end_time">End Time:</label>
+                <input type="time" name="end_time" id="end_time" value="{{ end_time }}">
+            </div>
+            <div>
+                <label for="location">Location:</label>
+                <input type="text" name="location" id="location" value="{{ section.location }}">
+            </div>
+            <div>
+                <label for="is_online">Is Online:</label>
+                <select name="is_online" id="is_online" required>
+                    <option value="1" {% if section.is_online %}selected{% endif %}>Yes</option>
+                    <option value="" {% if not section.is_online %}selected{% endif %}>No</option>
+                </select>
+            </div>
+            <div>
+                <label for="section_type">Section Type:</label>
+                <select name="section_type" id="section_type" required>
+                    <option value="lecture" {% if section.type == 'lecture' %}selected{% endif %}>Lecture</option>
+                    <option value="lab" {% if section.type == 'lab' %}selected{% endif %}>Lab</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit">Update Section</button>
+            </div>
+        </form>
+        <a href="{% url 'courseSections' section.course_parent.pk %}" class="link-button">Go Back</a>
+        <a href="/Home/" class="link-button">Go Home</a>
     </div>
 </body>
 </html>

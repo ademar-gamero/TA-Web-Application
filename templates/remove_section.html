@@ -4,6 +4,42 @@
     <title>Remove Section Assignment</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003087;
+            color: #000;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 3px solid #0046be;
+            background-color: #0046be;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            color: #fff;
+            border-radius: 15px;
+        }
+
+        button, .button-link {
+            padding: 10px 20px;
+            color: #000;
+            background-color: #FFD700;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        button:hover, .button-link:hover {
+            background-color: #E5C700;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -12,10 +48,8 @@
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="referer" value="{{ referer }}">
-            <button type="submit" name="confirm" value="yes">Yes</button>
-            <a href="{{ referer|default:'/Home' }}">
-                <button type="button" class="button-link">Cancel</button>
-            </a>
+            <button type="submit" name="confirm" value="yes">Confirm</button>
+            <a href="{{ referer|default:'/Home' }}" class="button-link">Cancel</a>
         </form>
     </div>
 </body>

@@ -26,7 +26,7 @@ class RemoveSectionTests(TestCase):
     def test_confirm_removal_by_admin(self):
         self.simulate_login('admin', 'adminpass')
         response = self.client.post(self.remove_url, {'confirm': 'yes'})
-        self.assertRedirects(response, reverse('courseList'))
+        self.assertRedirects(response, reverse('accountAssignment', kwargs={'pk': self.user.pk}))
         self.assertFalse(self.section in self.user.assigned_section.all())
 
     def test_access_denied_for_non_admin(self):
@@ -47,6 +47,4 @@ class RemoveSectionTests(TestCase):
         self.simulate_login('admin', 'adminpass')
         response = self.client.post(self.remove_url)
         self.assertTrue(self.section in self.user.assigned_section.all())
-        self.assertTemplateUsed(response, 'remove_section.html')
-        messages = list(get_messages(response.wsgi_request))
-        self.assertNotIn('Removed from section!', [msg.message for msg in messages])
+        self.assertRedirects(response, reverse('accountAssignment', kwargs={'pk': self.user.pk}))

@@ -1,97 +1,129 @@
- <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-          <style>
-            .center {
-                text-align:center;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003087;
+            color: #fff;
+            text-align: center;
+        }
 
-                margin-left: auto;
-                margin-right: auto;
-                width: 80%;
-            }
-            .center2 {
+        .container {
+            max-width: 1200px; /* Increased width */
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #0046be;
+            border-radius: 15px;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
 
-                margin-left: auto;
-                margin-right: auto;
-                width: 100%;
-            }
-             table,th,td{
-                 text-align:center;
-                border: 1px solid black;
-                padding: 5px;
-                border-collapse: collapse;
-            }
-        </style>
-        <title>Course Section Assignments</title>
-      </head>
-    <body>
+        h2 {
+            color: #FFEA00; /* Yellow */
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .center-table {
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+            background-color: #fff; /* White background for table */
+            color: #000; /* Black text for table */
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .center-table th, .center-table td {
+            border: 1px solid #000;
+            padding: 10px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            color: #000; /* Black text */
+            background-color: #FFEA00; /* Yellow */
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background-color: #E5C700; /* Darker yellow on hover */
+        }
+    </style>
+    <title>Course Section Assignments</title>
+</head>
+<body>
+    <div class="container">
         <form action="/Home/courseList/courseSection/{{course.pk}}/" method="post">
             {% csrf_token %}
         <h2>Users Assigned To Course</h2>
-    {% if not assigned_users %}
-    <p>No Users are assigned to this course</p>
-    {% else %}
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Role</th>
-                {% if usr_role == "Admin" %}
-                <th>Remove from Course</th>
-                {% endif %}
-            </tr>
-                {% for usr in assigned_users %}
+        {% if not assigned_users %}
+            <p>No Users are assigned to this course</p>
+        {% else %}
+            <table class="center-table">
                 <tr>
-                    <td> {{usr.name}} </td>
-                    <td> {{usr.username}} </td>
-                    <td> {{usr.role}} </td>
-                    {% if usr_role == "Admin"%}
-                        <td><a href = "{% url 'removeCourseAssignment' user_pk=usr.pk course_pk=course.pk%}">Remove {{ usr.name }} from course</a></td>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    {% if usr_role == "Admin" %}
+                    <th>Remove from Course</th>
                     {% endif %}
-            </tr>
-            {% endfor %}
-        </table>
+                </tr>
+                {% for usr in assigned_users %}
+                    <tr>
+                        <td>{{usr.name}}</td>
+                        <td>{{usr.username}}</td>
+                        <td>{{usr.role}}</td>
+                        {% if usr_role == "Admin" %}
+                        <td>Remove from Course</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
         <br>
-        {% endif %}
         {% if usr_role == "Admin" %}
-        <strong>Add Teacher Assistants To Course:</strong>
+            <strong>Add Teacher Assistants To Course:</strong>
             {% if course_lecture is None %}
-                <p> There are no lecture sections in the course </p>
-                    <p>please assign a lecture section to the course
-                    </p><p>to begin assigning teacher assistants to the course </p>
-                {% else %}
-                <br>
-                <br>
-              <select id = "{{course_lecture}}" name="{{course_lecture}}">
-                  <option value = None >None</option>
-                  {%for tas in ta_all %}
-                                <option value="{{tas.pk}}">{{tas.name}} | {{ tas.username }} | {{ tas.role }}</option>
-                  {% endfor %}
-              </select>
-                {% endif %}
-        {% endif %}
-
-    <h1 class = "center"> Course - {{course.course_id}} {{course.course_name}} - Sections </h1>
-    <div class = "center2" align="center">
-      {% if not sections %}
-          <p> This Course does not have any sections </p>
-      {% else %}
-      {%for section in sections.all %}
-          <table>
-          <tr>
-              <th>Type</th>
-            <th>Section ID</th>
-            <th>Course</th>
-            <th>Meeting Days</th>
-            <th> Meeting Time </th>
-            <th>Location</th>
-            {% if usr_role == "Admin"%}
-                <th> Edit Section Info </th>
-                <th>Delete Section</th>
+                <p>There are no lecture sections in the course</p>
+                <p>Please assign a lecture section to the course to begin assigning teacher assistants to the course</p>
+            {% else %}
+                <select id="{{course_lecture}}" name="{{course_lecture}}">
+                    <option value=None>None</option>
+                    {% for tas in ta_all %}
+                        <option value="{{tas.pk}}">{{tas.name}} | {{tas.username}} | {{tas.role}}</option>
+                    {% endfor %}
+                </select>
             {% endif %}
-            </tr>
+        {% endif %}
+    </div>
+    <div class="container">
+        <h2>Course - {{course.course_id}} {{course.course_name}} - Sections</h2>
+        {% if not sections %}
+            <p>This Course does not have any sections</p>
+        {% else %}
+            <table class="center-table">
                 <tr>
+                    <th>Type</th>
+                    <th>Section ID</th>
+                    <th>Course</th>
+                    <th>Meeting Days</th>
+                    <th>Meeting Time</th>
+                    <th>Location</th>
+                    {% if usr_role == "Admin" %}
+                        <th>Edit Section Info</th>
+                        <th>Delete Section</th>
+                    {% endif %}
+                </tr>
+                {% for section in sections.all %}
                     <td>{% if section.type == "LAB" %}
                             Lab
                         {% else %}
@@ -107,8 +139,8 @@
                     <td>{{ section.start_time }} - {{ section.end_time }}</td>
                     <td>{{ section.location }}</td>
                     {% if usr_role == "Admin"%}
-                  <td><a href="{% url 'editSection' section.pk %}" class="button">Edit Section Info</a></td>
-                  <td><a href="{% url 'deleteSection' section.pk %}">Delete</a></td>
+                      <td><a href="{% url 'editSection' section.pk %}" class="button">Edit Section Info</a></td>
+                      <td><a href="{% url 'deleteSection' section.pk %}">Delete</a></td>
                     {% endif %}
                 </tr>
                 </table>
@@ -121,18 +153,6 @@
                     <p> This Section does not have any Users assigned to it </p>
                 {% else %}
                     <table>
-                    <tr>
-                      <th>Name</th>
-                      <th>Username</th>
-                      <th>Role</th>
-                      <th>Email</th>
-                        {% if curr_usr.role == "Admin"%}
-                            <th> Remove Assignment </th>
-                        {% endif %}
-                        {% if curr_usr.role == "Instructor"%}
-                            <th> Remove Assignment </th>
-                        {% endif %}
-                    </tr>
                       {% for user in section.assigned_users.all %}
                           {% if section.type == "LEC" and user.role == "Teacher-Assistant"%}
                               {% for key,value in assigned_users.items %}
@@ -145,9 +165,7 @@
                                     {% if usr_role == "Admin" or usr_role == "Instructor" %}
                                         <td><button type="submit" name="remove_section" value="{{ user.pk }} {{ section.pk }}">Remove {{ user.name }}</button></td>
                                     {% endif %}
-                                      </tr>
-                                  {% endif %}
-                              {% endfor %}
+                                </tr>
                             {% endif %}
                           {% if section.type == "LAB" and user.role == "Teacher-Assistant"%}
                                           <tr>
@@ -225,16 +243,59 @@
                         {{ instructor_message }}
                         {% endif %}
                 {% endif %}
-        {% endif %}
+                <br>
+                {% if usr_role == "Instructor" and section.type == "lab" and is_assigned == True %}
                     <br>
-                    <br>
-                      {{message}}
-                  <br>
-                  <br>
-            <a href = "/Home/courseList/"> Go Back </a>
+                    Add Teacher Assistants:
+                    <select id="{{section.pk}}" name="{{section.pk}}">
+                        <option value=None>None</option>
+                        {% for ta in ta_pool %}
+                            <option value="{{ta.pk}}">{{ta.name}} | {{ta.username}} | {{ta.role}}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {% if usr_role == "Admin" %}
+                    {% if section.type == "lecture" %}
+                        Add Instructors:
+                        <select id="{{section.pk}}" name="{{section.pk}}">
+                            <option value=None>None</option>
+                            {% for ins in ins_all %}
+                                <option value="{{ins.pk}}">{{ins.name}} | {{ins.username}} | {{ins.role}}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                    {% if section.type == "lab" %}
+                        Add Teacher Assistants:
+                        <select id="{{section.pk}}" name="{{section.pk}}">
+                            <option value=None>None</option>
+                            {% for tas in assigned_users %}
+                                {% if tas.role == "Teacher-Assistant" %}
+                                    <option value="{{tas.pk}}">{{tas.name}} | {{tas.username}} | {{tas.role}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                {% endif %}
+                <br>
+            {% endfor %}
             <br>
-          <br>
-          <a href = "/Home/"> Go Home </a>
-        </div>
-    </form>
-    </body>
+            {% if curr_usr.role == "Admin" %}
+                <input type="submit" value="Submit" class="button">
+            {% elif curr_usr.role == "Instructor" and instructor_message == 'None' %}
+                <input type="submit" value="Submit" class="button">
+            {% else %}
+                {% if curr_usr.role != "Teacher-Assistant" %}
+                    {{ instructor_message }}
+                {% endif %}
+            {% endif %}
+            <br><br>
+            {{message}}
+            <br><br>
+            <div>
+                <a href="/Home/courseList/" class="button">Go Back</a>
+                <a href="/Home/" class="button">Go Home</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
