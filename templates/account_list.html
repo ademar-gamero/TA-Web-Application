@@ -6,24 +6,35 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #000; /* Change to black */
+            background-color: #003087;
+            color: #000;
         }
 
         .container {
-            max-width: 1200px; /* Increased width */
+            max-width: 1200px;
             margin: 50px auto;
             padding: 20px;
-            border: 3px solid #0046be; /* Best Buy blue */
-            background-color: #fff; /* white background */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* subtle shadow */
+            border: 3px solid #0046be;
+            background-color: #0046be;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
+            color: #fff;
+            border-radius: 15px;
+        }
+
+        .form-container {
+            background-color: #0046be;
+            padding: 20px;
+            border-radius: 15px;
+            color: #fff;
         }
 
         th, td {
             border: 1px solid black;
             border-collapse: collapse;
             padding: 10px;
+            background-color: #fff;
+            color: #000;
         }
 
         input[type="text"], select {
@@ -32,76 +43,68 @@
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box; /* Ensure padding and border are included in width */
+            box-sizing: border-box;
         }
 
         button, input[type="submit"], .button-link {
             padding: 10px 20px;
-            color: #fff;
-            background-color: #0046be; /* Best Buy blue */
+            color: #000;
+            background-color: #FFD700;
             border: none;
             cursor: pointer;
             border-radius: 4px;
             text-decoration: none;
             display: inline-block;
             margin-top: 10px;
+            font-weight: bold;
         }
 
         button:hover, input[type="submit"]:hover, .button-link:hover {
-            background-color: #003087; /* darker blue on hover */
-        }
-
-        .error {
-            color: red;
-            margin-bottom: 10px;
-        }
-
-        .form-table td {
-            padding: 5px;
+            background-color: #E5C700;
         }
 
         .button-link {
-            margin-bottom: 20px; /* Add margin bottom to create space below */
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 align="center">User Account Roster</h1>
-        Filter for:
-        <form action="/Home/accountList/" method="post">
-            {% csrf_token %}
-            <table class="form-table" style="width: 100%;">
-                <tr>
-                    <td>Name:</td>
-                    <td><input type="text" name="name" placeholder="name"></td>
-                </tr>
-                <tr>
-                    <td>Username:</td>
-                    <td><input type="text" name="username" placeholder="username"></td>
-                </tr>
-                <tr>
-                    <td>Role:</td>
-                    <td>
-                        <select name="roles" id="roles">
-                            <option value="">None</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Instructor">Instructor</option>
-                            <option value="Teacher-Assistant">Teacher Assistant</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <input type="submit" name="input_button" value="Submit">
-                        {% if usr_role != "Admin"%}
-                            <input type="submit" name="input_button" value="Show Users Assigned To Your Courses">
-                        {% endif %}
-                        <input type="submit" name="input_button" value="Clear Filter">
-                    </td>
-                </tr>
-            </table>
-        </form>
+        <div class="form-container">
+            <p>Filter for:</p>
+            <form action="/Home/accountList/" method="post">
+                {% csrf_token %}
+                <table class="form-table" style="width: 100%;">
+                    <tr>
+                        <td>Name:</td>
+                        <td><input type="text" name="name" placeholder="name"></td>
+                    </tr>
+                    <tr>
+                        <td>Username:</td>
+                        <td><input type="text" name="username" placeholder="username"></td>
+                    </tr>
+                    <tr>
+                        <td>Role:</td>
+                        <td>
+                            <select name="roles" id="roles">
+                                <option value="">None</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Instructor">Instructor</option>
+                                <option value="Teacher-Assistant">Teacher Assistant</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div style="margin-top: 10px;">
+                    <input type="submit" name="input_button" value="Submit" class="button">
+                    {% if usr_role != "Admin"%}
+                        <input type="submit" name="input_button" value="Show Users Assigned To Your Courses" class="button">
+                    {% endif %}
+                    <input type="submit" name="input_button" value="Clear Filter" class="button">
+                </div>
+            </form>
+        </div>
         <br>
         <a href="/Home/" class="button-link">Home</a>
         <br>
@@ -130,7 +133,7 @@
                         {% if account.role != "Admin" %}
                             <td>
                                 <form action="{% url 'accountAssignment' pk=account.pk %}" method="get">
-                                    <button type="submit">{{account.username}}'s Assignments</button>
+                                    <button type="submit" class="button">{{account.username}}'s Assignments</button>
                                 </form>
                             </td>
                         {% else %}
@@ -142,13 +145,13 @@
                             <td>{{account.address}}</td>
                             <td>
                                 <form action="{% url 'accountInfo' pk=account.pk %}" method="get">
-                                    <button type="submit">Edit {{account.username}}</button>
+                                    <button type="submit" class="button">Edit {{account.username}}</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="{% url 'deleteAccount' pk=account.pk %}" method="post">
                                     {% csrf_token %}
-                                    <button type="submit">Delete {{ account.username }}</button>
+                                    <button type="submit" class="button">Delete {{ account.username }}</button>
                                 </form>
                             </td>
                         {% endif %}
