@@ -40,7 +40,11 @@ th, td {
         </form>
       <br>
       <a href = "/Home/"> Go Home </a>
-	<br>
+    <br>
+    {% if isAdmin %}
+        <a href = "/Home/accountCreation/"> Create Account </a>
+	    <br>
+    {% endif %}
 	<div align="center">
 		<table style="width:75%; border-collapse: collapse;">
 			<tr>
