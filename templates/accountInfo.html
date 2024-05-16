@@ -7,7 +7,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #003087;
-            color: #fff;
+            color: #FFEA00;
             text-align: center;
         }
 
@@ -59,6 +59,14 @@
 
         input[type="submit"]:hover, .button:hover {
             background-color: #E5C700;
+        }
+
+        input[type="text"].name-box {
+            width: 300px; /* Increased width for name box */
+        }
+
+        input[type="text"].address-box {
+            width: 400px; /* Increased width for address box */
         }
 
         .message {
@@ -130,8 +138,8 @@
         </form>
         <h3 class="message">{{ message }}</h3>
         <div class="button-group">
-            <a href="/Home/accountList/" class="button">Go Back</a>
-            <a href="/Home/" class="button">Go Home</a>
+            <a href="/Home/accountList/" class="button">Back</a>
+            <a href="/Home/" class="button">Home</a>
         </div>
     </div>
 </body>
