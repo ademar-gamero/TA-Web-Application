@@ -28,21 +28,22 @@ class courseSections(View):
                     assigned_users[inst] = "True"
             for ta in tas:
                 if ta not in ta_pool:
-                    if not ta.assigned_section.filter(type="lab", course_parent=section.course_parent).exists:
+                    if not ta.assigned_section.filter(type="LAB", course_parent=section.course_parent).exists:
                         assigned_users[ta] = "True"
                     else:
                         assigned_users[ta] = "False"
                     ta_pool.append(ta)
         course_lecture = None
         for secs in sections:
-            if secs.type == "lecture":
+            if secs.type == "LEC":
                 course_lecture = secs.pk
 
         check = "False"
         for usrs in assigned_users:
+            print(usrs.role)
             if usrs.role == "Instructor":
                 check = "True"
-
+        print(check)
         instructor_message = 'None'
         if curr_usr not in assigned_users:
             instructor_message = "Your are not assigned to this course"
@@ -50,7 +51,7 @@ class courseSections(View):
                                                         "ta_all": teacherassistant_pool, "ins_all": instructor_pool,
                                                         "usr_role": usr_role, "ta_pool": ta_pool, "assigned_users":assigned_users,
                                                         "course_lecture":course_lecture,"instructor_message":instructor_message,
-                                                        "check":check,"is_assigned":is_assigned, "curr_usr":curr_usr})
+                                                        "check":check,"is_assigned":is_assigned, "curr_usr":curr_usr},)
 
     def post(self, request, course_pk):
         usr_role = request.session["role"]
@@ -71,14 +72,14 @@ class courseSections(View):
                     assigned_users[inst]="True"
             for ta in tas:
                 if ta not in ta_pool:
-                    if not ta.assigned_section.filter(type="lab", course_parent=section.course_parent).exists:
+                    if not ta.assigned_section.filter(type="LAB", course_parent=section.course_parent).exists:
                         assigned_users[ta] = "True"
                     else:
                         assigned_users[ta] = "False"
                     ta_pool.append(ta)
         course_lecture = None
         for secs in sections:
-            if secs.type == "lecture":
+            if secs.type == "LEC":
                 course_lecture = secs.pk
         check = "False"
         for usrs in assigned_users:
@@ -112,7 +113,7 @@ class courseSections(View):
                         return render(request, "course_sections.html", {"course": course, "sections": sections,"curr_usr":curr_usr,
                                                                         "ta_all": teacherassistant_pool, "ins_all": instructor_pool, "usr_role": usr_role,
                                                                         "ta_pool": ta_pool, "assigned_users":assigned_users,"check":check,
-                                                                        "course_lecture":course_lecture,check:"check","instructor_message":instructor_message,"message": failure.__str__()})
+                                                                        "course_lecture":course_lecture,"instructor_message":instructor_message,"message": failure.__str__()})
 
         # get pool of users for sections
         ta_pool = []
@@ -126,14 +127,14 @@ class courseSections(View):
                     assigned_users[inst] = "True"
             for ta in tas:
                 if ta not in ta_pool:
-                    if not ta.assigned_section.filter(type="lab", course_parent=section.course_parent).exists:
+                    if not ta.assigned_section.filter(type="LAB", course_parent=section.course_parent).exists:
                         assigned_users[ta] = "True"
                     else:
                         assigned_users[ta] = "False"
                     ta_pool.append(ta)
         course_lecture = None
         for secs in sections:
-            if secs.type == "lecture":
+            if secs.type == "LEC":
                 course_lecture = secs.pk
 
         check = "False"

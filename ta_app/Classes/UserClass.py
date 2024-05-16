@@ -185,7 +185,7 @@ class UserClass(ABC):
                 self.assigned_sections = [new_section]
             else:
                 if self.assigned_sections.count(new_section) > 0:
-                    if new_section.type == "lecture" or new_section.type=="LEC" and (self.role == "Teacher-Assistant"):
+                    if new_section.type=="LEC" and (self.role == "Teacher-Assistant"):
                         raise ValueError(self.__str__() + " cannot be assigned, teacher assistant is already assigned to course " + new_section.course_parent.__str__())
                     raise ValueError(self.__str__() + " cannot be assigned, user is already assigned to section " + new_section.__str__())
                 if self.assigned:
