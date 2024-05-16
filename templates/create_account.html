@@ -6,27 +6,35 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #000;
+            background-color: #003087; /* White background */
+            color: #000; /* Black text */
         }
 
         .container {
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-            border: 3px solid #0046be;
-            background-color: #fff;
+            background-color: #0046be; /* Best Buy blue */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
+            border-radius: 15px; /* Rounded edges */
+            color: #fff; /* White text */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            background-color: #0046be; /* Blue background for table */
         }
 
         th, td {
             padding: 10px;
+            color: #fff; /* White text for table */
+            font-weight: bold;
+        }
+
+        th, td label {
+            color: #fff; /* White text for labels */
         }
 
         input[type="text"], input[type="password"], select {
@@ -35,23 +43,26 @@
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            color: #000; /* Black text */
+            background-color: #fff; /* White background */
             box-sizing: border-box;
         }
 
         button, input[type="submit"], .button-link {
             padding: 10px 20px;
-            color: #fff;
-            background-color: #0046be;
+            color: #000; /* Black text */
+            background-color: #FFEA00; /* Yellow */
             border: none;
             cursor: pointer;
             border-radius: 4px;
             text-decoration: none;
             display: inline-block;
             margin-top: 10px;
+            font-weight: bold;
         }
 
         button:hover, input[type="submit"]:hover, .button-link:hover {
-            background-color: #003087;
+            background-color: #E5C700; /* Darker yellow on hover */
         }
 
         .error {
