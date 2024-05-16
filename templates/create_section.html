@@ -6,18 +6,24 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #000; /* Change to black */
+            background-color: #003087;
+            color: #000;
+            text-align: center;
         }
 
         .container {
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
-            border: 3px solid #0046be; /* Best Buy blue */
-            background-color: #fff; /* white background */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* subtle shadow */
-            text-align: center;
+            background-color: #0046be;
+            border-radius: 15px;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
         }
 
         .center {
@@ -26,53 +32,45 @@
             margin-right: auto;
             width: 80%;
         }
-        .center2 {
-            margin-left: auto;
-            margin-right: auto;
-            width: 100%;
-        }
-        .center3 {
-            margin: auto;
-            width: 100%;
-        }
+
         table, th, td {
-            border: 1px solid black;
-            padding: 5px;
+            border: 1px solid #fff;
+            padding: 10px;
             border-collapse: collapse;
+            background-color: #0046be;
+            color: #fff;
         }
 
-        input[type="text"], select, textarea {
+        th, td label {
+            color: #fff;
+        }
+
+        input[type="text"], select, textarea, input[type="time"], input[type="number"] {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box; /* Ensure padding and border are included in width */
-        }
-
-        input[type="time"] {
-            width: calc(100% - 16px); /* Adjust width to be consistent with padding and border */
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; /* Ensure padding and border are included in width */
+            color: #000;
+            background-color: #fff;
+            box-sizing: border-box;
         }
 
         button, input[type="submit"], .button-link {
             padding: 10px 20px;
-            color: #fff;
-            background-color: #0046be; /* Best Buy blue */
+            color: #000;
+            background-color: #FFEA00;
             border: none;
             cursor: pointer;
             border-radius: 4px;
             text-decoration: none;
             display: inline-block;
             margin-top: 10px;
+            font-weight: bold;
         }
 
         button:hover, input[type="submit"]:hover, .button-link:hover {
-            background-color: #003087; /* darker blue on hover */
+            background-color: #E5C700;
         }
 
         .error {
@@ -89,7 +87,8 @@
             {% csrf_token %}
             <table class="center">
                 <tr>
-                    <td><label for="course_parent">Course:</label>
+                    <td>
+                        <label for="course_parent">Course:</label>
                         <select name="course_parent" id="course_parent" required>
                             {% for course in courses %}
                                 <option value="{{ course.id }}">{{ course }}</option>
@@ -98,7 +97,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="section_id">Section ID:</label>
+                    <td>
+                        <label for="section_id">Section ID:</label>
                         <input type="text" name="section_id" id="section_id" required>
                     </td>
                 </tr>
@@ -115,17 +115,20 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="start_time">Start Time:</label>
+                    <td>
+                        <label for="start_time">Start Time:</label>
                         <input type="time" name="start_time" id="start_time">
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="end_time">End Time:</label>
+                    <td>
+                        <label for="end_time">End Time:</label>
                         <input type="time" name="end_time" id="end_time">
                     </td>
                 </tr>
                 <tr>
-                    <td><label for="section_type">Section Type:</label>
+                    <td>
+                        <label for="section_type">Section Type:</label>
                         <select name="section_type" id="section_type" required>
                             <option value="lecture">Lecture</option>
                             <option value="lab">Lab</option>
@@ -133,7 +136,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><button type="submit">Create Section</button></td>
+                    <td>
+                        <button type="submit">Create Section</button>
+                    </td>
                 </tr>
             </table>
         </form>
