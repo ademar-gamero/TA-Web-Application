@@ -13,10 +13,11 @@ class Home(View):
             return redirect('login')
 
 
-        days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        days_of_week = ['Mo', 'Tu', 'We', 'Th', 'Fr']
         if Day.objects.count() < 5:
             for day_name in days_of_week:
-                Day.objects.get_or_create(day=day_name)
+                day = Day.objects.create(day=day_name)
+                day.save()
 
 
         curr_role = request.session["role"]
