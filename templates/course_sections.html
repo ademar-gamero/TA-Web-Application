@@ -140,7 +140,7 @@
                                     <td> {{user.role}} </td>
                                     <td> {{user.email}} </td>
                                     {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
+                                        <td><button type="submit" name="remove_section" value="{{ user.pk }} {{ section.pk }}">Remove {{ user.name }}</button></td>
                                     {% endif %}
                                       </tr>
                                   {% endif %}
@@ -153,7 +153,7 @@
                                         <td> {{user.role}} </td>
                                         <td> {{user.email}} </td>
                                         {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
+                                        <td><button type="submit" name="remove_section" value="{{ user.pk }} {{ section.pk }}">Remove {{ user.name }}</button></td>
                                         {% endif %}
                                           </tr>
                                 {% endif %}
@@ -164,7 +164,7 @@
                                         <td> {{user.role}} </td>
                                         <td> {{user.email}} </td>
                                         {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
+                                        <td><button type="submit" name="remove_section" value="{{ user.pk }} {{ section.pk }}">Remove {{ user.name }}</button></td>
                                         {% endif %}
                                           </tr>
                                 {% endif %}
