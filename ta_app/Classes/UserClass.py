@@ -378,12 +378,13 @@ class UserClass(ABC):
         if self.role == "Teacher-Assistant" and new_section.type == "LEC":
             return
         for section in self.assigned_sections:
-            for day1 in section.meeting_days.values_list():
-                for day2 in new_section.meeting_days.values_list():
+            for day1 in section.meeting_days.all():
+                for day2 in new_section.meeting_days.all():
                     if day1 == day2:
                         possible_conflict = True
                 if possible_conflict:
                     if self.role == "Teacher-Assistant" and section.type == "LEC":
+                        possible_conflict = False
                         continue
                     conflict = True
                     if new_section.start_time < section.start_time:
