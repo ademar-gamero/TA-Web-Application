@@ -134,7 +134,6 @@
                         {% endif %}
                     </tr>
                       {% for user in section.assigned_users.all %}
-                          {}
                           {% if section.type == "LEC" and user.role == "Teacher-Assistant"%}
                               {% for key,value in assigned_users.items %}
                                   {% if key.pk == user.pk and value == "True" %}
