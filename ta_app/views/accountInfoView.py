@@ -19,16 +19,18 @@ class accountInfoView(View):
             return redirect('login')
         curr_acc = request.session["role"]
         is_admin = False
+        own_acc = False
         if curr_acc == "Admin":
             is_admin = True
         elif request.session["pk"] != pk:
             return redirect("/Home/")
-
+        if request.session["pk"] == pk:
+            own_acc = True
         account = User.objects.get(pk=pk)
         self.acc_edit = UserClass(username=account.username, password=account.password, name=account.name, role=account.role,
                                   email=account.email, phone_number=account.phone_number, address=account.address, assigned=account.assigned,
                                   assigned_sections=account.assigned_section.all(), skills=account.skills)
-        return render(request, "accountInfo.html", {'user': account, 'is_admin': is_admin,"roles":roles})
+        return render(request, "accountInfo.html", {'user': account, 'is_admin': is_admin,"roles":roles, "own_acc":own_acc})
 
     def post(self, request, pk):
         name = request.POST.get('name')
