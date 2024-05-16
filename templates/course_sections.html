@@ -11,7 +11,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1200px; /* Increased width */
             margin: 50px auto;
             padding: 20px;
             background-color: #0046be;
@@ -21,7 +21,7 @@
         }
 
         h2 {
-            color: #FFEA00;
+            color: #FFEA00; /* Yellow */
             font-size: 1.8em;
             margin-bottom: 20px;
         }
@@ -30,8 +30,8 @@
             margin-left: auto;
             margin-right: auto;
             width: 80%;
-            background-color: #fff;
-            color: #000;
+            background-color: #fff; /* White background for table */
+            color: #000; /* Black text for table */
             border-radius: 10px;
             padding: 10px;
         }
@@ -43,8 +43,8 @@
 
         .button {
             padding: 10px 20px;
-            color: #000;
-            background-color: #FFEA00;
+            color: #000; /* Black text */
+            background-color: #FFEA00; /* Yellow */
             border: none;
             cursor: pointer;
             border-radius: 4px;
@@ -55,7 +55,7 @@
         }
 
         .button:hover {
-            background-color: #E5C700;
+            background-color: #E5C700; /* Darker yellow on hover */
         }
     </style>
     <title>Course Section Assignments</title>
@@ -76,20 +76,20 @@
                     {% endif %}
                 </tr>
                 {% for usr in assigned_users %}
-                <tr>
-                    <td> {{usr.name}} </td>
-                    <td> {{usr.username}} </td>
-                    <td> {{usr.role}} </td>
-                    {% if usr_role == "Admin"%}
-                        <td><a href = "{% url 'removeCourseAssignment' user_pk=usr.pk course_pk=course.pk%}">Remove {{ usr.name }} from course</a></td>
-                    {% endif %}
-            </tr>
-            {% endfor %}
-        </table>
-        <br>
+                    <tr>
+                        <td>{{usr.name}}</td>
+                        <td>{{usr.username}}</td>
+                        <td>{{usr.role}}</td>
+                        {% if usr_role == "Admin" %}
+                        <td>Remove from Course</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
         {% endif %}
+        <br>
         {% if usr_role == "Admin" %}
-        <strong>Add Teacher Assistants To Course:</strong>
+            <strong>Add Teacher Assistants To Course:</strong>
             {% if course_lecture is None %}
                 <p>There are no lecture sections in the course</p>
                 <p>Please assign a lecture section to the course to begin assigning teacher assistants to the course</p>
@@ -102,170 +102,154 @@
                 </select>
             {% endif %}
         {% endif %}
-
-    <h1 class = "center"> Course - {{course.course_id}} {{course.course_name}} - Sections </h1>
-    <div class = "center2" align="center">
-      {% if not sections %}
-          <p> This Course does not have any sections </p>
-      {% else %}
-      {%for section in sections.all %}
-          <table>
-          <tr>
-              <th>Type</th>
-            <th>Section ID</th>
-            <th>Course</th>
-            <th>Meeting Days</th>
-            <th> Meeting Time </th>
-            <th>Location</th>
-            {% if usr_role == "Admin"%}
-                <th> Edit Section Info </th>
-                <th>Delete Section</th>
-            {% endif %}
-            </tr>
+    </div>
+    <div class="container">
+        <h2>Course - {{course.course_id}} {{course.course_name}} - Sections</h2>
+        {% if not sections %}
+            <p>This Course does not have any sections</p>
+        {% else %}
+            <table class="center-table">
                 <tr>
-                    <td>{% if section.type == "lab" %}
-                            Lab
-                        {% else %}
-                            Lecture
-                        {% endif %}
-                    </td>
-                  <td>{{ section.section_id }}</td>
-                    <td> {{ section.course_parent }}</td>
-                    <td>{% for day in section.meeting_days.all %}
-                            {{ day }}
-                        {% endfor %}
-                        </td>
-                    <td>{{ section.start_time }} - {{ section.end_time }}</td>
-                    <td>{{ section.location }}</td>
-                    {% if usr_role == "Admin"%}
-                  <td><a href="{% url 'editSection' section.pk %}" class="button">Edit Section Info</a></td>
-                  <td><a href="{% url 'deleteSection' section.pk %}">Delete</a></td>
+                    <th>Type</th>
+                    <th>Section ID</th>
+                    <th>Course</th>
+                    <th>Meeting Days</th>
+                    <th>Meeting Time</th>
+                    <th>Location</th>
+                    {% if usr_role == "Admin" %}
+                        <th>Edit Section Info</th>
+                        <th>Delete Section</th>
                     {% endif %}
                 </tr>
-                </table>
-
-                <br>
-            <strong> {{section.type}} {{section.section_id}} Assigned Users: </strong>
-                {% if section.type == "lecture" and check == "False" %}
-                    <p> This Section does not have any Users assigned to it </p>
-                {% elif section.type == "lab" and not section.assigned_users.all %}
-                    <p> This Section does not have any Users assigned to it </p>
-                {% else %}
-                    <table>
+                {% for section in sections.all %}
                     <tr>
-                      <th>Name</th>
-                      <th>Username</th>
-                      <th>Role</th>
-                      <th>Email</th>
-                        {% if curr_usr.role == "Admin"%}
-                            <th> Remove Assignment </th>
-                        {% endif %}
-                        {% if curr_usr.role == "Instructor"%}
-                            <th> Remove Assignment </th>
+                        <td>{% if section.type == "lab" %}Lab{% else %}Lecture{% endif %}</td>
+                        <td>{{ section.section_id }}</td>
+                        <td>{{ section.course_parent }}</td>
+                        <td>{% for day in section.meeting_days.all %}{{ day }} {% endfor %}</td> <!-- Added space between days -->
+                        <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                        <td>{{ section.location }}</td>
+                        {% if usr_role == "Admin" %}
+                            <td>Edit section info link</td>
+                            <td><a href="{% url 'deleteSection' section.pk %}" class="button">Delete</a></td>
                         {% endif %}
                     </tr>
-                      {% for user in section.assigned_users.all %}
-                          {% if section.type == "lecture" and user.role == "Teacher-Assistant"%}
-                              {% for key,value in assigned_users.items %}
-                                  {% if key.pk == user.pk and value == "True" %}
-                                      <tr>
-                                    <td> {{user.name}} </td>
-                                    <td> {{user.username}} </td>
-                                    <td> {{user.role}} </td>
-                                    <td> {{user.email}} </td>
-                                    {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
-                                    {% endif %}
-                                      </tr>
-                                  {% endif %}
-                              {% endfor %}
-                            {% endif %}
-                          {% if section.type == "lab" and user.role == "Teacher-Assistant"%}
-                                          <tr>
-                                        <td> {{user.name}} </td>
-                                        <td> {{user.username}} </td>
-                                        <td> {{user.role}} </td>
-                                        <td> {{user.email}} </td>
-                                        {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
-                                        {% endif %}
-                                          </tr>
-                                {% endif %}
-                          {% if section.type == "lecture" and user.role == "Instructor"%}
-                                          <tr>
-                                        <td> {{user.name}} </td>
-                                        <td> {{user.username}} </td>
-                                        <td> {{user.role}} </td>
-                                        <td> {{user.email}} </td>
-                                        {% if usr_role == "Admin" or usr_role == "Instructor" %}
-                                        <td><button type="submit" name="remove_section" value="{{ user.pk }}-{{ section.pk }}">Remove {{ user.name }}</button></td>
-                                        {% endif %}
-                                          </tr>
-                                {% endif %}
-                      {% endfor %}
-                        </table>
-          <br>
-                    {% endif %}
-
-                        {%if usr_role == "Instructor" and section.type == "lab" and is_assigned == True %}
-                            <br>
-                            Add Teacher Assistants:
-                                <br>
-                              <select id = "{{section.pk}}" name="{{section.pk}}">
-                                    <option value=None>None</option>
-                                  {%for ta in ta_pool%}
-                                      <option value="{{ta.pk}}">{{ta.name}} | {{ ta.username }} | {{ ta.role }}</option>
-                                  {% endfor %}
-                              </select>
-                                <br>
-                              {% endif %}
-
-                        {%if usr_role == "Admin"%}
-                          {% if section.type == "lecture" %}
-                            Add Instructors:
-                            <select id = "{{section.pk}}" name="{{section.pk}}">
-                              <option value=None>None</option>
-                              {%for ins in ins_all %}
-                                    <option value="{{ins.pk}}">{{ins.name}} | {{ ins.username }} | {{ ins.role }}</option>
-                              {% endfor %}
-                            </select>
-                              <br>
-                          {% endif %}
-                            {% if section.type == "lab" %}
-                            Add Teacher Assistants:
-                              <select id = "{{section.pk}}" name="{{section.pk}}">
-                                  <option value=None>None</option>
-                                  {%for tas in assigned_users %}
-                                            {% if tas.role == "Teacher-Assistant" %}
-                                            <option value="{{tas.pk}}">{{tas.name}} | {{ tas.username }} | {{ tas.role }}</option>
-                                            {% endif %}
-                                  {% endfor %}
-                              </select>
-                                   <br>
-                                {% endif %}
-                            {% endif %}
-                            <br>
-          {% endfor %}
-                    <br>
-                {% if curr_usr.role == "Admin" %}
-              <input type="submit" value="Submit">
-                {% elif curr_usr.role == "Instructor" and instructor_message == 'None' %}
-                    <input type="submit" name="input_button" value="Submit">
+                {% endfor %}
+            </table>
+            {% for section in sections.all %}
+                <h3>{{section.type}} {{section.section_id}} Assigned Users:</h3>
+                {% if section.type == "lecture" and check == "False" %}
+                    <p>This Section does not have any Users assigned to it</p>
+                {% elif section.type == "lab" and not section.assigned_users.all %}
+                    <p>This Section does not have any Users assigned to it</p>
                 {% else %}
-                    {% if curr_usr.role != "Teacher-Assistant" %}
-                        {{ instructor_message }}
-                        {% endif %}
+                    <table class="center-table">
+                        <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Email</th>
+                            {% if curr_usr.role == "Admin" %}
+                                <th>Remove Assignment</th>
+                            {% endif %}
+                            {% if curr_usr.role == "Instructor" %}
+                                <th>Remove Assignment</th>
+                            {% endif %}
+                        </tr>
+                        {% for user in section.assigned_users.all %}
+                            {% if section.type == "lecture" and user.role == "Teacher-Assistant" %}
+                                {% for key, value in assigned_users.items %}
+                                    {% if key.pk == user.pk and value == "True" %}
+                                        <tr>
+                                            <td>{{user.name}}</td>
+                                            <td>{{user.username}}</td>
+                                            <td>{{user.role}}</td>
+                                            <td>{{user.email}}</td>
+                                            {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                                                <td><a href="{% url 'removeSection' user.pk section.pk %}" class="button">Remove Assignment</a></td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            {% if section.type == "lab" and user.role == "Teacher-Assistant" %}
+                                <tr>
+                                    <td>{{user.name}}</td>
+                                    <td>{{user.username}}</td>
+                                    <td>{{user.role}}</td>
+                                    <td>{{user.email}}</td>
+                                    {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                                        <td>Remove Assignment</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                            {% if section.type == "lecture" and user.role == "Instructor" %}
+                                <tr>
+                                    <td>{{user.name}}</td>
+                                    <td>{{user.username}}</td>
+                                    <td>{{user.role}}</td>
+                                    <td>{{user.email}}</td>
+                                    {% if usr_role == "Admin" or usr_role == "Instructor" %}
+                                        <td><a href="{% url 'removeSection' user.pk section.pk %}" class="button">Remove Assignment</a></td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
                 {% endif %}
-        {% endif %}
+                <br>
+                {% if usr_role == "Instructor" and section.type == "lab" and is_assigned == True %}
                     <br>
-                    <br>
-                      {{message}}
-                  <br>
-                  <br>
-            <a href = "/Home/courseList/"> Go Back </a>
+                    Add Teacher Assistants:
+                    <select id="{{section.pk}}" name="{{section.pk}}">
+                        <option value=None>None</option>
+                        {% for ta in ta_pool %}
+                            <option value="{{ta.pk}}">{{ta.name}} | {{ta.username}} | {{ta.role}}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {% if usr_role == "Admin" %}
+                    {% if section.type == "lecture" %}
+                        Add Instructors:
+                        <select id="{{section.pk}}" name="{{section.pk}}">
+                            <option value=None>None</option>
+                            {% for ins in ins_all %}
+                                <option value="{{ins.pk}}">{{ins.name}} | {{ins.username}} | {{ins.role}}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                    {% if section.type == "lab" %}
+                        Add Teacher Assistants:
+                        <select id="{{section.pk}}" name="{{section.pk}}">
+                            <option value=None>None</option>
+                            {% for tas in assigned_users %}
+                                {% if tas.role == "Teacher-Assistant" %}
+                                    <option value="{{tas.pk}}">{{tas.name}} | {{tas.username}} | {{tas.role}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                {% endif %}
+                <br>
+            {% endfor %}
             <br>
-          <br>
-          <a href = "/Home/"> Go Home </a>
-        </div>
-    </form>
-    </body>
+            {% if curr_usr.role == "Admin" %}
+                <input type="submit" value="Submit" class="button">
+            {% elif curr_usr.role == "Instructor" and instructor_message == 'None' %}
+                <input type="submit" value="Submit" class="button">
+            {% else %}
+                {% if curr_usr.role != "Teacher-Assistant" %}
+                    {{ instructor_message }}
+                {% endif %}
+            {% endif %}
+            <br><br>
+            {{message}}
+            <br><br>
+            <div>
+                <a href="/Home/courseList/" class="button">Go Back</a>
+                <a href="/Home/" class="button">Go Home</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -7,7 +7,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #003087;
-            color: #000;
+            color: #fff;
             text-align: center;
         }
 
@@ -74,108 +74,134 @@
             background-color: #E5C700;
         }
 
+        .home-button {
+            padding: 10px 20px;
+            color: #000;
+            background-color: #FFEA00;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .home-button:hover {
+            background-color: #E5C700;
+        }
+
     </style>
     <title>Create Section</title>
 </head>
 <body>
     <div class="container">
         <h2>Create Section</h2>
-        <table>
         <form method="post" action="{% url 'createSection' %}">
             {% csrf_token %}
-            <div>
-                <label for="course_parent">Course:</label>
-                {% if not courses %}
-                    <p>You must create a course to assign a section to a course!</p>
-                {% else %}
-                <select name="course_parent" id="course_parent" required>
-                    {% for course in courses %}
-                    <option value="{{ course.pk }}">{{ course}}</option>
-                    {% endfor %}
-                {% endif %}
-                </select>
-            </div>
-            <div>
-                <label for="section_id">Section ID:</label>
-                <input type="text" name="section_id" id="section_id" required>
-            </div>
-            <div>
-            <fieldset>
-                <legend>Days:</legend>
-                {% for day in days %}
-                    <label><input type="checkbox" name="days" value="{{ day.pk }}"> {{ day }}</label>
-                {% endfor %}
-            </fieldset>
-
-            </div>
-            <div>
-                <label for="is_online">Is Online:</label>
-                <input type="checkbox" name="is_online" id="is_online" value="True">
-
-            </div>
-            <div>
-                <label for="start_time">Start Time:</label>
-                <input type="time" name="start_time" id="start_time" value="None">
-            </div>
-            <div>
-                <label for="end_time">End Time:</label>
-                <input type="time" name="end_time" id="end_time" value="None">
-            </div>
-            <div>
-                <label for="location">Location:</label>
-                <input type="text" name="location" id="location" placeholder = 'N/A'>
-            </div>
-            <div>
-                <label for="section_type">Section Type:</label>
-                <select name="section_type" id="section_type" required>
-                    <option value="LEC">Lecture</option>
-                    <option value="LAB">Lab</option>
-                </select>
-            </div>
-            <div>
-                {% if courses %}
-                    <button type="submit">Create Section</button>
-                {% else %}
-                    <p>You must create a course to create a section!</p>
-                {% endif %}
-            </div>
+            <table class="center">
+                <tr>
+                    <td><label for="course_parent">Course:</label></td>
+                    <td>
+                        {% if not courses %}
+                            <p>You must create a course to assign a section to a course!</p>
+                        {% else %}
+                        <select name="course_parent" id="course_parent" required>
+                            {% for course in courses %}
+                                <option value="{{ course.pk }}">{{ course }}</option>
+                            {% endfor %}
+                        </select>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="section_id">Section ID:</label></td>
+                    <td><input type="text" name="section_id" id="section_id" required></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <fieldset>
+                            <legend>Days:</legend>
+                            {% for day in days %}
+                                <label><input type="checkbox" name="days" value="{{ day.pk }}"> {{ day }}</label>
+                            {% endfor %}
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="is_online">Is Online:</label></td>
+                    <td><input type="checkbox" name="is_online" id="is_online" value="True"></td>
+                </tr>
+                <tr>
+                    <td><label for="start_time">Start Time:</label></td>
+                    <td><input type="time" name="start_time" id="start_time"></td>
+                </tr>
+                <tr>
+                    <td><label for="end_time">End Time:</label></td>
+                    <td><input type="time" name="end_time" id="end_time"></td>
+                </tr>
+                <tr>
+                    <td><label for="location">Location:</label></td>
+                    <td><input type="text" name="location" id="location" placeholder="N/A"></td>
+                </tr>
+                <tr>
+                    <td><label for="section_type">Section Type:</label></td>
+                    <td>
+                        <select name="section_type" id="section_type" required>
+                            <option value="LEC">Lecture</option>
+                            <option value="LAB">Lab</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        {% if courses %}
+                            <button type="submit">Create Section</button>
+                        {% else %}
+                            <p>You must create a course to create a section!</p>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
         </form>
         <br>{{ error }}
         <div class="center">
-          <h2> Saved Sections </h2>
-          <table class = "center">
-            <tr>
-                <th>Section ID</th>
-              <th>Course</th>
-              <th>Type</th>
-                <th>Online</th>
-              <th>Location</th>
-              <th>Day</th>
-              <th>Time</th>
-            </tr>
-            {% for section in sections %}
-            <tr>
-                <td>{{ section.section_id }}</td>
-              <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
-              <td>{{ section.type }}</td>
-                <td>{{ section.is_online }}</td>
-              <td>{{ section.location }}</td>
-                <td>
-                {% for day in section.meeting_days.all %}
-                    {{ day.day}}
-                    {% if not forloop.last  %}
-                        -
-                    {% endif %}
+            <h2>Saved Sections</h2>
+            <table class="center">
+                <tr>
+                    <th>Section ID</th>
+                    <th>Course</th>
+                    <th>Type</th>
+                    <th>Online</th>
+                    <th>Location</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                </tr>
+                {% for section in sections %}
+                <tr>
+                    <td>{{ section.section_id }}</td>
+                    <td>{{ section.course_parent.course_name }} {{ section.course_parent.course_id }}</td>
+                    <td>{{ section.type }}</td>
+                    <td>{{ section.is_online }}</td>
+                    <td>{{ section.location }}</td>
+                    <td>
+                        {% for day in section.meeting_days.all %}
+                            {{ day.day }}
+                            {% if not forloop.last %}
+                                -
+                            {% endif %}
+                        {% endfor %}
+                        {% if not section.meeting_days.all %}
+                            None
+                        {% endif %}
+                    </td>
+                    <td>{{ section.start_time }} - {{ section.end_time }}</td>
+                </tr>
                 {% endfor %}
-                {% if not section.meeting_days.all %}
-                    None
-                {% endif %}
-                </td>
-              <td>{{ section.start_time }} - {{ section.end_time }}</td>
-            </tr>
-            {% endfor %}
-          </table>
+            </table>
         </div>
+        <a href="/Home/" class="home-button">Go Home</a>
     </div>
 </body>
 </html>
+
