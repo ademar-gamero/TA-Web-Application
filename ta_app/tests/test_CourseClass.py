@@ -12,7 +12,7 @@ class CommonCourses(TestCase):
 class CourseInit(CommonCourses):
     def test_courseFourArg(self):
         # will the Four-argument constructor produce the correct id, name, description, and semester?
-        temp = self.default
+        temp = CourseClass(0, "test name", "test description", "Fall")
         self.assertEqual(0, temp.course_id, "course_id is incorrect value")
         self.assertEqual("test name", temp.course_name, "course_name is incorrect value")
         self.assertEqual("test description", temp.description, "course description is incorrect value")

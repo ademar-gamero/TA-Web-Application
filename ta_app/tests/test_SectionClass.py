@@ -245,7 +245,7 @@ class TestSectionClass(TestCase):
             result = section_edit.edit_section(old_section_id=initial_section.section_id)
 
             # Check if edit was reported as successful
-            self.assertTrue(result, "Edit function did not return True.")  # ???
+            self.assertTrue(result, "Edit function did not return True.")
 
             # Verify the changes
             updated_section = Section.objects.get(section_id=initial_section.section_id)
