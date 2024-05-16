@@ -38,7 +38,6 @@ class courseList(View):
                 courses = Course.objects.all()
         elif request.POST.get('input_btn') == "Your Courses":
             for secs in user.assigned_section.all():
-                print(secs)
                 courses.append(secs.course_parent)
         else:
             courses = Course.objects.all()

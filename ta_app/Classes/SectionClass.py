@@ -9,6 +9,8 @@ class SectionClass:
 
     def __init__(self, course_parent=None, section_id=None, meeting_days=None, start_time=None, end_time=None,
                  section_type=None, location=None, is_online=None):
+        if location == "":
+            location = "None"
         if course_parent is None:
             raise ValueError("course_parent must not be None")
         if not isinstance(course_parent, Course):
@@ -38,13 +40,13 @@ class SectionClass:
                 raise ValueError("Start time and end time must be provided for in-person classes")
         if is_online:
             if location !='None':
-                raise ValueError("Please enter 'None' in location for online classes")
+                raise ValueError("Please leave location empty for online classes")
         self.course_parent = course_parent
         if section_id is None:
             raise ValueError("Section ID must not be None")
         self.section_id = section_id
         self.meeting_days = []
-        if meeting_days is not None:
+        if meeting_days != []:
             if start_time is None or end_time is None:
                 raise ValueError("You provided days, but did not provide a time")
             for day in meeting_days:
@@ -59,7 +61,7 @@ class SectionClass:
 
     def create_section(self):
         if Section.objects.filter(section_id=self.section_id).exists():
-            raise ValueError("Duplicate section exists.")
+            raise ValueError("Duplicate section exists - matching section id with another section")
         for day in self.meeting_days:
             if Section.objects.filter(location=self.location, start_time=self.start_time,
                                       end_time=self.end_time, meeting_days__in=[day]).exists():
