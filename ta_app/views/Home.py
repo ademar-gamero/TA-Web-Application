@@ -21,7 +21,8 @@ class Home(View):
 
         curr_role = request.session["role"]
         curr_name = request.session["name"]
-        response = render(request, "home.html", {"role": curr_role, "name": curr_name})
+        curr_pk = request.session["pk"]
+        response = render(request, "home.html", {"role": curr_role, "name": curr_name, "user_id": curr_pk})
         response['Cache-Control'] = 'no-store'
         return response
 
