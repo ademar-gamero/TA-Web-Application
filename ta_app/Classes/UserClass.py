@@ -354,7 +354,11 @@ class UserClass(ABC):
             User.objects.get(username=self.username)
             raise ValueError("Username is already taken")
         except User.DoesNotExist:
-            user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
+            try:
+                User.objects.get(email=self.email)
+                raise ValueError("Email is already taken")
+            except User.DoesNotExist:
+                user = User.objects.create(username=self.get_username(), password=self.get_password(), name=self.get_name(),
                                        role=self.get_role(), email=self.get_email(),
                                        phone_number=self.get_phone_number(),
                                        address=self.get_address(), assigned=self.get_assigned(),skills=self.get_skills())

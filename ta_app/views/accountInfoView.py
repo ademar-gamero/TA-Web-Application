@@ -40,7 +40,7 @@ class accountInfoView(View):
         phone_number = request.POST.get('phone_number')
         role = request.POST.get('role')
         address = request.POST.get('address')
-
+        skills = request.POST.get('skills')
         self.val = False
         account = User.objects.get(pk=pk)
         self.acc_edit = UserClass(username=account.username, password=account.password, name=account.name, role=account.role,
@@ -48,7 +48,7 @@ class accountInfoView(View):
                                   assigned_sections=account.assigned_section.all(), skills=account.skills)
         try:
             self.acc_edit.edit_user(username=username, password=password, name=name, role=role, email=email,
-                                    phone=phone_number, address=address)
+                                    phone=phone_number, address=address, skills=skills)
         except ValueError as error:
             return render(request, "accountInfo.html", {'user': self.acc_edit, 'message': error.__str__()})
         updated_account = User.objects.get(pk=pk)

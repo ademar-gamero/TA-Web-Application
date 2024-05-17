@@ -31,7 +31,7 @@
             text-align: center;
             margin-left: auto;
             margin-right: auto;
-            width: 80%;
+            width: 100%;
         }
 
         table, th, td {
@@ -187,18 +187,12 @@
                         {% if not section.meeting_days.all %}
                             None
                         {% endif %}
+                        {% if not section.meeting_days.all %}
+                            None
+                        {% endif %}
                     </td>
                     <td>{{ section.start_time }} - {{ section.end_time }}</td>
                 {% endfor %}
-                {% if not section.meeting_days.all %}
-                    None
-                {% endif %}
-                </td>
-                {% if section.start_time is not None and section.end_time is not None %}
-                    <td>{{ section.start_time }} - {{ section.end_time }}</td>
-                {% else %}
-                    <td>None</td>
-                {% endif %}
             </tr>
           </table>
         </div>
